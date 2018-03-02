@@ -1,0 +1,32 @@
+{
+  "name": "worker-dom",
+  "version": "0.0.1",
+  "description": "A facsimile of a modern DOM implementation intended to run in a Web Worker.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ampproject/worker-dom.git"
+  },
+  "author": "Kristofer Baxter",
+  "license": "Apache-2.0",
+  "scripts": {
+    "watch": "yarn tsc -w -p config/tsconfig.build.json",
+    "build": "yarn tsc -p config/tsconfig.build.json",
+    "bundle": "yarn build && yarn rollup --config config/rollup.config.js",
+    "test": "yarn tsc -p config/tsconfig.test.json && yarn ava src/output/test/"
+  },
+  "devDependencies": {
+    "@babel/cli": "v7.0.0-beta.40",
+    "@babel/core": "v7.0.0-beta.40",
+    "@babel/plugin-proposal-class-properties": "v7.0.0-beta.40",
+    "@babel/plugin-proposal-object-rest-spread": "v7.0.0-beta.40",
+    "@babel/preset-env": "v7.0.0-beta.40",
+    "ava": "0.25.0",
+    "rollup": "0.56.3",
+    "rollup-plugin-babel": "4.0.0-beta.2",
+    "rollup-plugin-commonjs": "8.3.0",
+    "rollup-plugin-node-resolve": "3.0.3",
+    "tsickle": "0.27.2",
+    "typescript": "2.7.2"
+  }
+}
