@@ -1,4 +1,4 @@
-import {Node} from './Node';
-import {Event} from './Event';
+import { Node } from './Node';
+import { Event } from './Event';
 
-export {Node, Event};
+export { Node, Event };

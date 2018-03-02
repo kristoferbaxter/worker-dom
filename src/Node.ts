@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Event } from "./Event";
-import { toLower, splice } from "./utils";
+import { Event } from './Event';
+import { toLower, splice } from './utils';
 
 export const enum NodeType {
   ELEMENT_NODE = 1,
