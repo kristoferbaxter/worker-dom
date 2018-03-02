@@ -159,6 +159,8 @@ test('Node.lastChild returns Node.childNodes[last]', t => {
 });
 
 test('Node.nextSibling returns the next sibling node', t => {
+  t.plan(3);
+
   const node = new Node(NodeType.ELEMENT_NODE);
   const child = new Node(NodeType.ELEMENT_NODE);
   const childTwo = new Node(NodeType.ELEMENT_NODE);
@@ -167,4 +169,6 @@ test('Node.nextSibling returns the next sibling node', t => {
   node.appendChild(childTwo);
 
   t.deepEqual(child.nextSibling, childTwo, 'when a parent contains two children, the nextSibling of the first is the second.');
+  t.is(node.nextSibling, null, 'when a node does not have a parent, its sibling is null');
+  t.is(childTwo.nextSibling, null, 'when a node is the last child of a parent, the next sibling is null');
 });
