@@ -63,9 +63,8 @@ export class Node {
 
   /**
    * Adds the specified childNode argument as the last child to the current node.
-   *
-   * If the argument referenced an existing node on the DOM tree, the node will be detached
-   * from its current position and attached at the new position.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild
+   * @param child Child Node to append to this Node.
    */
   public appendChild(child: Node): void {
     child.remove();
@@ -82,14 +81,20 @@ export class Node {
   }
 
   /**
-   * Removes a child node from the current element, which must be a child of the current node.
-   *
-   * @param child child Node to remove from the parent.
+   * Removes a child node from the current element.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/removeChild
+   * @param child Child Node to remove from this Node.
+   * @returns Node removed from the tree or null if the node wasn't attached to this tree.
    */
-  public removeChild(child: Node): void {
-    splice(this.childNodes, child, null, false);
+  public removeChild(child: Node): Node {
+    const index = this.childNodes.indexOf(child);
 
-    // TODO – KB: Restore mutation observation.
+    if (index !== -1) {
+      return this.childNodes.splice(index, 1)[0];
+    }
+    return null;
+
+    // TODO – KB: Restore mutation obs ervation.
     // let i = splice(this.childNodes, child, null, false);
     // this.mutate(this, 'childList', {
     //   addedNodes: null,
@@ -98,17 +103,40 @@ export class Node {
     //   nextSibling: this.childNodes[i],
     // });
   }
-  public remove() {
+
+  /**
+   * Removes this Node from the tree it belogs too.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/ChildNode/remove
+   */
+  public remove(): void {
     this.parentNode && this.parentNode.removeChild(this);
   }
 
-  // EventTarget methods
+  /**
+   * Add an event listener to callback when a specific event type is dispatched.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
+   * @param type Event Type (i.e 'click')
+   * @param handler Function called when event is dispatched.
+   */
   public addEventListener(type: string, handler: EventHandler): void {
     this._handlers_[toLower(type)] || (this._handlers_[toLower(type)] = []).push(handler);
   }
+
+  /**
+   * Remove a registered event listener for a specific event type.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener
+   * @param type Event Type (i.e 'click')
+   * @param handler Function to stop calling when event is dispatched.
+   */
   public removeEventListener(type: string, handler: EventHandler): void {
     splice(this._handlers_[toLower(type)], handler, 0, true);
   }
+
+  /**
+   * Dispatch an event for this Node.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent
+   * @param event Event to dispatch to this node and potentially cascade to parents.
+   */
   public dispatchEvent(event: Event): boolean {
     let target: Node = (event.currentTarget = this);
     let handlers: EventHandler[];
