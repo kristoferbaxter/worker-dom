@@ -18,11 +18,11 @@ export function assign(obj: object, props: object): void {
   for (let iterator in props) obj[iterator] = props[iterator];
 }
 
-export function toLower(string: string) {
+export function toLower(string: string): string {
   return string.toLowerCase();
 }
 
-export function splice<T>(array: T[], item: T, add: any, byValueOnly: boolean) {
+export function splice<T>(array: T[], item: T, add: any, byValueOnly: boolean): number {
   let i = array ? findWhere(array, item, true, byValueOnly) : -1;
   if (~i) {
     add ? array.splice(i, 0, add) : array.splice(i, 1);
