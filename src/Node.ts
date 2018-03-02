@@ -31,11 +31,11 @@ export const enum NodeType {
   DOCUMENT_FRAGMENT_NODE = 11,
   NOTATION_NODE = 12,
 }
-
 type EventHandler = (event: Event) => any;
 interface EventHandlers {
   [index: string]: EventHandler[];
 }
+type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
 
 // https://developer.mozilla.org/en-US/docs/Web/API/Node
 // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget
@@ -45,12 +45,12 @@ interface EventHandlers {
 
 export class Node {
   public nodeType: NodeType;
-  public nodeName: string;
+  public nodeName: NodeName;
   public childNodes: Node[] = [];
   public parentNode: Node = null;
   private _handlers_: EventHandlers = {};
 
-  constructor(nodeType: NodeType, nodeName: string) {
+  constructor(nodeType: NodeType, nodeName: NodeName) {
     this.nodeType = nodeType;
     this.nodeName = nodeName;
   }
