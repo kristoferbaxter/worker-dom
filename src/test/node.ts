@@ -21,7 +21,7 @@ import { Event } from '../Event';
 test('Node.dispatchEvent() calls handler functions registered with addEventListener', t => {
   t.plan(2);
 
-  const node = new Node(NodeType.ELEMENT_NODE);
+  const node = new Node(NodeType.ELEMENT_NODE, 'div');
   node.addEventListener('click', (event: Event) => {
     t.pass();
   });
@@ -32,7 +32,7 @@ test('Node.dispatchEvent() calls handler functions registered with addEventListe
 });
 
 test('Node.dispatchEvent() does not call handler functions removed with removeEventListener', t => {
-  const node = new Node(NodeType.ELEMENT_NODE);
+  const node = new Node(NodeType.ELEMENT_NODE, 'div');
   const functionRemoved = (event: Event) => t.fail('removeEventListener function handler was called');
   node.addEventListener('click', functionRemoved);
   node.removeEventListener('click', functionRemoved);
@@ -45,7 +45,7 @@ test('Node.dispatchEvent() does not call handler functions removed with removeEv
 test('Node.dispatchEvent() calls handler functions for only specified type of event', t => {
   t.plan(2);
 
-  const node = new Node(NodeType.ELEMENT_NODE);
+  const node = new Node(NodeType.ELEMENT_NODE, 'div');
   node.addEventListener('click', (event: Event) => {
     t.is(event.type, 'click', 'event type is correct');
   });
@@ -59,7 +59,7 @@ test('Node.dispatchEvent() calls handler functions for only specified type of ev
 });
 
 test('Node.dispatchEvent() does not call handler functions for unspecified event types', t => {
-  const node = new Node(NodeType.ELEMENT_NODE);
+  const node = new Node(NodeType.ELEMENT_NODE, 'div');
   node.addEventListener('foo', (event: Event) => {
     t.fail('handler for the incorrect type was called');
   });
@@ -72,7 +72,7 @@ test('Node.dispatchEvent() does not call handler functions for unspecified event
 test('Node.dispatchEvent() calls handler functions with correct event.target', t => {
   t.plan(2);
 
-  const node = new Node(NodeType.ELEMENT_NODE);
+  const node = new Node(NodeType.ELEMENT_NODE, 'div');
   node.addEventListener('click', (event: Event) => {
     t.deepEqual(event.target, node, 'event target is the node the event was dispatched from');
   });
@@ -85,16 +85,16 @@ test('Node.dispatchEvent() calls handler functions with correct event.target', t
 test('Node.appendChild() adds specified child Node', t => {
   t.plan(4);
 
-  const node = new Node(NodeType.ELEMENT_NODE);
-  const child = new Node(NodeType.ELEMENT_NODE);
+  const node = new Node(NodeType.ELEMENT_NODE, 'div');
+  const child = new Node(NodeType.ELEMENT_NODE, 'div');
   node.appendChild(child);
   t.deepEqual(node.childNodes[0], child, 'appending to an empty childNode[] makes childNode[0] = new child');
 
-  const childTwo = new Node(NodeType.ELEMENT_NODE);
+  const childTwo = new Node(NodeType.ELEMENT_NODE, 'div');
   node.appendChild(childTwo);
   t.deepEqual(node.childNodes[1], childTwo, 'appending to a populated childNode[] makes childNode[length] = new child');
 
-  const childThree = new Node(NodeType.ELEMENT_NODE);
+  const childThree = new Node(NodeType.ELEMENT_NODE, 'div');
   node.appendChild(childThree);
   node.appendChild(child);
   t.deepEqual(node.childNodes[0], childTwo, 'reappending a known child removes the child from exising position');
@@ -104,13 +104,13 @@ test('Node.appendChild() adds specified child Node', t => {
 test('Node.removeChild() removes specified child Node from parent', t => {
   t.plan(3);
 
-  const node = new Node(NodeType.ELEMENT_NODE);
-  const child = new Node(NodeType.ELEMENT_NODE);
+  const node = new Node(NodeType.ELEMENT_NODE, 'div');
+  const child = new Node(NodeType.ELEMENT_NODE, 'div');
   node.appendChild(child);
   node.removeChild(child);
   t.is(node.childNodes.length, 0, 'removing the only child from childNode[] makes childNodes have no members');
 
-  const childTwo = new Node(NodeType.ELEMENT_NODE);
+  const childTwo = new Node(NodeType.ELEMENT_NODE, 'div');
   node.appendChild(child);
   node.appendChild(childTwo);
   node.removeChild(childTwo);
@@ -121,8 +121,8 @@ test('Node.removeChild() removes specified child Node from parent', t => {
 test('Node.remove() removes Node from parent', t => {
   t.plan(2);
 
-  const node = new Node(NodeType.ELEMENT_NODE);
-  const child = new Node(NodeType.ELEMENT_NODE);
+  const node = new Node(NodeType.ELEMENT_NODE, 'div');
+  const child = new Node(NodeType.ELEMENT_NODE, 'div');
 
   node.appendChild(child);
   child.remove();
@@ -135,12 +135,12 @@ test('Node.remove() removes Node from parent', t => {
 test('Node.firstChild returns Node.childNodes[0]', t => {
   t.plan(2);
 
-  const node = new Node(NodeType.ELEMENT_NODE);
-  const child = new Node(NodeType.ELEMENT_NODE);
+  const node = new Node(NodeType.ELEMENT_NODE, 'div');
+  const child = new Node(NodeType.ELEMENT_NODE, 'div');
   node.appendChild(child);
   t.deepEqual(node.firstChild, child, 'a single child is returned when only a single child is available.');
 
-  const childTwo = new Node(NodeType.ELEMENT_NODE);
+  const childTwo = new Node(NodeType.ELEMENT_NODE, 'div');
   node.appendChild(childTwo);
   t.deepEqual(node.firstChild, child, 'the first child added is returned when more than a single child is available.');
 });
@@ -148,12 +148,12 @@ test('Node.firstChild returns Node.childNodes[0]', t => {
 test('Node.lastChild returns Node.childNodes[last]', t => {
   t.plan(2);
 
-  const node = new Node(NodeType.ELEMENT_NODE);
-  const child = new Node(NodeType.ELEMENT_NODE);
+  const node = new Node(NodeType.ELEMENT_NODE, 'div');
+  const child = new Node(NodeType.ELEMENT_NODE, 'div');
   node.appendChild(child);
   t.deepEqual(node.lastChild, child, 'a single child is returned when only a single child is available.');
 
-  const childTwo = new Node(NodeType.ELEMENT_NODE);
+  const childTwo = new Node(NodeType.ELEMENT_NODE, 'div');
   node.appendChild(childTwo);
   t.deepEqual(node.lastChild, childTwo, 'the last child added is returned when more than a single child is available.');
 });
@@ -161,9 +161,9 @@ test('Node.lastChild returns Node.childNodes[last]', t => {
 test('Node.nextSibling returns the next sibling node', t => {
   t.plan(3);
 
-  const node = new Node(NodeType.ELEMENT_NODE);
-  const child = new Node(NodeType.ELEMENT_NODE);
-  const childTwo = new Node(NodeType.ELEMENT_NODE);
+  const node = new Node(NodeType.ELEMENT_NODE, 'div');
+  const child = new Node(NodeType.ELEMENT_NODE, 'div');
+  const childTwo = new Node(NodeType.ELEMENT_NODE, 'div');
 
   node.appendChild(child);
   node.appendChild(childTwo);

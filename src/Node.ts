@@ -45,12 +45,14 @@ interface EventHandlers {
 
 export class Node {
   public nodeType: NodeType;
+  public nodeName: string;
   public childNodes: Node[] = [];
   public parentNode: Node = null;
   private _handlers_: EventHandlers = {};
 
-  constructor(nodeType: NodeType) {
+  constructor(nodeType: NodeType, nodeName: string) {
     this.nodeType = nodeType;
+    this.nodeName = nodeName;
   }
 
   // Unimplemented Properties
