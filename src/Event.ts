@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Node} from './Node';
+import { Node } from "./Node";
 
 interface EventOptions {
   bubbles?: boolean;
@@ -31,6 +31,7 @@ export class Event {
   public isTrusted: boolean;
   public returnValue: boolean;
   // public srcElement: Element | null;
+  // TODO – KB: Restore
   public target: Node;
   public timeStamp: number;
   public type: string;

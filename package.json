@@ -7,13 +7,17 @@
     "type": "git",
     "url": "https://github.com/ampproject/worker-dom.git"
   },
+  "engines": {
+    "yarn": ">=1.0.0"
+  },
   "author": "Kristofer Baxter",
   "license": "Apache-2.0",
   "scripts": {
     "watch": "yarn tsc -w -p config/tsconfig.build.json",
     "build": "yarn tsc -p config/tsconfig.build.json",
     "bundle": "yarn build && yarn rollup --config config/rollup.config.js",
-    "test": "yarn tsc -p config/tsconfig.test.json && yarn ava src/output/test/"
+    "test": "yarn tsc -p config/tsconfig.test.json && yarn ava src/output/test/",
+    "precommit": "lint-staged"
   },
   "devDependencies": {
     "@babel/cli": "v7.0.0-beta.40",
@@ -22,11 +26,17 @@
     "@babel/plugin-proposal-object-rest-spread": "v7.0.0-beta.40",
     "@babel/preset-env": "v7.0.0-beta.40",
     "ava": "0.25.0",
+    "husky": "0.14.3",
+    "lint-staged": "7.0.0",
+    "prettier": "1.11.1",
     "rollup": "0.56.3",
     "rollup-plugin-babel": "4.0.0-beta.2",
     "rollup-plugin-commonjs": "8.3.0",
     "rollup-plugin-node-resolve": "3.0.3",
     "tsickle": "0.27.2",
     "typescript": "2.7.2"
+  },
+  "lint-staged": {
+    "*.ts": ["yarn prettier --config config/.prettierrc --write", "git add"]
   }
 }
