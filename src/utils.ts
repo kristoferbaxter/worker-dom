@@ -33,7 +33,7 @@ export function splice<T>(array: T[], item: T, add: any, byValueOnly: boolean) {
 export function findWhere(array: any[], fn: any, returnIndex: boolean, byValueOnly: boolean): any {
   let iterator = array.length;
   while (iterator--) {
-    if (typeof fn === "function" && !byValueOnly ? fn(array[iterator]) : array[iterator] === fn) {
+    if (typeof fn === 'function' && !byValueOnly ? fn(array[iterator]) : array[iterator] === fn) {
       break;
     }
   }

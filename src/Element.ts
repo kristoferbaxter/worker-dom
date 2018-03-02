@@ -1,4 +1,4 @@
-import { Node, NodeType } from "./Node";
+import { Node, NodeType } from './Node';
 
 export class Element extends Node {
   /**

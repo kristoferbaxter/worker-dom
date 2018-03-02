@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Event } from "./Event";
-import { toLower, splice } from "./utils";
+import { Event } from './Event';
+import { toLower, splice } from './utils';
 
 export const enum NodeType {
   ELEMENT_NODE = 1,
@@ -53,12 +53,28 @@ export class Node {
     this.nodeType = nodeType;
   }
 
+  // Unimplemented Properties
+  // Node.baseURI – https://developer.mozilla.org/en-US/docs/Web/API/Node/baseURI
+  // Node.isConnected – https://developer.mozilla.org/en-US/docs/Web/API/Node/isConnected
+
   // Properties
   get firstChild(): Node {
     return this.childNodes.length > 0 ? this.childNodes[0] : null;
   }
   get lastChild(): Node {
     return this.childNodes.length > 0 ? this.childNodes[this.childNodes.length - 1] : null;
+  }
+  /**
+   * Returns the node immediately following the specified one in its parent's childNodes list,
+   * or null if the specified node is the last node in that list.
+   */
+  get nextSibling(): Node {
+    if (this.parentNode === null) {
+      return null;
+    }
+
+    const parentChildNodes = this.parentNode.childNodes;
+    return parentChildNodes[parentChildNodes.indexOf(this) + 1] || null;
   }
 
   /**
