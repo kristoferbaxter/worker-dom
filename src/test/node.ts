@@ -172,3 +172,13 @@ test('Node.nextSibling returns the next sibling node', t => {
   t.is(node.nextSibling, null, 'when a node does not have a parent, its sibling is null');
   t.is(childTwo.nextSibling, null, 'when a node is the last child of a parent, the next sibling is null');
 });
+
+test('Node.nodeName returns the name of the Node', t => {
+  t.plan(2);
+
+  const node = new Node(NodeType.TEXT_NODE, '#text');
+  const nodeTwo = new Node(NodeType.ELEMENT_NODE, 'div');
+
+  t.is(node.nodeName, '#text', 'text node returns a valid text node name');
+  t.is(nodeTwo.nodeName, 'div', 'standard element node returns a valid node name');
+});
