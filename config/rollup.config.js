@@ -25,8 +25,23 @@ export default {
 	external: [],
 	plugins: [
 		babel({
-			exclude: 'node_modules/**'
-		}),
+      exclude: 'node_modules/**',
+      presets: [
+        [
+          '@babel/env', {
+            targets: {
+              browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'],
+            },
+            loose: true,
+            modules: false
+          }
+        ],
+      ],
+      plugins: [
+        ['@babel/plugin-proposal-object-rest-spread'],
+        ['@babel/proposal-class-properties'],
+      ]
+    }),
 		nodeResolve({ jsnext:true }),
 		commonjs(),
 	]
