@@ -22,7 +22,7 @@ export function toLower(string: string) {
   return string.toLowerCase();
 }
 
-export function splice(array: any[], item: any, add: any, byValueOnly: boolean) {
+export function splice<T>(array: T[], item: T, add: any, byValueOnly: boolean) {
   let i = array ? findWhere(array, item, true, byValueOnly) : -1;
   if (~i) {
     add ? array.splice(i, 0, add) : array.splice(i, 1);
@@ -33,7 +33,7 @@ export function splice(array: any[], item: any, add: any, byValueOnly: boolean) 
 export function findWhere(array: any[], fn: any, returnIndex: boolean, byValueOnly: boolean): any {
   let iterator = array.length;
   while (iterator--) {
-    if (typeof fn === 'function' && !byValueOnly ? fn(array[iterator]) : array[iterator] === fn) {
+    if (typeof fn === "function" && !byValueOnly ? fn(array[iterator]) : array[iterator] === fn) {
       break;
     }
   }

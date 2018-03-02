@@ -16,7 +16,7 @@
     "watch": "yarn tsc -w -p config/tsconfig.build.json",
     "build": "yarn tsc -p config/tsconfig.build.json",
     "bundle": "yarn build && yarn rollup --config config/rollup.config.js",
-    "test": "yarn tsc -p config/tsconfig.test.json && yarn ava src/output/test/",
+    "test": "yarn tsc -p config/tsconfig.test.json && yarn ava -v src/output/test/",
     "precommit": "lint-staged"
   },
   "devDependencies": {

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {Event} from './Event';
-import {toLower, splice} from './utils';
+import { Event } from "./Event";
+import { toLower, splice } from "./utils";
 
 export const enum NodeType {
   ELEMENT_NODE = 1,
@@ -44,9 +44,65 @@ interface EventHandlers {
 // This is intentional to reduce the number of classes.
 
 export class Node {
+  public nodeType: NodeType;
+  public childNodes: Node[] = [];
   public parentNode: Node = null;
   private _handlers_: EventHandlers = {};
 
+  constructor(nodeType: NodeType) {
+    this.nodeType = nodeType;
+  }
+
+  // Properties
+  get firstChild(): Node {
+    return this.childNodes.length > 0 ? this.childNodes[0] : null;
+  }
+  get lastChild(): Node {
+    return this.childNodes.length > 0 ? this.childNodes[this.childNodes.length - 1] : null;
+  }
+
+  /**
+   * Adds the specified childNode argument as the last child to the current node.
+   *
+   * If the argument referenced an existing node on the DOM tree, the node will be detached
+   * from its current position and attached at the new position.
+   */
+  public appendChild(child: Node): void {
+    child.remove();
+    child.parentNode = this;
+    this.childNodes.push(child);
+
+    // TODO – KB: Restore mutation observation.
+    // this.mutate(this, 'childList', {
+    //   addedNodes: [child],
+    //   removedNodes: null,
+    //   previousSibling: this.childNodes[this.childNodes.length - 2],
+    //   nextSibling: null,
+    // });
+  }
+
+  /**
+   * Removes a child node from the current element, which must be a child of the current node.
+   *
+   * @param child child Node to remove from the parent.
+   */
+  public removeChild(child: Node): void {
+    splice(this.childNodes, child, null, false);
+
+    // TODO – KB: Restore mutation observation.
+    // let i = splice(this.childNodes, child, null, false);
+    // this.mutate(this, 'childList', {
+    //   addedNodes: null,
+    //   removedNodes: [child],
+    //   previousSibling: this.childNodes[i - 1],
+    //   nextSibling: this.childNodes[i],
+    // });
+  }
+  public remove() {
+    this.parentNode && this.parentNode.removeChild(this);
+  }
+
+  // EventTarget methods
   public addEventListener(type: string, handler: EventHandler): void {
     this._handlers_[toLower(type)] || (this._handlers_[toLower(type)] = []).push(handler);
   }
@@ -61,7 +117,7 @@ export class Node {
     do {
       handlers = target._handlers_ && target._handlers_[toLower(event.type)];
       if (handlers) {
-        for (iterator = handlers.length; iterator--;) {
+        for (iterator = handlers.length; iterator--; ) {
           if ((handlers[iterator].call(target, event) === false || event._end) && event.cancelable) {
             break;
           }
