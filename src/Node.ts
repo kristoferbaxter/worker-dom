@@ -32,7 +32,6 @@ export const enum NodeType {
   NOTATION_NODE = 12,
 }
 
-// TODO – KB, This is overly generic.
 type EventHandler = (event: Event) => any;
 interface EventHandlers {
   [index: string]: EventHandler[];
