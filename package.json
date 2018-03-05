@@ -36,10 +36,7 @@
     "typescript": "2.7.2"
   },
   "lint-staged": {
-    "*.ts": [
-      "yarn prettier --config config/.prettierrc --write",
-      "git add"
-    ]
+    "*.ts": ["yarn prettier --config config/.prettierrc --write", "git add"]
   },
   "husky": {
     "hooks": {
