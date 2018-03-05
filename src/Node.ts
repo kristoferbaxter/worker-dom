@@ -58,18 +58,28 @@ export class Node {
   // Unimplemented Properties
   // Node.baseURI – https://developer.mozilla.org/en-US/docs/Web/API/Node/baseURI
   // Node.isConnected – https://developer.mozilla.org/en-US/docs/Web/API/Node/isConnected
+  // Node.nodeValue – https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeValue
+  // Node.ownerDocument – https://developer.mozilla.org/en-US/docs/Web/API/Node/ownerDocument
 
-  // Properties
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/firstChild
+   * @returns Node's first child in the tree, or null if the node has no children.
+   */
   get firstChild(): Node {
     return this.childNodes.length > 0 ? this.childNodes[0] : null;
   }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/lastChild
+   * @returns The last child of a node, or null if there are no child elements.
+   */
   get lastChild(): Node {
     return this.childNodes.length > 0 ? this.childNodes[this.childNodes.length - 1] : null;
   }
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/nextSibling
-   * @returns node immediately following the specified one in it's parent's childNodes or null if one doesn't exist.
+   * @returns node immediately following the specified one in it's parent's childNodes, or null if one doesn't exist.
    */
   get nextSibling(): Node {
     if (this.parentNode === null) {
@@ -78,6 +88,19 @@ export class Node {
 
     const parentChildNodes = this.parentNode.childNodes;
     return parentChildNodes[parentChildNodes.indexOf(this) + 1] || null;
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/previousSibling
+   * @returns node immediately preceding the specified one in its parent's childNodes, or null if the specified node is the first in that list.
+   */
+  get previousSibling(): Node {
+    if (this.parentNode === null) {
+      return null;
+    }
+
+    const parentChildNodes = this.parentNode.childNodes;
+    return parentChildNodes[parentChildNodes.indexOf(this) - 1] || null;
   }
 
   /**
