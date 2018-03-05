@@ -31,11 +31,11 @@ export const enum NodeType {
   DOCUMENT_FRAGMENT_NODE = 11,
   NOTATION_NODE = 12,
 }
-
 type EventHandler = (event: Event) => any;
 interface EventHandlers {
   [index: string]: EventHandler[];
 }
+type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
 
 // https://developer.mozilla.org/en-US/docs/Web/API/Node
 // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget
@@ -45,13 +45,19 @@ interface EventHandlers {
 
 export class Node {
   public nodeType: NodeType;
+  public nodeName: NodeName;
   public childNodes: Node[] = [];
   public parentNode: Node = null;
   private _handlers_: EventHandlers = {};
 
-  constructor(nodeType: NodeType) {
+  constructor(nodeType: NodeType, nodeName: NodeName) {
     this.nodeType = nodeType;
+    this.nodeName = nodeName;
   }
+
+  // Unimplemented Properties
+  // Node.baseURI – https://developer.mozilla.org/en-US/docs/Web/API/Node/baseURI
+  // Node.isConnected – https://developer.mozilla.org/en-US/docs/Web/API/Node/isConnected
 
   // Properties
   get firstChild(): Node {
@@ -59,6 +65,19 @@ export class Node {
   }
   get lastChild(): Node {
     return this.childNodes.length > 0 ? this.childNodes[this.childNodes.length - 1] : null;
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/nextSibling
+   * @returns node immediately following the specified one in it's parent's childNodes or null if one doesn't exist.
+   */
+  get nextSibling(): Node {
+    if (this.parentNode === null) {
+      return null;
+    }
+
+    const parentChildNodes = this.parentNode.childNodes;
+    return parentChildNodes[parentChildNodes.indexOf(this) + 1] || null;
   }
 
   /**
