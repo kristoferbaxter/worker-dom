@@ -18,6 +18,16 @@ import test from 'ava';
 import { Node, NodeType } from '../Node';
 import { Event } from '../Event';
 
+test('Node.nodeName returns the name of the Node', t => {
+  t.plan(2);
+
+  const node = new Node(NodeType.TEXT_NODE, '#text');
+  const nodeTwo = new Node(NodeType.ELEMENT_NODE, 'div');
+
+  t.is(node.nodeName, '#text', 'text node returns a valid text node name');
+  t.is(nodeTwo.nodeName, 'div', 'standard element node returns a valid node name');
+});
+
 test('Node.dispatchEvent() calls handler functions registered with addEventListener', t => {
   t.plan(2);
 
@@ -168,17 +178,22 @@ test('Node.nextSibling returns the next sibling node', t => {
   node.appendChild(child);
   node.appendChild(childTwo);
 
-  t.deepEqual(child.nextSibling, childTwo, 'when a parent contains two children, the nextSibling of the first is the second.');
-  t.is(node.nextSibling, null, 'when a node does not have a parent, its sibling is null');
+  t.deepEqual(child.nextSibling, childTwo, 'when a parent contains two children, the next sibling of the first is the second.');
+  t.is(node.nextSibling, null, 'when a node does not have a parent, its next sibling is null');
   t.is(childTwo.nextSibling, null, 'when a node is the last child of a parent, the next sibling is null');
 });
 
-test('Node.nodeName returns the name of the Node', t => {
-  t.plan(2);
+test('Node.previousSibling returns the previous sibling node', t => {
+  t.plan(3);
 
-  const node = new Node(NodeType.TEXT_NODE, '#text');
-  const nodeTwo = new Node(NodeType.ELEMENT_NODE, 'div');
+  const node = new Node(NodeType.ELEMENT_NODE, 'div');
+  const child = new Node(NodeType.ELEMENT_NODE, 'div');
+  const childTwo = new Node(NodeType.ELEMENT_NODE, 'div');
 
-  t.is(node.nodeName, '#text', 'text node returns a valid text node name');
-  t.is(nodeTwo.nodeName, 'div', 'standard element node returns a valid node name');
+  node.appendChild(child);
+  node.appendChild(childTwo);
+
+  t.deepEqual(childTwo.previousSibling, child, 'when a parent contains two children, the previous sibling of the second is the first.');
+  t.is(node.previousSibling, null, 'when a node does not have a parent, its previous sibling is null');
+  t.is(child.previousSibling, null, 'when a node is the first child of a parent, the previous sibling is null');
 });
