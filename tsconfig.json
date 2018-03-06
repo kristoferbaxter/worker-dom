@@ -5,16 +5,19 @@
       "es2017",
       "webworker"
     ],
-    "outDir": "../src/output",
+    "outDir": "./src/output",
     "sourceMap": true,
     "moduleResolution": "node",
     "target": "es2017",
     "baseUrl": ".",
     "allowJs": false,
     "noUnusedLocals": true,
-    "allowSyntheticDefaultImports": true
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true
   },
   "include": [
-    "../src/**/*.ts"
+    "./src/**/*.ts"
   ]
 }

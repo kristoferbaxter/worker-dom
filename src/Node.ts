@@ -29,6 +29,7 @@ export const enum NodeType {
   DOCUMENT_NODE = 9,
   DOCUMENT_TYPE_NODE = 10,
   DOCUMENT_FRAGMENT_NODE = 11,
+  // Note: DOCUMENT_FRAGMENT_NODE is not supported in this implementation yet.
   NOTATION_NODE = 12,
 }
 type EventHandler = (event: Event) => any;
@@ -47,7 +48,7 @@ export class Node {
   public nodeType: NodeType;
   public nodeName: NodeName;
   public childNodes: Node[] = [];
-  public parentNode: Node = null;
+  public parentNode: Node | null = null;
   private _handlers_: EventHandlers = {};
 
   constructor(nodeType: NodeType, nodeName: NodeName) {
@@ -61,6 +62,8 @@ export class Node {
   // Node.nodeValue – https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeValue
   // Node.ownerDocument – https://developer.mozilla.org/en-US/docs/Web/API/Node/ownerDocument
   // Node.compareDocumentPosition() – https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
+  // Node.getRootNode() – https://developer.mozilla.org/en-US/docs/Web/API/Node/getRootNode
+  // Node.hasChildNodes() – https://developer.mozilla.org/en-US/docs/Web/API/Node/hasChildNodes
 
   // Will Implement at Element layer
   // Node.textContent – https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent
@@ -71,7 +74,7 @@ export class Node {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/firstChild
    * @returns Node's first child in the tree, or null if the node has no children.
    */
-  get firstChild(): Node {
+  get firstChild(): Node | null {
     return this.childNodes.length > 0 ? this.childNodes[0] : null;
   }
 
@@ -79,7 +82,7 @@ export class Node {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/lastChild
    * @returns The last child of a node, or null if there are no child elements.
    */
-  get lastChild(): Node {
+  get lastChild(): Node | null {
     return this.childNodes.length > 0 ? this.childNodes[this.childNodes.length - 1] : null;
   }
 
@@ -87,7 +90,7 @@ export class Node {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/nextSibling
    * @returns node immediately following the specified one in it's parent's childNodes, or null if one doesn't exist.
    */
-  get nextSibling(): Node {
+  get nextSibling(): Node | null {
     if (this.parentNode === null) {
       return null;
     }
@@ -100,7 +103,7 @@ export class Node {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/previousSibling
    * @returns node immediately preceding the specified one in its parent's childNodes, or null if the specified node is the first in that list.
    */
-  get previousSibling(): Node {
+  get previousSibling(): Node | null {
     if (this.parentNode === null) {
       return null;
     }
@@ -126,6 +129,59 @@ export class Node {
   }
 
   /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/insertBefore
+   * @param child
+   * @param referenceNode
+   * @returns child after it has been inserted.
+   */
+  public insertBefore(child: Node | null, referenceNode: Node | undefined | null): Node | null {
+    if (child === null) {
+      return null;
+    }
+
+    if (child === this) {
+      // The new child cannot contain the parent.
+      return child;
+    }
+
+    if (referenceNode == null) {
+      // When a referenceNode is not valid, appendChild(child).
+      this.appendChild(child);
+
+      // TODO(KB): Restore mutation observation
+      // this.mutate(this, 'childList', {
+      //   addedNodes: [child],
+      //   removedNodes: null,
+      //   previousSibling: null,
+      //   nextSibling: referenceNode,
+      // });
+
+      return child;
+    }
+
+    if (this.childNodes.indexOf(referenceNode) >= 0) {
+      // Should only insertBefore direct children of this Node.
+      child.remove();
+
+      // Removing a child can cause this.childNodes to change, meaning we need to splice from its updated location.
+      this.childNodes.splice(this.childNodes.indexOf(referenceNode), 0, child);
+      child.parentNode = this;
+
+      // TODO(KB): Restore mutation observation
+      // this.mutate(this, 'childList', {
+      //   addedNodes: [child],
+      //   removedNodes: null,
+      //   previousSibling: null,
+      //   nextSibling: referenceNode,
+      // });
+
+      return child;
+    }
+
+    return null;
+  }
+
+  /**
    * Adds the specified childNode argument as the last child to the current node.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild
    * @param child Child Node to append to this Node.
@@ -135,7 +191,7 @@ export class Node {
     child.parentNode = this;
     this.childNodes.push(child);
 
-    // TODO – KB: Restore mutation observation.
+    // TODO(KB): Restore mutation observation.
     // this.mutate(this, 'childList', {
     //   addedNodes: [child],
     //   removedNodes: null,
@@ -150,15 +206,16 @@ export class Node {
    * @param child Child Node to remove from this Node.
    * @returns Node removed from the tree or null if the node wasn't attached to this tree.
    */
-  public removeChild(child: Node): Node {
+  public removeChild(child: Node): Node | null {
     const index = this.childNodes.indexOf(child);
 
     if (index !== -1) {
+      child.parentNode = null;
       return this.childNodes.splice(index, 1)[0];
     }
     return null;
 
-    // TODO – KB: Restore mutation obs ervation.
+    // TODO(KB): Restore mutation observation.
     // let i = splice(this.childNodes, child, null, false);
     // this.mutate(this, 'childList', {
     //   addedNodes: null,
@@ -183,7 +240,12 @@ export class Node {
    * @param handler Function called when event is dispatched.
    */
   public addEventListener(type: string, handler: EventHandler): void {
-    this._handlers_[toLower(type)] || (this._handlers_[toLower(type)] = []).push(handler);
+    let handlers: EventHandler[] = this._handlers_[toLower(type)];
+    if (handlers && handlers.length > 0) {
+      handlers.push(handler);
+    } else {
+      this._handlers_[toLower(type)] = [handler];
+    }
   }
 
   /**
@@ -202,12 +264,12 @@ export class Node {
    * @param event Event to dispatch to this node and potentially cascade to parents.
    */
   public dispatchEvent(event: Event): boolean {
-    let target: Node = (event.currentTarget = this);
-    let handlers: EventHandler[];
+    let target: Node | null = (event.currentTarget = this);
+    let handlers: EventHandler[] | null;
     let iterator: number;
 
     do {
-      handlers = target._handlers_ && target._handlers_[toLower(event.type)];
+      handlers = target && target._handlers_ && target._handlers_[toLower(event.type)];
       if (handlers) {
         for (iterator = handlers.length; iterator--; ) {
           if ((handlers[iterator].call(target, event) === false || event._end) && event.cancelable) {
@@ -215,7 +277,7 @@ export class Node {
           }
         }
       }
-    } while (event.bubbles && !(event.cancelable && event._stop) && (event.target = target = target.parentNode));
+    } while (event.bubbles && !(event.cancelable && event._stop) && (event.target = target = target && target.parentNode));
     return !event.defaultPrevented;
   }
 }
