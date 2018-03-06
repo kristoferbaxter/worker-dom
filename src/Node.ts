@@ -135,15 +135,16 @@ export class Node {
    * @returns child after it has been inserted.
    */
   public insertBefore(child: Node | null, referenceNode: Node | undefined | null): Node | null {
-    if (referenceNode === undefined || child === null) {
+    if (child === null) {
       return null;
     }
 
     if (child === this) {
+      // The new child cannot contain the parent.
       return child;
     }
 
-    if (referenceNode === null) {
+    if (referenceNode == null) {
       // When a referenceNode is not valid, appendChild(child).
       this.appendChild(child);
 
