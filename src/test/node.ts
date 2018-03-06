@@ -70,12 +70,13 @@ test('Node.dispatchEvent() calls handler functions for only specified type of ev
 });
 
 test('Node.appendChild() adds specified child Node', t => {
-  t.plan(4);
+  t.plan(5);
 
   const node = new Node(NodeType.ELEMENT_NODE, 'div');
   const child = new Node(NodeType.ELEMENT_NODE, 'div');
   node.appendChild(child);
   t.deepEqual(node.childNodes[0], child, 'appending to an empty childNode[] makes childNode[0] = new child');
+  t.deepEqual(child.parentNode, node, 'appending a child makes child.parentNode = Node');
 
   const childTwo = new Node(NodeType.ELEMENT_NODE, 'div');
   node.appendChild(childTwo);
@@ -89,13 +90,14 @@ test('Node.appendChild() adds specified child Node', t => {
 });
 
 test('Node.removeChild() removes specified child Node from parent', t => {
-  t.plan(3);
+  t.plan(4);
 
   const node = new Node(NodeType.ELEMENT_NODE, 'div');
   const child = new Node(NodeType.ELEMENT_NODE, 'div');
   node.appendChild(child);
   node.removeChild(child);
   t.is(node.childNodes.length, 0, 'removing the only child from childNode[] makes childNodes have no members');
+  t.is(child.parentNode, null, 'removed child does not have a parent');
 
   const childTwo = new Node(NodeType.ELEMENT_NODE, 'div');
   node.appendChild(child);
