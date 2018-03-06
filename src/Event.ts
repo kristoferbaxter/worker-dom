@@ -31,7 +31,7 @@ export class Event {
   public isTrusted: boolean;
   public returnValue: boolean;
   // public srcElement: Element | null;
-  // TODO – KB: Restore
+  // TODO(KB): Restore srcElement.
   public target: Node;
   public timeStamp: number;
   public type: string;

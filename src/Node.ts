@@ -143,7 +143,7 @@ export class Node {
       // When a referenceNode is not valid, appendChild(child).
       this.appendChild(child);
 
-      // TODO – KB: Restore Mutation
+      // TODO(KB): Restore mutation observation
       // this.mutate(this, 'childList', {
       //   addedNodes: [child],
       //   removedNodes: null,
@@ -160,7 +160,7 @@ export class Node {
       this.childNodes.splice(this.childNodes.indexOf(referenceNode), 0, child)[0];
       child.parentNode = this;
 
-      // TODO – KB: Restore Mutation
+      // TODO(KB): Restore mutation observation
       // this.mutate(this, 'childList', {
       //   addedNodes: [child],
       //   removedNodes: null,
@@ -184,7 +184,7 @@ export class Node {
     child.parentNode = this;
     this.childNodes.push(child);
 
-    // TODO – KB: Restore mutation observation.
+    // TODO(KB): Restore mutation observation.
     // this.mutate(this, 'childList', {
     //   addedNodes: [child],
     //   removedNodes: null,
@@ -208,7 +208,7 @@ export class Node {
     }
     return null;
 
-    // TODO – KB: Restore mutation obs ervation.
+    // TODO(KB): Restore mutation observation.
     // let i = splice(this.childNodes, child, null, false);
     // this.mutate(this, 'childList', {
     //   addedNodes: null,
