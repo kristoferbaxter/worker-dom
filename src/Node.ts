@@ -60,6 +60,12 @@ export class Node {
   // Node.isConnected – https://developer.mozilla.org/en-US/docs/Web/API/Node/isConnected
   // Node.nodeValue – https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeValue
   // Node.ownerDocument – https://developer.mozilla.org/en-US/docs/Web/API/Node/ownerDocument
+  // Node.compareDocumentPosition() – https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
+
+  // Will Implement at Element layer
+  // Node.textContent – https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent
+  //  - Will implement at the Element level and consider bringing back up to Node.
+  // Node.cloneNode – https://developer.mozilla.org/en-US/docs/Web/API/Node/cloneNode
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/firstChild
@@ -101,6 +107,22 @@ export class Node {
 
     const parentChildNodes = this.parentNode.childNodes;
     return parentChildNodes[parentChildNodes.indexOf(this) - 1] || null;
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/contains
+   * @param otherNode
+   * @returns whether a Node is a descendant of a given Node
+   */
+  public contains(otherNode: Node): boolean {
+    if (this.childNodes.length > 0) {
+      if (this.childNodes.indexOf(this) >= 0) {
+        return true;
+      }
+      return this.childNodes.some(child => child.contains(otherNode));
+    }
+
+    return otherNode === this;
   }
 
   /**

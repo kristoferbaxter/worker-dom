@@ -29,15 +29,16 @@ test('Node.nodeName returns the name of the Node', t => {
 });
 
 test('Node.dispatchEvent() calls handler functions registered with addEventListener', t => {
-  t.plan(2);
+  t.plan(3);
 
   const node = new Node(NodeType.ELEMENT_NODE, 'div');
   node.addEventListener('click', (event: Event) => {
+    t.deepEqual(event.target, node, 'event target is the node the event was dispatched from');
     t.pass();
   });
 
   const event = new Event('click', {});
-  event.target = t.context.node;
+  event.target = node;
   t.true(node.dispatchEvent(event));
 });
 
@@ -64,30 +65,6 @@ test('Node.dispatchEvent() calls handler functions for only specified type of ev
   });
 
   const event = new Event('click', {});
-  event.target = node;
-  t.true(node.dispatchEvent(event));
-});
-
-test('Node.dispatchEvent() does not call handler functions for unspecified event types', t => {
-  const node = new Node(NodeType.ELEMENT_NODE, 'div');
-  node.addEventListener('foo', (event: Event) => {
-    t.fail('handler for the incorrect type was called');
-  });
-
-  const event = new Event('click', {});
-  event.target = node;
-  t.true(node.dispatchEvent(event));
-});
-
-test('Node.dispatchEvent() calls handler functions with correct event.target', t => {
-  t.plan(2);
-
-  const node = new Node(NodeType.ELEMENT_NODE, 'div');
-  node.addEventListener('click', (event: Event) => {
-    t.deepEqual(event.target, node, 'event target is the node the event was dispatched from');
-  });
-
-  const event: Event = new Event('click', {});
   event.target = node;
   t.true(node.dispatchEvent(event));
 });
@@ -140,6 +117,25 @@ test('Node.remove() removes Node from parent', t => {
 
   node.remove();
   t.pass('removing a node without a parent does not error');
+});
+
+test('Node.contains(node) returns if node is contained within Node', t => {
+  t.plan(5);
+
+  const node = new Node(NodeType.ELEMENT_NODE, 'div');
+  t.is(node.contains(node), true, 'a node contains itself, return true');
+
+  const child = new Node(NodeType.ELEMENT_NODE, 'div');
+  t.is(node.contains(child), false, 'for a node not contained by parent, return false');
+
+  node.appendChild(child);
+  t.is(node.contains(child), true, 'for a node contained directly by parent, return true');
+
+  const deeperChild = new Node(NodeType.TEXT_NODE, '#text');
+  child.appendChild(deeperChild);
+  t.is(node.contains(deeperChild), true, 'for a node contained deeper within a tree, return true');
+
+  t.is(deeperChild.contains(node), false, 'for a node deep within a tree ensure it does not contain parents, return false');
 });
 
 test('Node.firstChild returns Node.childNodes[0]', t => {
