@@ -162,6 +162,8 @@ export class Node {
     if (this.childNodes.indexOf(referenceNode) >= 0) {
       // Should only insertBefore direct children of this Node.
       child.remove();
+
+      // Removing a child can cause this.childNodes to change, meaning we need to splice from its updated location.
       this.childNodes.splice(this.childNodes.indexOf(referenceNode), 0, child);
       child.parentNode = this;
 
