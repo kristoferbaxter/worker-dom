@@ -157,7 +157,7 @@ export class Node {
     if (this.childNodes.indexOf(referenceNode) >= 0) {
       // Should only insertBefore direct children of this Node.
       child.remove();
-      this.childNodes.splice(this.childNodes.indexOf(referenceNode), 0, child)[0];
+      this.childNodes.splice(this.childNodes.indexOf(referenceNode), 0, child);
       child.parentNode = this;
 
       // TODO(KB): Restore mutation observation
