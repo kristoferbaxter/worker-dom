@@ -138,6 +138,28 @@ test('Node.contains(node) returns if node is contained within Node', t => {
   t.is(deeperChild.contains(node), false, 'for a node deep within a tree ensure it does not contain parents, return false');
 });
 
+test('Node.insertBefore(child, ref) inserts child before reference node', t => {
+  t.plan(6);
+
+  const node = new Node(NodeType.ELEMENT_NODE, 'div');
+  const child = new Node(NodeType.ELEMENT_NODE, 'div');
+  const childTwo = new Node(NodeType.ELEMENT_NODE, 'div');
+  t.is(node.insertBefore(child, undefined), null, 'attempting to insert before an undefined reference returns null');
+  t.is(node.insertBefore(child, childTwo), null, 'attempting to insert before a node which is not a direct child returns null');
+
+  const inserted = node.insertBefore(child, null);
+  t.deepEqual(node.childNodes[node.childNodes.length - 1], inserted, 'inserting with a null reference appends the child');
+  node.insertBefore(inserted, child);
+  t.is(node.childNodes.indexOf(inserted), node.childNodes.indexOf(child), 'attempting to insert a node before itself does not move the node');
+
+  node.insertBefore(childTwo, child);
+  t.is(node.childNodes.indexOf(childTwo), 0, 'inserting a child before the only child in a node will make it first in Node.childNodes');
+
+  const childThree = new Node(NodeType.ELEMENT_NODE, 'div');
+  node.insertBefore(childThree, child);
+  t.is(node.childNodes.indexOf(childThree), node.childNodes.indexOf(child) - 1, 'inserting a child before another when there are multiple children places it before the ref');
+});
+
 test('Node.firstChild returns Node.childNodes[0]', t => {
   t.plan(2);
 

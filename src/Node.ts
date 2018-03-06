@@ -29,6 +29,7 @@ export const enum NodeType {
   DOCUMENT_NODE = 9,
   DOCUMENT_TYPE_NODE = 10,
   DOCUMENT_FRAGMENT_NODE = 11,
+  // Note: DOCUMENT_FRAGMENT_NODE is not supported in this implementation yet.
   NOTATION_NODE = 12,
 }
 type EventHandler = (event: Event) => any;
@@ -61,6 +62,8 @@ export class Node {
   // Node.nodeValue – https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeValue
   // Node.ownerDocument – https://developer.mozilla.org/en-US/docs/Web/API/Node/ownerDocument
   // Node.compareDocumentPosition() – https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
+  // Node.getRootNode() – https://developer.mozilla.org/en-US/docs/Web/API/Node/getRootNode
+  // Node.hasChildNodes() – https://developer.mozilla.org/en-US/docs/Web/API/Node/hasChildNodes
 
   // Will Implement at Element layer
   // Node.textContent – https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent
@@ -126,6 +129,52 @@ export class Node {
   }
 
   /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/insertBefore
+   * @param child
+   * @param referenceNode
+   * @returns child after it has been inserted.
+   */
+  public insertBefore(child: Node, referenceNode: Node): Node {
+    if (child === this) {
+      return child;
+    }
+
+    if (referenceNode === null) {
+      // When a referenceNode is not valid, appendChild(child).
+      this.appendChild(child);
+
+      // TODO – KB: Restore Mutation
+      // this.mutate(this, 'childList', {
+      //   addedNodes: [child],
+      //   removedNodes: null,
+      //   previousSibling: null,
+      //   nextSibling: referenceNode,
+      // });
+
+      return child;
+    }
+
+    if (this.childNodes.indexOf(referenceNode) >= 0) {
+      // Should only insertBefore direct children of this Node.
+      child.remove();
+      this.childNodes.splice(this.childNodes.indexOf(referenceNode), 0, child)[0];
+      child.parentNode = this;
+
+      // TODO – KB: Restore Mutation
+      // this.mutate(this, 'childList', {
+      //   addedNodes: [child],
+      //   removedNodes: null,
+      //   previousSibling: null,
+      //   nextSibling: referenceNode,
+      // });
+
+      return child;
+    }
+
+    return null;
+  }
+
+  /**
    * Adds the specified childNode argument as the last child to the current node.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild
    * @param child Child Node to append to this Node.
@@ -154,6 +203,7 @@ export class Node {
     const index = this.childNodes.indexOf(child);
 
     if (index !== -1) {
+      child.parentNode = null;
       return this.childNodes.splice(index, 1)[0];
     }
     return null;
