@@ -147,7 +147,7 @@ test('Node.insertBefore(child, ref) inserts child before reference node', t => {
   t.is(node.insertBefore(child, undefined), null, 'attempting to insert before an undefined reference returns null');
   t.is(node.insertBefore(child, childTwo), null, 'attempting to insert before a node which is not a direct child returns null');
 
-  const inserted = node.insertBefore(child, null);
+  const inserted: Node = node.insertBefore(child, null) as Node;
   t.deepEqual(node.childNodes[node.childNodes.length - 1], inserted, 'inserting with a null reference appends the child');
   node.insertBefore(inserted, child);
   t.is(node.childNodes.indexOf(inserted), node.childNodes.indexOf(child), 'attempting to insert a node before itself does not move the node');

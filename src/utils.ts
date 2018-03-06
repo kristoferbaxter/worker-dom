@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export function assign(obj: object, props: object): void {
+export function assign(obj: { [index: string]: any }, props: { [index: string]: any }): void {
   for (let iterator in props) obj[iterator] = props[iterator];
 }
 
@@ -40,6 +40,10 @@ export function findWhere(array: any[], fn: any, returnIndex: boolean, byValueOn
   return returnIndex ? iterator : array[iterator];
 }
 
-export function createAttributeFilter(ns: string, name: string): (any) => any {
+interface Attribute {
+  ns: string;
+  name: string;
+}
+export function createAttributeFilter(ns: string, name: string): (attribute: Attribute) => boolean {
   return o => o.ns === ns && toLower(o.name) === toLower(name);
 }

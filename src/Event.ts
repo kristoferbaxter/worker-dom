@@ -32,7 +32,7 @@ export class Event {
   public returnValue: boolean;
   // public srcElement: Element | null;
   // TODO(KB): Restore srcElement.
-  public target: Node;
+  public target: Node | null;
   public timeStamp: number;
   public type: string;
   public scoped: boolean;

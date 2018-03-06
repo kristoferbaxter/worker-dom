@@ -48,7 +48,7 @@ export class Node {
   public nodeType: NodeType;
   public nodeName: NodeName;
   public childNodes: Node[] = [];
-  public parentNode: Node = null;
+  public parentNode: Node | null = null;
   private _handlers_: EventHandlers = {};
 
   constructor(nodeType: NodeType, nodeName: NodeName) {
@@ -74,7 +74,7 @@ export class Node {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/firstChild
    * @returns Node's first child in the tree, or null if the node has no children.
    */
-  get firstChild(): Node {
+  get firstChild(): Node | null {
     return this.childNodes.length > 0 ? this.childNodes[0] : null;
   }
 
@@ -82,7 +82,7 @@ export class Node {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/lastChild
    * @returns The last child of a node, or null if there are no child elements.
    */
-  get lastChild(): Node {
+  get lastChild(): Node | null {
     return this.childNodes.length > 0 ? this.childNodes[this.childNodes.length - 1] : null;
   }
 
@@ -90,7 +90,7 @@ export class Node {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/nextSibling
    * @returns node immediately following the specified one in it's parent's childNodes, or null if one doesn't exist.
    */
-  get nextSibling(): Node {
+  get nextSibling(): Node | null {
     if (this.parentNode === null) {
       return null;
     }
@@ -103,7 +103,7 @@ export class Node {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/previousSibling
    * @returns node immediately preceding the specified one in its parent's childNodes, or null if the specified node is the first in that list.
    */
-  get previousSibling(): Node {
+  get previousSibling(): Node | null {
     if (this.parentNode === null) {
       return null;
     }
@@ -134,7 +134,11 @@ export class Node {
    * @param referenceNode
    * @returns child after it has been inserted.
    */
-  public insertBefore(child: Node, referenceNode: Node): Node {
+  public insertBefore(child: Node | null, referenceNode: Node | undefined | null): Node | null {
+    if (referenceNode === undefined || child === null) {
+      return null;
+    }
+
     if (child === this) {
       return child;
     }
@@ -199,7 +203,7 @@ export class Node {
    * @param child Child Node to remove from this Node.
    * @returns Node removed from the tree or null if the node wasn't attached to this tree.
    */
-  public removeChild(child: Node): Node {
+  public removeChild(child: Node): Node | null {
     const index = this.childNodes.indexOf(child);
 
     if (index !== -1) {
@@ -233,7 +237,12 @@ export class Node {
    * @param handler Function called when event is dispatched.
    */
   public addEventListener(type: string, handler: EventHandler): void {
-    this._handlers_[toLower(type)] || (this._handlers_[toLower(type)] = []).push(handler);
+    let handlers: EventHandler[] = this._handlers_[toLower(type)];
+    if (handlers && handlers.length > 0) {
+      handlers.push(handler);
+    } else {
+      this._handlers_[toLower(type)] = [handler];
+    }
   }
 
   /**
@@ -252,12 +261,12 @@ export class Node {
    * @param event Event to dispatch to this node and potentially cascade to parents.
    */
   public dispatchEvent(event: Event): boolean {
-    let target: Node = (event.currentTarget = this);
-    let handlers: EventHandler[];
+    let target: Node | null = (event.currentTarget = this);
+    let handlers: EventHandler[] | null;
     let iterator: number;
 
     do {
-      handlers = target._handlers_ && target._handlers_[toLower(event.type)];
+      handlers = target && target._handlers_ && target._handlers_[toLower(event.type)];
       if (handlers) {
         for (iterator = handlers.length; iterator--; ) {
           if ((handlers[iterator].call(target, event) === false || event._end) && event.cancelable) {
@@ -265,7 +274,7 @@ export class Node {
           }
         }
       }
-    } while (event.bubbles && !(event.cancelable && event._stop) && (event.target = target = target.parentNode));
+    } while (event.bubbles && !(event.cancelable && event._stop) && (event.target = target = target && target.parentNode));
     return !event.defaultPrevented;
   }
 }
