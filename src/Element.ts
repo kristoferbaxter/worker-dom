@@ -9,4 +9,13 @@ export class Element extends Node {
   get children(): Element[] {
     return this.childNodes.filter(node => node.nodeType === NodeType.ELEMENT_NODE) as Element[];
   }
+
+  /**
+   * Getter returning the number of child elements of a Element.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/childElementCount
+   * @returns number of child elements of the given Element.
+   */
+  get childElementCount(): number {
+    return this.children.length;
+  }
 }
