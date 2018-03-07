@@ -6,17 +6,12 @@ import babel from 'rollup-plugin-babel';
  * @returns {Array<OutputConfig>} Rollup configurations for output.
  */
 function outputConfiguration(esmodules) {
-  const basePath = `build/${(esmodules === true && 'esmodules') || ''}`;
+  const basePath = `build${(esmodules === true && '/esmodules') || ''}`;
 
   return [
     {
       file: `${basePath}/index.module.js`,
       format: 'es',
-      sourcemap: true,
-    },
-    {
-      file: `${basePath}/index.cjs.js`,
-      format: 'cjs',
       sourcemap: true,
     },
     {
