@@ -64,6 +64,12 @@ export class Node {
   // Node.compareDocumentPosition() – https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
   // Node.getRootNode() – https://developer.mozilla.org/en-US/docs/Web/API/Node/getRootNode
   // Node.hasChildNodes() – https://developer.mozilla.org/en-US/docs/Web/API/Node/hasChildNodes
+  // Node.isDefaultNamespace() – https://developer.mozilla.org/en-US/docs/Web/API/Node/isDefaultNamespace
+  // Node.isEqualNode() – https://developer.mozilla.org/en-US/docs/Web/API/Node/isEqualNode
+  // Node.isSameNode() – https://developer.mozilla.org/en-US/docs/Web/API/Node/isSameNode
+  // Node.lookupPrefix() – https://developer.mozilla.org/en-US/docs/Web/API/Node/lookupPrefix
+  // Node.lookupNamespaceURI() – https://developer.mozilla.org/en-US/docs/Web/API/Node/lookupNamespaceURI
+  // Node.normalize() – https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize
 
   // Will Implement at Element layer
   // Node.textContent – https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent
@@ -209,9 +215,10 @@ export class Node {
   public removeChild(child: Node): Node | null {
     const index = this.childNodes.indexOf(child);
 
-    if (index !== -1) {
+    if (index >= 0) {
       child.parentNode = null;
-      return this.childNodes.splice(index, 1)[0];
+      this.childNodes.splice(index, 1);
+      return child;
     }
     return null;
 
@@ -223,6 +230,30 @@ export class Node {
     //   previousSibling: this.childNodes[i - 1],
     //   nextSibling: this.childNodes[i],
     // });
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/replaceChild
+   * @param newChild new Node to replace old Node.
+   * @param oldChild existing Node to be replaced.
+   */
+  public replaceChild(newChild: Node, oldChild: Node): Node {
+    if (newChild !== oldChild) {
+      const index = this.childNodes.indexOf(oldChild);
+      if (index >= 0) {
+        this.childNodes.splice(index, 1, newChild);
+
+        // TODO(KB): Restore mutation observation.
+        // this.mutate(this, 'childList', {
+        //   addedNodes: [newChild],
+        //   removedNodes: [oldChild],
+        //   previousSibling: this.childNodes[index - 1],
+        //   nextSibling: this.childNodes[index + 1],
+        // });
+      }
+    }
+
+    return oldChild;
   }
 
   /**
