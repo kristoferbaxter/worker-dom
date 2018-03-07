@@ -63,7 +63,6 @@ export class Node {
   // Node.ownerDocument – https://developer.mozilla.org/en-US/docs/Web/API/Node/ownerDocument
   // Node.compareDocumentPosition() – https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
   // Node.getRootNode() – https://developer.mozilla.org/en-US/docs/Web/API/Node/getRootNode
-  // Node.hasChildNodes() – https://developer.mozilla.org/en-US/docs/Web/API/Node/hasChildNodes
   // Node.isDefaultNamespace() – https://developer.mozilla.org/en-US/docs/Web/API/Node/isDefaultNamespace
   // Node.isEqualNode() – https://developer.mozilla.org/en-US/docs/Web/API/Node/isEqualNode
   // Node.isSameNode() – https://developer.mozilla.org/en-US/docs/Web/API/Node/isSameNode
@@ -116,6 +115,14 @@ export class Node {
 
     const parentChildNodes = this.parentNode.childNodes;
     return parentChildNodes[parentChildNodes.indexOf(this) - 1] || null;
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/hasChildNodes
+   * @returns boolean if the Node has childNodes.
+   */
+  public hasChildNodes(): boolean {
+    return this.childNodes.length > 0;
   }
 
   /**
