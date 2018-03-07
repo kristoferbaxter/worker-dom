@@ -26,6 +26,12 @@ test.beforeEach(t => {
   };
 });
 
+test('should return 0 when no elements are appended', t => {
+  const { node } = t.context as { node: Element };
+
+  t.is(node.childElementCount, 0);
+});
+
 test('should return 1 when only one Element is appended', t => {
   const { node, child } = t.context as { node: Element; child: Element };
 
@@ -39,4 +45,11 @@ test('should return only the number of Elements, not childNodes', t => {
   node.appendChild(child);
   node.appendChild(childTwo);
   t.is(node.childElementCount, 1);
+});
+
+test('should return 0 when an Element only contains Nodes of other types', t => {
+  const { node, childTwo } = t.context as { node: Element; childTwo: Node };
+
+  node.appendChild(childTwo);
+  t.is(node.childElementCount, 0);
 });

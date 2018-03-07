@@ -26,34 +26,30 @@ test.beforeEach(t => {
   };
 });
 
-test('children should be an empty array when there are no childNodes', t => {
+test('should return null when an Element does not have any childNodes.', t => {
   const { node } = t.context as { node: Element };
 
-  t.is(node.children.length, 0);
-  t.deepEqual(node.children, []);
+  t.is(node.lastElementChild, null);
 });
 
-test('children should contain all childNodes when all are the correct NodeType', t => {
+test('should return the only child when only one Element is appended', t => {
   const { node, child } = t.context as { node: Element; child: Element };
 
   node.appendChild(child);
-  t.is(node.children.length, 1);
-  t.deepEqual(node.children, [child]);
+  t.deepEqual(node.lastElementChild, child);
 });
 
-test('children should contain only childNodes of NodeType.ELEMENT_NODE', t => {
+test('should return the only Element in Node.childNodes, not another Node', t => {
   const { node, child, childTwo } = t.context as { node: Element; child: Element; childTwo: Node };
 
   node.appendChild(child);
   node.appendChild(childTwo);
-  t.is(node.children.length, 1);
-  t.deepEqual(node.children, [child]);
+  t.deepEqual(node.lastElementChild, child);
 });
 
-test('children should be an empty array when there are no childNodes of NodeType.ELEMENT_NODE', t => {
+test('should return null when an Element only contains Node childNodes', t => {
   const { node, childTwo } = t.context as { node: Element; childTwo: Node };
 
   node.appendChild(childTwo);
-  t.is(node.children.length, 0);
-  t.deepEqual(node.children, []);
+  t.is(node.lastElementChild, null);
 });
