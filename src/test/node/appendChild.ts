@@ -31,6 +31,7 @@ test('appending to an Node with no childNodes', t => {
 
   node.appendChild(child);
   t.deepEqual(node.childNodes[0], child, 'childNode[0] = new child');
+  t.deepEqual(child.parentNode, node, 'child.parentNode = Node');
 });
 
 test('appending to a Node with populated childNodes', t => {

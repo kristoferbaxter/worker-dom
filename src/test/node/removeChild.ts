@@ -31,6 +31,7 @@ test('remove only child Node from parent', t => {
   node.appendChild(child);
   node.removeChild(child);
   t.is(node.childNodes.length, 0, 'removing the only child from childNode[] makes childNodes have no members');
+  t.is(child.parentNode, null, 'removed node has no parentNode');
 });
 
 test('remove child Node from parent with multiple children', t => {
