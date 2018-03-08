@@ -25,13 +25,13 @@ test.beforeEach(t => {
   };
 });
 
-test('tokenList should be empty by default', t => {
+test('getter should be empty by default', t => {
   const { tokenList } = t.context as { tokenList: DOMTokenList };
 
   t.is(tokenList.value, '');
 });
 
-test('tokenList should accept new total values via setter', t => {
+test('should accept new total values via setter', t => {
   const { tokenList } = t.context as { tokenList: DOMTokenList };
 
   tokenList.value = 'foo';
