@@ -151,7 +151,7 @@ export class DOMTokenList extends Array {
    * @param force NOT CURRENTLY IMPLEMENTED
    * @return true if the token is in the list following mutation, false if not.
    */
-  public toggle(token: string, force: boolean): boolean {
+  public toggle(token: string, force?: boolean): boolean {
     if (this.indexOf(token) < 0) {
       this.add(token);
       return true;
