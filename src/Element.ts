@@ -1,8 +1,35 @@
 import { Node, NodeType } from './Node';
+import { DOMTokenList } from './DOMTokenList';
+
+interface Attribute {
+  [index: string]: string;
+}
 
 const elementPredicate = (node: Node) => node.nodeType === NodeType.ELEMENT_NODE;
 
 export class Element extends Node {
+  public attributes: Attribute[] = [];
+  public classList: DOMTokenList = new DOMTokenList(this, 'className', null);
+  // Unimplemented
+  // Element.querySelector – https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector
+  // Element.querySelectorAll – https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelectorAll
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/className
+   * @returns string representation of the Element's class.
+   */
+  get className(): string {
+    return this.classList.value;
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/className
+   * @param value new string representaiton of the Element's class.
+   */
+  set className(value: string) {
+    this.classList.value = value;
+  }
+
   /**
    * Getter returning children of an Element that are Elements themselves.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/children
