@@ -54,10 +54,6 @@ test('getting last position should return the correct value', t => {
 test('getting middle positions should return the correct value', t => {
   const { tokenList } = t.context as { tokenList: DOMTokenList };
 
-  tokenList.value = 'foo';
-  t.is(tokenList.item(0), 'foo');
-  tokenList.value = 'foo bar';
-  t.is(tokenList.item(1), 'bar');
   tokenList.value = 'foo bar foo';
   t.is(tokenList.item(1), 'bar');
   tokenList.value = 'foo bar baz omega';
