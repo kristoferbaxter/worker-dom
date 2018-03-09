@@ -45,7 +45,7 @@ test('remove a single value', t => {
   t.is(tokenList.value, 'bar', 'removing a single value that is stored more than once currently removes duplicates and leaves other unique values intact');
 });
 
-test('adding multiple values', t => {
+test('removing multiple values', t => {
   const { tokenList } = t.context as { tokenList: DOMTokenList };
 
   tokenList.value = 'foo bar';
