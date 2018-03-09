@@ -44,7 +44,7 @@ export class DOMTokenList extends Array {
     const newValue = collection.trim();
 
     // Replace current tokens with new tokens.
-    this.splice(0, this.length, ...newValue.split(/\s+/));
+    this.splice(0, this.length, ...(newValue !== '' ? newValue.split(/\s+/) : ''));
 
     // TODO(KB): Restore mutation observation
     // this.mutate(this, 'attributes', {
@@ -152,15 +152,20 @@ export class DOMTokenList extends Array {
    *
    * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/toggle
    * @param token string to add or remove from the token list
-   * @param force NOT CURRENTLY IMPLEMENTED
+   * @param force changes toggle into a one way-only operation. true => token added. false => token removed.
    * @return true if the token is in the list following mutation, false if not.
    */
   public toggle(token: string, force?: boolean): boolean {
     if (this.indexOf(token) < 0) {
-      this.add(token);
+      if (force !== false) {
+        this.add(token);
+      }
       return true;
+    } else if (force !== true) {
+      this.remove(token);
+      return false;
     }
-    this.remove(token);
-    return false;
+
+    return true;
   }
 }
