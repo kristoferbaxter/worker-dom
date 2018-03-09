@@ -129,9 +129,13 @@ export class DOMTokenList extends Array {
 
     // TODO(KB): Restore mutation observation
     // const oldValue = this.value;
-    let set = new Set(this);
-    set.delete(token);
-    set.add(newToken);
+    let set = new Set(this); // foo foo bar
+    if (token !== newToken) {
+      set.delete(token);
+      if (newToken !== '') {
+        set.add(newToken);
+      }
+    }
     this.splice(0, this.length, ...set);
 
     // TODO(KB): Restore mutation observation
