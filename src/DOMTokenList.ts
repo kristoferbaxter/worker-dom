@@ -158,10 +158,12 @@ export class DOMTokenList extends Array {
   public toggle(token: string, force?: boolean): boolean {
     if (this.indexOf(token) < 0) {
       if (force !== false) {
+        // Note, this will add the token if force is undefined (not passed into the method), or true.
         this.add(token);
       }
       return true;
     } else if (force !== true) {
+      // Note, this will remove the token if force is undefined (not passed into the method), or false.
       this.remove(token);
       return false;
     }
