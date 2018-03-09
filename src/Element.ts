@@ -10,7 +10,14 @@ const elementPredicate = (node: Node) => node.nodeType === NodeType.ELEMENT_NODE
 export class Element extends Node {
   public attributes: Attribute[] = [];
   public classList: DOMTokenList = new DOMTokenList(this, 'className', null);
+  // No implementation necessary
+  // Element.id
+
   // Unimplemented
+  // Element.clientHeight – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientHeight
+  // Element.clientLeft – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientLeft
+  // Element.clientTop – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientTop
+  // Element.clientWidth – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientWidth
   // Element.querySelector – https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector
   // Element.querySelectorAll – https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelectorAll
 
@@ -28,6 +35,13 @@ export class Element extends Node {
    */
   set className(value: string) {
     this.classList.value = value;
+  }
+
+  get outerHTML(): string {
+    const className = this.className;
+    const children = this.children;
+
+    return `<${this.nodeName} class${className !== '' && `='${className}'`}>${children.length > 0 ? children.forEach(child => child.outerHTML) : ''}</${this.nodeName}>`;
   }
 
   /**
