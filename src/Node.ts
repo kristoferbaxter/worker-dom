@@ -130,9 +130,9 @@ export class Node {
    * @param otherNode
    * @returns whether a Node is a descendant of a given Node
    */
-  public contains(otherNode: Node): boolean {
+  public contains(otherNode: Node | null): boolean {
     if (this.childNodes.length > 0) {
-      if (this.childNodes.indexOf(this) >= 0) {
+      if (this.childNodes.includes(this)) {
         return true;
       }
       return this.childNodes.some(child => child.contains(otherNode));

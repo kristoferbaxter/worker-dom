@@ -1,5 +1,7 @@
-import nodeResolve from 'rollup-plugin-node-resolve';
 import babel from 'rollup-plugin-babel';
+import uglify from 'rollup-plugin-uglify';
+
+const enableUglify = true;
 
 /**
  * @param {boolean} esmodules
@@ -51,11 +53,11 @@ export default [
   {
     input: 'src/output/index.js',
     output: outputConfiguration(false),
-    plugins: [babel(babelConfiguration(false)), nodeResolve({ jsnext: true })],
+    plugins: [babel(babelConfiguration(false)), enableUglify && uglify()],
   },
   {
     input: 'src/output/index.js',
     output: outputConfiguration(true),
-    plugins: [babel(babelConfiguration(true)), nodeResolve({ jsnext: true })],
+    plugins: [babel(babelConfiguration(true)), enableUglify && uglify()],
   },
 ];
