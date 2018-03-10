@@ -16,7 +16,7 @@
     "watch": "yarn tsc -w -p config/tsconfig.build.json",
     "build": "yarn tsc -p config/tsconfig.build.json",
     "bundle": "yarn build && yarn rollup --config config/rollup.config.js",
-    "test": "rm -rf src/output && yarn tsc -p config/tsconfig.test.json && yarn ava -v src/output/test/"
+    "test": "rm -rf src/output && yarn tsc -p config/tsconfig.test.json && yarn ava src/output/test/"
   },
   "devDependencies": {
     "@babel/cli": "v7.0.0-beta.40",
@@ -32,11 +32,15 @@
     "rollup-plugin-babel": "4.0.0-beta.2",
     "rollup-plugin-commonjs": "8.3.0",
     "rollup-plugin-node-resolve": "3.0.3",
+    "rollup-plugin-uglify": "^3.0.0",
     "tsickle": "0.27.2",
     "typescript": "2.7.2"
   },
   "lint-staged": {
-    "*.ts": ["yarn prettier --config config/.prettierrc --write", "git add"]
+    "*.ts": [
+      "yarn prettier --config config/.prettierrc --write",
+      "git add"
+    ]
   },
   "husky": {
     "hooks": {
