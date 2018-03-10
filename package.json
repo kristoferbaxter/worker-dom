@@ -32,11 +32,15 @@
     "rollup-plugin-babel": "4.0.0-beta.2",
     "rollup-plugin-commonjs": "8.3.0",
     "rollup-plugin-node-resolve": "3.0.3",
+    "rollup-plugin-uglify": "^3.0.0",
     "tsickle": "0.27.2",
     "typescript": "2.7.2"
   },
   "lint-staged": {
-    "*.ts": ["yarn prettier --config config/.prettierrc --write", "git add"]
+    "*.ts": [
+      "yarn prettier --config config/.prettierrc --write",
+      "git add"
+    ]
   },
   "husky": {
     "hooks": {
