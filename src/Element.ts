@@ -1,14 +1,14 @@
 import { Node, NodeType } from './Node';
 import { DOMTokenList } from './DOMTokenList';
 
-interface Attribute {
+interface Attributes {
   [index: string]: string;
 }
 
-const elementPredicate = (node: Node) => node.nodeType === NodeType.ELEMENT_NODE;
+const elementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
 export class Element extends Node {
-  public attributes: Attribute[] = [];
+  public attributes: Attributes = {};
   public classList: DOMTokenList = new DOMTokenList(this, 'className', null);
   // No implementation necessary
   // Element.id
@@ -23,7 +23,7 @@ export class Element extends Node {
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/className
-   * @returns string representation of the Element's class.
+   * @return string representation of the Element's class.
    */
   get className(): string {
     return this.classList.value;
@@ -37,17 +37,37 @@ export class Element extends Node {
     this.classList.value = value;
   }
 
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/outerHTML
+   * @return string representation of serialized HTML describing the Element and its descendants.
+   */
   get outerHTML(): string {
-    const className = this.className;
+    const attributeToString = (key: string, value: string): string => `${key}='${value}'`;
+    const attributesToString = Object.keys(this.attributes)
+      .map(key => attributeToString(key, this.attributes[key]))
+      .join(' ');
+    const tagOpening = [this.nodeName, attributeToString('class', this.className), attributesToString].join(' ').trim();
+
+    return `<${tagOpening}>${this.innerHTML}</${this.nodeName}>`;
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML
+   * @return string representation of serialized HTML describing the Element's descendants.
+   */
+  get innerHTML(): string {
     const children = this.children;
 
-    return `<${this.nodeName} class${className !== '' && `='${className}'`}>${children.length > 0 ? children.forEach(child => child.outerHTML) : ''}</${this.nodeName}>`;
+    if (children.length) {
+      return children.map(child => child.outerHTML).join('');
+    }
+    return '';
   }
 
   /**
    * Getter returning children of an Element that are Elements themselves.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/children
-   * @returns Element objects that are children of this ParentNode, omitting all of its non-element nodes.
+   * @return Element objects that are children of this ParentNode, omitting all of its non-element nodes.
    */
   get children(): Element[] {
     return this.childNodes.filter(elementPredicate) as Element[];
@@ -56,7 +76,7 @@ export class Element extends Node {
   /**
    * Getter returning the number of child elements of a Element.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/childElementCount
-   * @returns number of child elements of the given Element.
+   * @return number of child elements of the given Element.
    */
   get childElementCount(): number {
     return this.children.length;
