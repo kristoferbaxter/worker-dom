@@ -70,7 +70,7 @@ export class DOMTokenList extends Array {
    * @return boolean indicating if the token is contained by the DOMTokenList.
    */
   public contains(token: string): boolean {
-    return this.indexOf(token) >= 0;
+    return this.includes(token);
   }
 
   /**
@@ -104,7 +104,7 @@ export class DOMTokenList extends Array {
   public remove(...tokens: string[]): void {
     // TODO(KB): Restore mutation observation
     // const oldValue = this.value;
-    this.splice(0, this.length, ...new Set(this.filter(token => tokens.indexOf(token) === -1)));
+    this.splice(0, this.length, ...new Set(this.filter(token => !tokens.includes(token))));
 
     // TODO(KB): Restore mutation observation
     // this.mutate(this, 'attributes', {
@@ -121,9 +121,7 @@ export class DOMTokenList extends Array {
    * @param newToken
    */
   public replace(token: string, newToken: string): void {
-    const index = this.indexOf(token);
-
-    if (index < 0) {
+    if (!this.includes(token)) {
       return;
     }
 
@@ -156,12 +154,14 @@ export class DOMTokenList extends Array {
    * @return true if the token is in the list following mutation, false if not.
    */
   public toggle(token: string, force?: boolean): boolean {
-    if (this.indexOf(token) < 0) {
+    if (!this.includes(token)) {
       if (force !== false) {
+        // Note, this will add the token if force is undefined (not passed into the method), or true.
         this.add(token);
       }
       return true;
     } else if (force !== true) {
+      // Note, this will remove the token if force is undefined (not passed into the method), or false.
       this.remove(token);
       return false;
     }
