@@ -1,14 +1,12 @@
 import { Node, NodeType } from './Node';
 import { DOMTokenList } from './DOMTokenList';
+import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate, NamespaceURI } from './Attr';
+import { keyValueString } from './utils';
 
-interface Attributes {
-  [index: string]: string;
-}
-
-const elementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
+const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
 export class Element extends Node {
-  public attributes: Attributes = {};
+  public attributes: Attr[] = [];
   public classList: DOMTokenList = new DOMTokenList(this, 'className', null);
   // No implementation necessary
   // Element.id
@@ -20,6 +18,29 @@ export class Element extends Node {
   // Element.clientWidth – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientWidth
   // Element.querySelector – https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector
   // Element.querySelectorAll – https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelectorAll
+  // set Element.innerHTML – https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML
+  // Element.localName – https://developer.mozilla.org/en-US/docs/Web/API/Element/localName
+  // Element.namespaceURI – https://developer.mozilla.org/en-US/docs/Web/API/Element/namespaceURI
+  // NonDocumentTypeChildNode.nextElementSibling – https://developer.mozilla.org/en-US/docs/Web/API/NonDocumentTypeChildNode/nextElementSibling
+  // Element.prefix – https://developer.mozilla.org/en-US/docs/Web/API/Element/prefix
+  // NonDocummentTypeChildNode.previousElementSibling – https://developer.mozilla.org/en-US/docs/Web/API/NonDocumentTypeChildNode/previousElementSibling
+  // Element.scrollHeight – https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight
+  // Element.scrollLeft – https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollLeft
+  // Element.scrollLeftMax – https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollLeftMax
+  // Element.scrollTop – https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollTop
+  // Element.scrollTopMax – https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollTopMax
+  // Element.scrollWidth – https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollWidth
+  // Element.shadowRoot – !! CustomElements – https://developer.mozilla.org/en-US/docs/Web/API/Element/shadowRoot
+  // Element.slot – !! CustomElements – https://developer.mozilla.org/en-US/docs/Web/API/Element/slot
+  // Element.tabStop – https://developer.mozilla.org/en-US/docs/Web/API/Element/tabStop
+  // Element.undoManager – https://developer.mozilla.org/en-US/docs/Web/API/Element/undoManager
+  // Element.undoScope – https://developer.mozilla.org/en-US/docs/Web/API/Element/undoScope
+  // Element.attachShadow() – !! CustomElements – https://developer.mozilla.org/en-US/docs/Web/API/Element/attachShadow
+  // Element.animate() – https://developer.mozilla.org/en-US/docs/Web/API/Element/animate
+  // Element.closest() – https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
+
+  // Mixins not implemented
+  // Slotable.assignedSlot – https://developer.mozilla.org/en-US/docs/Web/API/Slotable/assignedSlot
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/className
@@ -42,13 +63,7 @@ export class Element extends Node {
    * @return string representation of serialized HTML describing the Element and its descendants.
    */
   get outerHTML(): string {
-    const attributeToString = (key: string, value: string): string => `${key}='${value}'`;
-    const attributesToString = Object.keys(this.attributes)
-      .map(key => attributeToString(key, this.attributes[key]))
-      .join(' ');
-    const tagOpening = [this.nodeName, attributeToString('class', this.className), attributesToString].join(' ').trim();
-
-    return `<${tagOpening}>${this.innerHTML}</${this.nodeName}>`;
+    return `<${[this.nodeName, keyValueString('class', this.className), attrsToString(this.attributes)].join(' ').trim()}>${this.innerHTML}</${this.nodeName}>`;
   }
 
   /**
@@ -65,12 +80,20 @@ export class Element extends Node {
   }
 
   /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/tagName
+   * @return string tag name (i.e 'div')
+   */
+  get tagName(): string {
+    return this.nodeName;
+  }
+
+  /**
    * Getter returning children of an Element that are Elements themselves.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/children
    * @return Element objects that are children of this ParentNode, omitting all of its non-element nodes.
    */
   get children(): Element[] {
-    return this.childNodes.filter(elementPredicate) as Element[];
+    return this.childNodes.filter(isElementPredicate) as Element[];
   }
 
   /**
@@ -88,7 +111,7 @@ export class Element extends Node {
    * @return first childNode that is also an element.
    */
   get firstElementChild(): Element | null {
-    return (this.childNodes.find(elementPredicate) as Element) || null;
+    return (this.childNodes.find(isElementPredicate) as Element) || null;
   }
 
   /**
@@ -99,5 +122,109 @@ export class Element extends Node {
   get lastElementChild(): Element | null {
     const children = this.children;
     return children[children.length - 1] || null;
+  }
+
+  /**
+   * Sets the value of an attribute on this element using a null namespace.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute
+   * @param name attribute key
+   * @param value attribute value
+   */
+  public setAttribute(name: string, value: string): void {
+    this.setAttributeNS(null, name, value);
+  }
+
+  /**
+   * Get the value of an attribute on this Element with the null namespace.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttribute
+   * @param name
+   * @return value of a specified attribute on the element, or null if the attribute doesn't exist.
+   */
+  public getAttribute(name: string): string | null {
+    return this.getAttributeNS(null, name);
+  }
+
+  /**
+   * Remove an attribute from this element in the null namespace.
+   *
+   * Method returns void, so it is not chainable.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/removeAttribute
+   * @param name
+   */
+  public removeAttribute(name: string): void {
+    this.removeAttributeNS(null, name);
+  }
+
+  /**
+   * Sets the value of an attribute on this Element with the provided namespace.
+   *
+   * If the attribute already exists, the value is updated; otherwise a new attribute is added with the specified name and value.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttributeNS
+   * @param namespaceURI
+   * @param name attribute key
+   * @param value attribute value
+   */
+  public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): void {
+    const attr = this.attributes.find(matchAttrPredicate(namespaceURI, name));
+    // TODO(KB) – Restore mutation support
+    // const oldValue = attr.value;
+
+    if (attr) {
+      attr.value = value;
+    } else {
+      this.attributes.push({
+        namespaceURI,
+        name,
+        value,
+      });
+    }
+
+    // TODO(KB) – Restore mutation support
+    // this.mutate(this, 'attributes', {
+    //   attributeName: name,
+    //   attributeNamespace: ns,
+    //   value,
+    //   oldValue,
+    // });
+  }
+
+  /**
+   * Get the value of an attribute on this Element with the specified namespace.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttributeNS
+   * @param namespaceURI attribute namespace
+   * @param name attribute name
+   * @return value of a specified attribute on the element, or null if the attribute doesn't exist.
+   */
+  public getAttributeNS(namespaceURI: NamespaceURI, name: string): string | null {
+    const attr = this.attributes.find(matchAttrPredicate(namespaceURI, name));
+
+    return (attr && attr.value) || null;
+  }
+
+  /**
+   * Remove an attribute from this element in the specified namespace.
+   *
+   * Method returns void, so it is not chainable.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/removeAttribute
+   * @param namespaceURI attribute namespace
+   * @param name attribute name
+   */
+  public removeAttributeNS(namespaceURI: NamespaceURI, name: string): void {
+    const index = this.attributes.findIndex(matchAttrPredicate(namespaceURI, name));
+
+    if (index >= 0) {
+      // TODO(KB) – Restore mutation support
+      // const oldValue = this.attributes[index].value;
+      this.attributes.splice(index, 1);
+
+      // TODO(KB) – Restore mutation support
+      // this.mutate(this, 'attributes', {
+      //   attributeName: name,
+      //   attributeNamespace: ns,
+      //   oldValue: oldValue,
+      // });
+    }
   }
 }
