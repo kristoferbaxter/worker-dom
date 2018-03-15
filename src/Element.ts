@@ -5,6 +5,18 @@ import { keyValueString } from './utils';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
+type ConditionPredicate = (element: Element) => boolean;
+function findMatchingChildren(element: Element, conditionPredicate: ConditionPredicate): Element[] {
+  const matchingElements: Element[] = [];
+  element.children.forEach(child => {
+    if (conditionPredicate(child)) {
+      matchingElements.push(child);
+    }
+    matchingElements.push(...findMatchingChildren(child, conditionPredicate));
+  });
+  return matchingElements;
+}
+
 export class Element extends Node {
   public attributes: Attr[] = [];
   public classList: DOMTokenList = new DOMTokenList(this, 'className', null);
@@ -38,6 +50,10 @@ export class Element extends Node {
   // Element.attachShadow() – !! CustomElements – https://developer.mozilla.org/en-US/docs/Web/API/Element/attachShadow
   // Element.animate() – https://developer.mozilla.org/en-US/docs/Web/API/Element/animate
   // Element.closest() – https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
+  // Element.getAttributeNames() – https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttributeNames
+  // Element.getBoundingClientRect() – https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
+  // Element.getClientRects() – https://developer.mozilla.org/en-US/docs/Web/API/Element/getClientRects
+  // Element.getElementsByTagNameNS() – https://developer.mozilla.org/en-US/docs/Web/API/Element/getElementsByTagNameNS
 
   // Mixins not implemented
   // Slotable.assignedSlot – https://developer.mozilla.org/en-US/docs/Web/API/Slotable/assignedSlot
@@ -127,7 +143,7 @@ export class Element extends Node {
   /**
    * Sets the value of an attribute on this element using a null namespace.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute
-   * @param name attribute key
+   * @param name attribute name
    * @param value attribute value
    */
   public setAttribute(name: string, value: string): void {
@@ -138,7 +154,7 @@ export class Element extends Node {
    * Get the value of an attribute on this Element with the null namespace.
    *
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttribute
-   * @param name
+   * @param name attribute name
    * @return value of a specified attribute on the element, or null if the attribute doesn't exist.
    */
   public getAttribute(name: string): string | null {
@@ -150,10 +166,19 @@ export class Element extends Node {
    *
    * Method returns void, so it is not chainable.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/removeAttribute
-   * @param name
+   * @param name attribute name
    */
   public removeAttribute(name: string): void {
     this.removeAttributeNS(null, name);
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/hasAttribute
+   * @param name attribute name
+   * @return Boolean indicating if the element has the specified attribute.
+   */
+  public hasAttribute(name: string): boolean {
+    return this.hasAttributeNS(null, name);
   }
 
   /**
@@ -162,7 +187,7 @@ export class Element extends Node {
    * If the attribute already exists, the value is updated; otherwise a new attribute is added with the specified name and value.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttributeNS
    * @param namespaceURI
-   * @param name attribute key
+   * @param name attribute name
    * @param value attribute value
    */
   public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): void {
@@ -226,5 +251,37 @@ export class Element extends Node {
       //   oldValue: oldValue,
       // });
     }
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/hasAttributeNS
+   * @param namespaceURI attribute namespace
+   * @param name attribute name
+   * @return Boolean indicating if the element has the specified attribute.
+   */
+  public hasAttributeNS(namespaceURI: NamespaceURI, name: string): boolean {
+    return this.attributes.some(matchAttrPredicate(namespaceURI, name));
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/getElementsByClassName
+   * @param names contains one more more classnames to match on. Multiples are space seperated, indicating an AND operation.
+   * @return Element array with matching classnames
+   */
+  public getElementsByClassName(names: string): Element[] {
+    const inputClassList = names.split(' ');
+    // TODO(KB) – Compare performance of [].some(value => DOMTokenList.contains(value)) and regex.
+    // const classRegex = new RegExp(classNames.split(' ').map(name => `(?=.*${name})`).join(''));
+
+    return findMatchingChildren(this, element => inputClassList.some(inputClassName => element.classList.contains(inputClassName)));
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/getElementsByTagName
+   * @param tagName the qualified name to look for. The special string "*" represents all elements.
+   * @return Element array with matching tagnames
+   */
+  public getElementsByTagName(tagName: string): Element[] {
+    return findMatchingChildren(this, tagName === '*' ? element => true : element => element.tagName === tagName);
   }
 }

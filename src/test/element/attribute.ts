@@ -77,3 +77,16 @@ test('removeAttribute deletes only a specific value from the attributes', t => {
   t.is(node.attributes.length, 1);
   t.deepEqual(node.attributes[0], attrTwo);
 });
+
+test('hasAttribute returns false when the attribute is not present', t => {
+  const { node } = t.context as { node: Element };
+
+  t.is(node.hasAttribute('undefined'), false);
+});
+
+test('hasAttribute returns true when the attribute is present', t => {
+  const { node } = t.context as { node: Element };
+
+  node.setAttribute('defined', 'yeppers');
+  t.is(node.hasAttribute('defined'), true);
+});

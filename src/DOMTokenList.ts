@@ -66,7 +66,7 @@ export class DOMTokenList extends Array {
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/contains
-   * @param token token value the DOMTokenList is tested for.
+   * @param token value the DOMTokenList is tested for.
    * @return boolean indicating if the token is contained by the DOMTokenList.
    */
   public contains(token: string): boolean {
