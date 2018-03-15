@@ -231,34 +231,24 @@ export class Element extends Node {
     }
   }
 
-  public getElementsByClassName(classNames: string): Element[] {
-    const inputClassList = classNames.split(' ');
-    let matchingElements: Element[] = [];
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/getElementsByClassName
+   * @param names contains one more more classnames to match on. Multiples are space seperated, indicating an AND operation.
+   * @return Element array with matching classnames
+   */
+  public getElementsByClassName(names: string): Element[] {
+    const inputClassList = names.split(' ');
+    const matchingElements: Element[] = [];
 
     this.children.forEach(child => {
-      if (child.classList === undefined) {
-        console.log('undefined', child);
-      }
+      // TODO(KB) – Compare performance of [].some(value => DOMTokenList.contains(value)) and regex.
+      // const classRegex = new RegExp(classNames.split(' ').map(name => `(?=.*${name})`).join(''));
       if (inputClassList.some(inputClassName => child.classList.contains(inputClassName))) {
         matchingElements.push(child);
       }
-      matchingElements.push(...child.getElementsByClassName(classNames));
+      matchingElements.push(...child.getElementsByClassName(names));
     });
 
     return matchingElements;
-
-    // const matchingElements = this.children.filter(child => classList.some(className => child.classList.contains(className)));  //child.classList.contains)
-    // let matchingElements = [];
-    // this.children.forEach()
-
-    // classNames.split(' ').map(name => `(?=.*${name}`)
-
-    // const classRegex = new RegExp(classNames.split(' ').map(name => `(?=.*${name})`).join(''));
-
-    // if (this.hasChildNodes) {
-    //   this.children.forEach(child => {
-    //     child.classList.contains()
-    //   })
-    // }
   }
 }
