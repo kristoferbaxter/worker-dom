@@ -23,43 +23,43 @@ test.beforeEach(t => {
     node: new Element(NodeType.ELEMENT_NODE, 'div'),
     child: new Element(NodeType.ELEMENT_NODE, 'div'),
     childTwo: new Element(NodeType.ELEMENT_NODE, 'p'),
+    childThree: new Element(NodeType.ELEMENT_NODE, 'p'),
   };
 });
 
-test('single direct child with one classname', t => {
+test('single direct child', t => {
   const { node, child } = t.context as { node: Element; child: Element };
 
-  child.className = 'foo';
   node.appendChild(child);
 
-  t.is(node.getElementsByClassName('foo').length, 1);
-  t.is(node.getElementsByClassName('bar').length, 0);
-  t.deepEqual(node.getElementsByClassName('foo'), [child]);
+  t.is(node.getElementsByTagName('div').length, 1);
+  t.is(node.getElementsByTagName('p').length, 0);
+  t.deepEqual(node.getElementsByTagName('div'), [child]);
 });
 
-test('multiple direct children with two classnames', t => {
-  const { node, child } = t.context as { node: Element; child: Element };
+test('multiple direct children', t => {
+  const { node, child, childTwo } = t.context as { node: Element; child: Element; childTwo: Element };
 
-  child.className = 'foo bar';
   node.appendChild(child);
+  node.appendChild(childTwo);
 
-  t.is(node.getElementsByClassName('foo bar').length, 1);
-  t.is(node.getElementsByClassName('foo').length, 1);
-  t.is(node.getElementsByClassName('bar').length, 1);
-  t.is(node.getElementsByClassName('baz').length, 0);
-  t.deepEqual(node.getElementsByClassName('foo bar'), [child]);
-  t.deepEqual(node.getElementsByClassName('foo'), [child]);
-  t.deepEqual(node.getElementsByClassName('bar'), [child]);
+  t.is(node.getElementsByTagName('div').length, 1);
+  t.is(node.getElementsByTagName('p').length, 1);
+  t.is(node.getElementsByTagName('amp-state').length, 0);
+  t.deepEqual(node.getElementsByTagName('div'), [child]);
+  t.deepEqual(node.getElementsByTagName('p'), [childTwo]);
 });
 
 test('tree with depth > 1', t => {
-  const { node, child, childTwo } = t.context as { node: Element; child: Element; childTwo: Element };
+  const { node, child, childTwo, childThree } = t.context as { node: Element; child: Element; childTwo: Element; childThree: Element };
 
-  childTwo.className = child.className = 'foo';
   child.appendChild(childTwo);
+  child.appendChild(childThree);
   node.appendChild(child);
 
-  t.is(node.getElementsByClassName('foo').length, 2);
-  t.is(node.getElementsByClassName('bar').length, 0);
-  t.deepEqual(node.getElementsByClassName('foo'), [child, childTwo]);
+  t.is(node.getElementsByTagName('div').length, 1);
+  t.is(node.getElementsByTagName('p').length, 2);
+  t.is(node.getElementsByTagName('amp-state').length, 0);
+  t.deepEqual(node.getElementsByTagName('div'), [child]);
+  t.deepEqual(node.getElementsByTagName('p'), [childTwo, childThree]);
 });

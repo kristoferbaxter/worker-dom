@@ -5,6 +5,18 @@ import { keyValueString } from './utils';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
+type ConditionPredicate = (element: Element) => boolean;
+function findMatchingChildren(element: Element, conditionPredicate: ConditionPredicate): Element[] {
+  const matchingElements: Element[] = [];
+  element.children.forEach(child => {
+    if (conditionPredicate(child)) {
+      matchingElements.push(child);
+    }
+    matchingElements.push(...findMatchingChildren(child, conditionPredicate));
+  });
+  return matchingElements;
+}
+
 export class Element extends Node {
   public attributes: Attr[] = [];
   public classList: DOMTokenList = new DOMTokenList(this, 'className', null);
@@ -238,17 +250,18 @@ export class Element extends Node {
    */
   public getElementsByClassName(names: string): Element[] {
     const inputClassList = names.split(' ');
-    const matchingElements: Element[] = [];
+    // TODO(KB) – Compare performance of [].some(value => DOMTokenList.contains(value)) and regex.
+    // const classRegex = new RegExp(classNames.split(' ').map(name => `(?=.*${name})`).join(''));
 
-    this.children.forEach(child => {
-      // TODO(KB) – Compare performance of [].some(value => DOMTokenList.contains(value)) and regex.
-      // const classRegex = new RegExp(classNames.split(' ').map(name => `(?=.*${name})`).join(''));
-      if (inputClassList.some(inputClassName => child.classList.contains(inputClassName))) {
-        matchingElements.push(child);
-      }
-      matchingElements.push(...child.getElementsByClassName(names));
-    });
+    return findMatchingChildren(this, element => inputClassList.some(inputClassName => element.classList.contains(inputClassName)));
+  }
 
-    return matchingElements;
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/getElementsByTagName
+   * @param tagName
+   * @return Element array with matching tagnames
+   */
+  public getElementsByTagName(tagName: string): Element[] {
+    return findMatchingChildren(this, element => element.tagName === tagName);
   }
 }
