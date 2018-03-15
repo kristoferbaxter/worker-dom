@@ -53,6 +53,7 @@ export class Element extends Node {
   // Element.getAttributeNames() – https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttributeNames
   // Element.getBoundingClientRect() – https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
   // Element.getClientRects() – https://developer.mozilla.org/en-US/docs/Web/API/Element/getClientRects
+  // Element.getElementsByTagNameNS() – https://developer.mozilla.org/en-US/docs/Web/API/Element/getElementsByTagNameNS
 
   // Mixins not implemented
   // Slotable.assignedSlot – https://developer.mozilla.org/en-US/docs/Web/API/Slotable/assignedSlot
@@ -142,7 +143,7 @@ export class Element extends Node {
   /**
    * Sets the value of an attribute on this element using a null namespace.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute
-   * @param name attribute key
+   * @param name attribute name
    * @param value attribute value
    */
   public setAttribute(name: string, value: string): void {
@@ -153,7 +154,7 @@ export class Element extends Node {
    * Get the value of an attribute on this Element with the null namespace.
    *
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttribute
-   * @param name
+   * @param name attribute name
    * @return value of a specified attribute on the element, or null if the attribute doesn't exist.
    */
   public getAttribute(name: string): string | null {
@@ -165,10 +166,19 @@ export class Element extends Node {
    *
    * Method returns void, so it is not chainable.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/removeAttribute
-   * @param name
+   * @param name attribute name
    */
   public removeAttribute(name: string): void {
     this.removeAttributeNS(null, name);
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/hasAttribute
+   * @param name attribute name
+   * @return Boolean indicating if the element has the specified attribute.
+   */
+  public hasAttribute(name: string): boolean {
+    return this.hasAttributeNS(null, name);
   }
 
   /**
@@ -177,7 +187,7 @@ export class Element extends Node {
    * If the attribute already exists, the value is updated; otherwise a new attribute is added with the specified name and value.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttributeNS
    * @param namespaceURI
-   * @param name attribute key
+   * @param name attribute name
    * @param value attribute value
    */
   public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): void {
@@ -241,6 +251,16 @@ export class Element extends Node {
       //   oldValue: oldValue,
       // });
     }
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/hasAttributeNS
+   * @param namespaceURI attribute namespace
+   * @param name attribute name
+   * @return Boolean indicating if the element has the specified attribute.
+   */
+  public hasAttributeNS(namespaceURI: NamespaceURI, name: string): boolean {
+    return this.attributes.some(matchAttrPredicate(namespaceURI, name));
   }
 
   /**
