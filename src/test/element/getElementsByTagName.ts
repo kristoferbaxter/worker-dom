@@ -33,8 +33,10 @@ test('single direct child', t => {
   node.appendChild(child);
 
   t.is(node.getElementsByTagName('div').length, 1);
+  t.is(node.getElementsByTagName('*').length, 1);
   t.is(node.getElementsByTagName('p').length, 0);
   t.deepEqual(node.getElementsByTagName('div'), [child]);
+  t.deepEqual(node.getElementsByTagName('*'), [child]);
 });
 
 test('multiple direct children', t => {
@@ -45,9 +47,11 @@ test('multiple direct children', t => {
 
   t.is(node.getElementsByTagName('div').length, 1);
   t.is(node.getElementsByTagName('p').length, 1);
+  t.is(node.getElementsByTagName('*').length, 2);
   t.is(node.getElementsByTagName('amp-state').length, 0);
   t.deepEqual(node.getElementsByTagName('div'), [child]);
   t.deepEqual(node.getElementsByTagName('p'), [childTwo]);
+  t.deepEqual(node.getElementsByTagName('*'), [child, childTwo]);
 });
 
 test('tree with depth > 1', t => {
@@ -59,7 +63,9 @@ test('tree with depth > 1', t => {
 
   t.is(node.getElementsByTagName('div').length, 1);
   t.is(node.getElementsByTagName('p').length, 2);
+  t.is(node.getElementsByTagName('*').length, 3);
   t.is(node.getElementsByTagName('amp-state').length, 0);
   t.deepEqual(node.getElementsByTagName('div'), [child]);
   t.deepEqual(node.getElementsByTagName('p'), [childTwo, childThree]);
+  t.deepEqual(node.getElementsByTagName('*'), [child, childTwo, childThree]);
 });

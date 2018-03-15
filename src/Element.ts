@@ -258,10 +258,10 @@ export class Element extends Node {
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/getElementsByTagName
-   * @param tagName
+   * @param tagName the qualified name to look for. The special string "*" represents all elements.
    * @return Element array with matching tagnames
    */
   public getElementsByTagName(tagName: string): Element[] {
-    return findMatchingChildren(this, element => element.tagName === tagName);
+    return findMatchingChildren(this, tagName === '*' ? element => true : element => element.tagName === tagName);
   }
 }
