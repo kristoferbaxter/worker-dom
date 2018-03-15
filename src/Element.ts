@@ -38,6 +38,9 @@ export class Element extends Node {
   // Element.attachShadow() – !! CustomElements – https://developer.mozilla.org/en-US/docs/Web/API/Element/attachShadow
   // Element.animate() – https://developer.mozilla.org/en-US/docs/Web/API/Element/animate
   // Element.closest() – https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
+  // Element.getAttributeNames() – https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttributeNames
+  // Element.getBoundingClientRect() – https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
+  // Element.getClientRects() – https://developer.mozilla.org/en-US/docs/Web/API/Element/getClientRects
 
   // Mixins not implemented
   // Slotable.assignedSlot – https://developer.mozilla.org/en-US/docs/Web/API/Slotable/assignedSlot
@@ -226,5 +229,36 @@ export class Element extends Node {
       //   oldValue: oldValue,
       // });
     }
+  }
+
+  public getElementsByClassName(classNames: string): Element[] {
+    const inputClassList = classNames.split(' ');
+    let matchingElements: Element[] = [];
+
+    this.children.forEach(child => {
+      if (child.classList === undefined) {
+        console.log('undefined', child);
+      }
+      if (inputClassList.some(inputClassName => child.classList.contains(inputClassName))) {
+        matchingElements.push(child);
+      }
+      matchingElements.push(...child.getElementsByClassName(classNames));
+    });
+
+    return matchingElements;
+
+    // const matchingElements = this.children.filter(child => classList.some(className => child.classList.contains(className)));  //child.classList.contains)
+    // let matchingElements = [];
+    // this.children.forEach()
+
+    // classNames.split(' ').map(name => `(?=.*${name}`)
+
+    // const classRegex = new RegExp(classNames.split(' ').map(name => `(?=.*${name})`).join(''));
+
+    // if (this.hasChildNodes) {
+    //   this.children.forEach(child => {
+    //     child.classList.contains()
+    //   })
+    // }
   }
 }
