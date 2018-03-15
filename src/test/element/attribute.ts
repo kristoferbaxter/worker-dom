@@ -90,3 +90,23 @@ test('hasAttribute returns true when the attribute is present', t => {
   node.setAttribute('defined', 'yeppers');
   t.is(node.hasAttribute('defined'), true);
 });
+
+test('hasAttributes return false when the Element does not have attributes', t => {
+  const { node } = t.context as { node: Element };
+
+  t.is(node.hasAttributes(), false);
+});
+
+test('hasAttributes return true when the Element has attributes in the null namespaceURI', t => {
+  const { node } = t.context as { node: Element };
+
+  node.setAttribute('defined', 'yeppers');
+  t.is(node.hasAttributes(), true);
+});
+
+test('hasAttributes return true when the Element has attributes in other namespaceURIs', t => {
+  const { node } = t.context as { node: Element };
+
+  node.setAttributeNS('namespace', 'defined', 'yeppers');
+  t.is(node.hasAttributes(), true);
+});
