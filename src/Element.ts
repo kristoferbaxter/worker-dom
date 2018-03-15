@@ -182,6 +182,14 @@ export class Element extends Node {
   }
 
   /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/hasAttributes
+   * @return Boolean indicating if the element has any attributes.
+   */
+  public hasAttributes(): boolean {
+    return this.attributes.length > 0;
+  }
+
+  /**
    * Sets the value of an attribute on this Element with the provided namespace.
    *
    * If the attribute already exists, the value is updated; otherwise a new attribute is added with the specified name and value.
