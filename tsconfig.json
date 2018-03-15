@@ -8,7 +8,7 @@
     "outDir": "./src/output",
     "sourceMap": true,
     "moduleResolution": "node",
-    "target": "es2017",
+    "target": "esnext",
     "baseUrl": ".",
     "allowJs": false,
     "noUnusedLocals": true,
