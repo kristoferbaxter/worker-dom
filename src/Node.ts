@@ -15,7 +15,7 @@
  */
 
 import { Event } from './Event';
-import { toLower, splice } from './utils';
+import { toLower } from './utils';
 
 export const enum NodeType {
   ELEMENT_NODE = 1,
@@ -221,8 +221,9 @@ export class Node {
    */
   public removeChild(child: Node): Node | null {
     const index = this.childNodes.indexOf(child);
+    const exists = index >= 0;
 
-    if (index >= 0) {
+    if (exists) {
       child.parentNode = null;
       this.childNodes.splice(index, 1);
       return child;
@@ -230,10 +231,9 @@ export class Node {
     return null;
 
     // TODO(KB): Restore mutation observation.
-    // let i = splice(this.childNodes, child, null, false);
     // this.mutate(this, 'childList', {
     //   addedNodes: null,
-    //   removedNodes: [child],
+    //   removedNodes: exists ? [child] : [],
     //   previousSibling: this.childNodes[i - 1],
     //   nextSibling: this.childNodes[i],
     // });
@@ -293,7 +293,12 @@ export class Node {
    * @param handler Function to stop calling when event is dispatched.
    */
   public removeEventListener(type: string, handler: EventHandler): void {
-    splice(this._handlers_[toLower(type)], handler, 0, true);
+    const handlers = this._handlers_[toLower(type)];
+    const index = handlers.indexOf(handler);
+
+    if (index >= 0) {
+      handlers.splice(index, 1);
+    }
   }
 
   /**

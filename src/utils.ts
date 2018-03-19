@@ -14,28 +14,6 @@
  * limitations under the License.
  */
 
-export const assign = (obj: { [index: string]: any }, props: { [index: string]: any }): void => {
-  for (let iterator in props) obj[iterator] = props[iterator];
-};
-
 export const toLower = (string: string): string => string.toLowerCase();
-
-export function splice<T>(array: T[], item: T, add: any, byValueOnly: boolean): number {
-  let i = array ? findWhere(array, item, true, byValueOnly) : -1;
-  if (~i) {
-    add ? array.splice(i, 0, add) : array.splice(i, 1);
-  }
-  return i;
-}
-
-export function findWhere(array: any[], fn: any, returnIndex: boolean, byValueOnly: boolean): any {
-  let iterator = array.length;
-  while (iterator--) {
-    if (typeof fn === 'function' && !byValueOnly ? fn(array[iterator]) : array[iterator] === fn) {
-      break;
-    }
-  }
-  return returnIndex ? iterator : array[iterator];
-}
 
 export const keyValueString = (key: string, value: string): string => `${key}="${value}"`;
