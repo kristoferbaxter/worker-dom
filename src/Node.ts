@@ -36,7 +36,7 @@ type EventHandler = (event: Event) => any;
 interface EventHandlers {
   [index: string]: EventHandler[];
 }
-type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
+export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
 
 // https://developer.mozilla.org/en-US/docs/Web/API/Node
 // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget
@@ -60,6 +60,7 @@ export class Node {
   // Node.baseURI – https://developer.mozilla.org/en-US/docs/Web/API/Node/baseURI
   // Node.isConnected – https://developer.mozilla.org/en-US/docs/Web/API/Node/isConnected
   // Node.nodeValue – https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeValue
+  // –––– Implemented at Text layer. Text.nodeValue
   // Node.ownerDocument – https://developer.mozilla.org/en-US/docs/Web/API/Node/ownerDocument
   // Node.compareDocumentPosition() – https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
   // Node.getRootNode() – https://developer.mozilla.org/en-US/docs/Web/API/Node/getRootNode
