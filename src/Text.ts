@@ -51,9 +51,10 @@ export class Text extends CharacterData {
 
     this.nodeValue = this.data.slice(0, offset);
     if (parentNode !== null) {
-      const childNodes = parentNode.childNodes;
-      const insertBeforePosition = childNodes.indexOf(this) + 1;
-      const insertBeforeNode = childNodes.length >= insertBeforePosition ? childNodes[insertBeforePosition] : null;
+      // When this node is attached to the DOM, the remainder text needs to be inserted directly after.
+      const parentChildNodes = parentNode.childNodes;
+      const insertBeforePosition = parentChildNodes.indexOf(this) + 1;
+      const insertBeforeNode = parentChildNodes.length >= insertBeforePosition ? parentChildNodes[insertBeforePosition] : null;
 
       return parentNode.insertBefore(remainderTextNode, insertBeforeNode) as Text;
     }
