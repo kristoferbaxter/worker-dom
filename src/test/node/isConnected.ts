@@ -21,16 +21,17 @@ test.beforeEach(t => {
   t.context = {
     node: new Node(NodeType.ELEMENT_NODE, 'div'),
     child: new Node(NodeType.ELEMENT_NODE, 'div'),
+    childTwo: new Node(NodeType.ELEMENT_NODE, 'p'),
   };
 });
 
-test('without a document, tree depth 1 nodes are not connected', t => {
+test('without a connected parent, tree depth 1 nodes are not connected', t => {
   const { node } = t.context as { node: Node };
 
   t.is(node.isConnected, false);
 });
 
-test('without a document, tree depth > 1 are not connected', t => {
+test('without a connected parent, tree depth > 1 are not connected', t => {
   const { node, child } = t.context as { node: Node; child: Node };
 
   node.appendChild(child);
@@ -39,4 +40,14 @@ test('without a document, tree depth > 1 are not connected', t => {
   t.is(child.isConnected, false);
 });
 
-// TODO(KB): Add a document body test when Docment becomes available.
+test('with a connected parent, nodes are connected during append', t => {
+  const { node, child, childTwo } = t.context as { node: Node; child: Node; childTwo: Node };
+
+  node.isConnected = true;
+  child.appendChild(childTwo);
+  node.appendChild(child);
+
+  t.is(node.isConnected, true);
+  t.is(child.isConnected, true);
+  t.is(childTwo.isConnected, true);
+});
