@@ -49,6 +49,7 @@ export class Node {
   public nodeName: NodeName;
   public childNodes: Node[] = [];
   public parentNode: Node | null = null;
+  public isConnected: boolean = false;
   private _handlers_: EventHandlers = {};
 
   constructor(nodeType: NodeType, nodeName: NodeName) {
@@ -180,6 +181,7 @@ export class Node {
       // Removing a child can cause this.childNodes to change, meaning we need to splice from its updated location.
       this.childNodes.splice(this.childNodes.indexOf(referenceNode), 0, child);
       child.parentNode = this;
+      child.isConnected = this.isConnected;
 
       // TODO(KB): Restore mutation observation
       // this.mutate(this, 'childList', {
@@ -203,6 +205,7 @@ export class Node {
   public appendChild(child: Node): void {
     child.remove();
     child.parentNode = this;
+    child.isConnected = this.isConnected;
     this.childNodes.push(child);
 
     // TODO(KB): Restore mutation observation.
@@ -226,6 +229,7 @@ export class Node {
 
     if (exists) {
       child.parentNode = null;
+      child.isConnected = false;
       this.childNodes.splice(index, 1);
       return child;
     }
@@ -240,15 +244,19 @@ export class Node {
     // });
   }
 
+  // TODO(KB): Verify behaviour.
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/replaceChild
    * @param newChild new Node to replace old Node.
    * @param oldChild existing Node to be replaced.
+   * @return child that was replaced.
    */
   public replaceChild(newChild: Node, oldChild: Node): Node {
     if (newChild !== oldChild) {
       const index = this.childNodes.indexOf(oldChild);
       if (index >= 0) {
+        oldChild.parentNode = null;
+        oldChild.isConnected = false;
         this.childNodes.splice(index, 1, newChild);
 
         // TODO(KB): Restore mutation observation.
