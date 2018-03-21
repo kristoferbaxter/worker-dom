@@ -19,9 +19,7 @@ import { Element } from './Element';
 import { Text } from './Text';
 import { Document } from './Document';
 
-// export { Node, Element, Text, Event };
-
-export function dom() {
+export function document() {
   function createElement(tagName: string): Element {
     return new Element(NodeType.ELEMENT_NODE, String(tagName).toUpperCase());
   }

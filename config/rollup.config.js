@@ -21,7 +21,7 @@ function outputConfiguration(esmodules) {
       format: 'iife',
       sourcemap: true,
       name: 'WorkerDom',
-      outro: DEBUG_BUNDLE ? 'window.workerDocument = dom();' : '',
+      outro: DEBUG_BUNDLE ? 'window.workerDocument = document();' : '',
     },
   ];
 }
