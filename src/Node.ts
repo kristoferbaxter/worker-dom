@@ -59,7 +59,6 @@ export class Node {
 
   // Unimplemented Properties
   // Node.baseURI – https://developer.mozilla.org/en-US/docs/Web/API/Node/baseURI
-  // Node.isConnected – https://developer.mozilla.org/en-US/docs/Web/API/Node/isConnected
   // Node.nodeValue – https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeValue
   // –––– Implemented at Text layer. Text.nodeValue
   // Node.ownerDocument – https://developer.mozilla.org/en-US/docs/Web/API/Node/ownerDocument
