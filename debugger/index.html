@@ -8,15 +8,13 @@
 </head>
 <body>
   <p>This debugger allows you to experiment with the WorkerDom API.</p>
-  <code>global.WorkerDom = {Node, Element, Text, Event}</code>
+  <code>global.workerDocument = {createElement, createElementNS, createTextNode, defaultView, body, ...Element}</code>
   <pre>
     Example:
     <code>
-      const node = new WorkerDom.Node(Node.ELEMENT_NODE, 'div');
-      const child = new WorkerDom.Node(Node.ELEMENT_NODE, 'div');
+      const child = workerDocument.createElement('div');
       
-      node.isConnected = true;
-      node.appendChild(child);
+      workerDocument.body.appendChild(child);
       console.log(`is child connected? ${child.isConnected === true ? 'yes' : 'no'}`);
     </code>
   </pre>

@@ -36,7 +36,6 @@ export function dom() {
     let document = new Document(createElement, createElementNS, (text: string): Text => new Text(text));
     document.isConnected = true;
     document.appendChild((document.body = createElement('body')));
-    document.nodes.body = document.body;
     return document;
   }
 
