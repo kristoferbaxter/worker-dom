@@ -265,7 +265,7 @@ export class Node {
       const index = this.childNodes.indexOf(oldChild);
       if (index >= 0) {
         oldChild.parentNode = null;
-        oldChild.isConnected = false;
+        propagate(oldChild, 'isConnected', false);
         this.childNodes.splice(index, 1, newChild);
 
         // TODO(KB): Restore mutation observation.
