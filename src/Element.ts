@@ -115,10 +115,10 @@ export class Element extends Node {
    * @return string representation of serialized HTML describing the Element's descendants.
    */
   get innerHTML(): string {
-    const children = this.children;
+    const childNodes = this.childNodes;
 
-    if (children.length) {
-      return children.map(child => child.outerHTML).join('');
+    if (childNodes.length) {
+      return childNodes.map(child => (child.nodeType === NodeType.ELEMENT_NODE ? child.outerHTML : child.textContent)).join('');
     }
     return '';
   }
