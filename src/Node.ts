@@ -38,6 +38,17 @@ interface EventHandlers {
 }
 export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
 
+/**
+ * Propagates a property change for a Node to itself and all childNodes.
+ * @param node Node to start applying change to
+ * @param property Property to modify
+ * @param value New value to apply
+ */
+const propagate = (node: Node, property: string, value: any): void => {
+  node[property] = value;
+  node.childNodes.forEach(child => propagate(child, property, value));
+};
+
 // https://developer.mozilla.org/en-US/docs/Web/API/Node
 // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget
 //
@@ -45,10 +56,12 @@ export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text'
 // This is intentional to reduce the number of classes.
 
 export class Node {
+  [index: string]: any;
   public nodeType: NodeType;
   public nodeName: NodeName;
   public childNodes: Node[] = [];
   public parentNode: Node | null = null;
+  public isConnected: boolean = false;
   private _handlers_: EventHandlers = {};
 
   constructor(nodeType: NodeType, nodeName: NodeName) {
@@ -58,7 +71,6 @@ export class Node {
 
   // Unimplemented Properties
   // Node.baseURI – https://developer.mozilla.org/en-US/docs/Web/API/Node/baseURI
-  // Node.isConnected – https://developer.mozilla.org/en-US/docs/Web/API/Node/isConnected
   // Node.ownerDocument – https://developer.mozilla.org/en-US/docs/Web/API/Node/ownerDocument
   // Node.compareDocumentPosition() – https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
   // Node.getRootNode() – https://developer.mozilla.org/en-US/docs/Web/API/Node/getRootNode
@@ -178,6 +190,7 @@ export class Node {
       // Removing a child can cause this.childNodes to change, meaning we need to splice from its updated location.
       this.childNodes.splice(this.childNodes.indexOf(referenceNode), 0, child);
       child.parentNode = this;
+      propagate(child, 'isConnected', this.isConnected);
 
       // TODO(KB): Restore mutation observation
       // this.mutate(this, 'childList', {
@@ -201,6 +214,7 @@ export class Node {
   public appendChild(child: Node): void {
     child.remove();
     child.parentNode = this;
+    propagate(child, 'isConnected', this.isConnected);
     this.childNodes.push(child);
 
     // TODO(KB): Restore mutation observation.
@@ -224,6 +238,7 @@ export class Node {
 
     if (exists) {
       child.parentNode = null;
+      propagate(child, 'isConnected', false);
       this.childNodes.splice(index, 1);
       return child;
     }
@@ -238,15 +253,19 @@ export class Node {
     // });
   }
 
+  // TODO(KB): Verify behaviour.
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/replaceChild
    * @param newChild new Node to replace old Node.
    * @param oldChild existing Node to be replaced.
+   * @return child that was replaced.
    */
   public replaceChild(newChild: Node, oldChild: Node): Node {
     if (newChild !== oldChild) {
       const index = this.childNodes.indexOf(oldChild);
       if (index >= 0) {
+        oldChild.parentNode = null;
+        propagate(oldChild, 'isConnected', false);
         this.childNodes.splice(index, 1, newChild);
 
         // TODO(KB): Restore mutation observation.
