@@ -8,7 +8,8 @@
     "url": "https://github.com/ampproject/worker-dom.git"
   },
   "engines": {
-    "yarn": ">=1.0.0"
+    "yarn": ">=1.0.0",
+    "node": ">=8.0.0"
   },
   "author": "Kristofer Baxter",
   "license": "Apache-2.0",
@@ -26,7 +27,7 @@
     "@babel/plugin-proposal-class-properties": "v7.0.0-beta.42",
     "@babel/plugin-proposal-object-rest-spread": "v7.0.0-beta.42",
     "@babel/preset-env": "v7.0.0-beta.42",
-    "@std/esm": "^0.25.3",
+    "@std/esm": "0.25.3",
     "ava": "0.25.0",
     "husky": "0.15.0-rc.8",
     "lint-staged": "7.0.0",
