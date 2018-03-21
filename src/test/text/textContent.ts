@@ -27,8 +27,6 @@ test('get textContent', t => {
   const { text } = t.context as { text: Text };
 
   t.is(text.textContent, 'default value');
-  text.data = 'new value';
-  t.is(text.textContent, 'new value');
 });
 
 test('set textContent', t => {
@@ -36,4 +34,19 @@ test('set textContent', t => {
 
   text.textContent = 'new value';
   t.is(text.textContent, 'new value');
+});
+
+test('textContent matches data', t => {
+  const { text } = t.context as { text: Text };
+
+  t.is(text.data, 'default value');
+  t.is(text.textContent, 'default value');
+
+  text.data = 'data setter';
+  t.is(text.data, 'data setter');
+  t.is(text.textContent, 'data setter');
+
+  text.textContent = 'textContent setter';
+  t.is(text.data, 'textContent setter');
+  t.is(text.textContent, 'textContent setter');
 });
