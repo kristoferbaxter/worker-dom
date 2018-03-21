@@ -38,6 +38,17 @@ interface EventHandlers {
 }
 export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
 
+/**
+ * Propagates a property change for a Node to itself and all childNodes.
+ * @param node Node to start applying change to
+ * @param property Property to modify
+ * @param value New value to apply
+ */
+const propagate = (node: Node, property: string, value: any): void => {
+  node[property] = value;
+  node.childNodes.forEach(child => propagate(child, property, value));
+};
+
 // https://developer.mozilla.org/en-US/docs/Web/API/Node
 // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget
 //
@@ -45,6 +56,7 @@ export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text'
 // This is intentional to reduce the number of classes.
 
 export class Node {
+  [index: string]: any;
   public nodeType: NodeType;
   public nodeName: NodeName;
   public childNodes: Node[] = [];
@@ -178,7 +190,7 @@ export class Node {
       // Removing a child can cause this.childNodes to change, meaning we need to splice from its updated location.
       this.childNodes.splice(this.childNodes.indexOf(referenceNode), 0, child);
       child.parentNode = this;
-      child.isConnected = this.isConnected;
+      propagate(child, 'isConnected', this.isConnected);
 
       // TODO(KB): Restore mutation observation
       // this.mutate(this, 'childList', {
@@ -202,7 +214,7 @@ export class Node {
   public appendChild(child: Node): void {
     child.remove();
     child.parentNode = this;
-    child.isConnected = this.isConnected;
+    propagate(child, 'isConnected', this.isConnected);
     this.childNodes.push(child);
 
     // TODO(KB): Restore mutation observation.
@@ -226,7 +238,7 @@ export class Node {
 
     if (exists) {
       child.parentNode = null;
-      child.isConnected = false;
+      propagate(child, 'isConnected', false);
       this.childNodes.splice(index, 1);
       return child;
     }
