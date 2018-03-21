@@ -28,12 +28,18 @@ export class Text extends CharacterData {
   // Text.wholeText – https://developer.mozilla.org/en-US/docs/Web/API/Text/wholeText
   // Text.assignedSlot – https://developer.mozilla.org/en-US/docs/Web/API/Text/assignedSlot
 
-  // TODO(KB): Investigate moving textContent getter and setter to Node.
-  // This getter and setter is normally applied at the Node layer.
-  // EventSource -> Node -> CharacterData -> Text
+  /**
+   * textContent getter, retrieves underlying CharacterData data.
+   * This is a different implmentation than DOMv1-4 APIs, but should be transparent to Frameworks.
+   */
   get textContent(): string {
     return this.data;
   }
+
+  /**
+   * textContent setter, mutates underlying CharacterData data.
+   * This is a different implmentation than DOMv1-4 APIs, but should be transparent to Frameworks.
+   */
   set textContent(value: string) {
     // Mutation Observation is performed by CharacterData.
     this.nodeValue = value;
