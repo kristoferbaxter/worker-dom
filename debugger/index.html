@@ -8,6 +8,17 @@
 </head>
 <body>
   <p>This debugger allows you to experiment with the WorkerDom API.</p>
-  <p>global.WorkerDom = {Node, Element, Text, Event}</p>
+  <code>global.WorkerDom = {Node, Element, Text, Event}</code>
+  <pre>
+    Example:
+    <code>
+      const node = new WorkerDom.Node(Node.ELEMENT_NODE, 'div');
+      const child = new WorkerDom.Node(Node.ELEMENT_NODE, 'div');
+      
+      node.isConnected = true;
+      node.appendChild(child);
+      console.log(`is child connected? ${child.isConnected === true ? 'yes' : 'no'}`);
+    </code>
+  </pre>
 </body>
 </html>
