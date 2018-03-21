@@ -51,3 +51,16 @@ test('with a connected parent, nodes are connected during append', t => {
   t.is(child.isConnected, true);
   t.is(childTwo.isConnected, true);
 });
+
+test('nodes are disconnected during removal', t => {
+  const { node, child, childTwo } = t.context as { node: Node; child: Node; childTwo: Node };
+
+  node.isConnected = true;
+  child.appendChild(childTwo);
+  node.appendChild(child);
+  node.removeChild(child);
+
+  t.is(node.isConnected, true);
+  t.is(child.isConnected, false);
+  t.is(childTwo.isConnected, false);
+});
