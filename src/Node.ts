@@ -36,7 +36,7 @@ type EventHandler = (event: Event) => any;
 interface EventHandlers {
   [index: string]: EventHandler[];
 }
-type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
+export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
 
 // https://developer.mozilla.org/en-US/docs/Web/API/Node
 // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget
@@ -59,7 +59,6 @@ export class Node {
   // Unimplemented Properties
   // Node.baseURI – https://developer.mozilla.org/en-US/docs/Web/API/Node/baseURI
   // Node.isConnected – https://developer.mozilla.org/en-US/docs/Web/API/Node/isConnected
-  // Node.nodeValue – https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeValue
   // Node.ownerDocument – https://developer.mozilla.org/en-US/docs/Web/API/Node/ownerDocument
   // Node.compareDocumentPosition() – https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
   // Node.getRootNode() – https://developer.mozilla.org/en-US/docs/Web/API/Node/getRootNode
@@ -70,9 +69,9 @@ export class Node {
   // Node.lookupNamespaceURI() – https://developer.mozilla.org/en-US/docs/Web/API/Node/lookupNamespaceURI
   // Node.normalize() – https://developer.mozilla.org/en-US/docs/Web/API/Node/normalize
 
-  // Will Implement at Element layer
+  // Implemented at Element/Text layer
+  // Node.nodeValue – https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeValue
   // Node.textContent – https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent
-  //  - Will implement at the Element level and consider bringing back up to Node.
   // Node.cloneNode – https://developer.mozilla.org/en-US/docs/Web/API/Node/cloneNode
 
   /**
