@@ -1,14 +1,14 @@
 import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
 
-const enableUglify = true;
+const {DEBUG_BUNDLE, UGLIFY_BUNDLE} = process.env;
 
 /**
  * @param {boolean} esmodules
  * @returns {Array<OutputConfig>} Rollup configurations for output.
  */
 function outputConfiguration(esmodules) {
-  const basePath = `build${(esmodules === true && '/esmodules') || ''}`;
+  const basePath = `${DEBUG_BUNDLE ? 'debugger/build' : 'build'}${(esmodules === true && '/esmodules') || ''}`;
 
   return [
     {
@@ -21,6 +21,7 @@ function outputConfiguration(esmodules) {
       format: 'iife',
       sourcemap: true,
       name: 'WorkerDom',
+      outro: DEBUG_BUNDLE ? 'window.WorkerDom = { Node, Element, Text, Event };' : '',
     },
   ];
 }
@@ -53,11 +54,11 @@ export default [
   {
     input: 'src/output/index.js',
     output: outputConfiguration(false),
-    plugins: [babel(babelConfiguration(false)), enableUglify && uglify()],
+    plugins: [babel(babelConfiguration(false)), !!UGLIFY_BUNDLE && uglify()],
   },
   {
     input: 'src/output/index.js',
     output: outputConfiguration(true),
-    plugins: [babel(babelConfiguration(true)), enableUglify && uglify()],
+    plugins: [babel(babelConfiguration(true)), !!UGLIFY_BUNDLE && uglify()],
   },
 ];

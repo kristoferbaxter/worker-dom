@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Page Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="build/esmodules/index.js" type="module"></script>
+</head>
+<body>
+  <p>This debugger allows you to experiment with the WorkerDom API.</p>
+  <code>global.WorkerDom = {Node, Element, Text, Event}</code>
+  <pre>
+    Example:
+    <code>
+      const node = new WorkerDom.Node(Node.ELEMENT_NODE, 'div');
+      const child = new WorkerDom.Node(Node.ELEMENT_NODE, 'div');
+      
+      node.isConnected = true;
+      node.appendChild(child);
+      console.log(`is child connected? ${child.isConnected === true ? 'yes' : 'no'}`);
+    </code>
+  </pre>
+</body>
+</html>
