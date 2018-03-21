@@ -18,11 +18,12 @@ import { Node, NodeName, NodeType } from './Node';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/CharacterData
 export abstract class CharacterData extends Node {
-  data: string;
+  // _data_ is private to ensure mutation observation occurs for all public setters.
+  private _data_: string;
 
   constructor(data: string, nodeType: NodeType, nodeName: NodeName) {
     super(nodeType, nodeName);
-    this.data = data;
+    this._data_ = data;
   }
 
   // Unimplemented Methods
@@ -35,10 +36,29 @@ export abstract class CharacterData extends Node {
   // CharacterData.substringData()
 
   /**
+   * @return Returns the string contained in private CharacterData.data
+   */
+  get data(): string {
+    return this._data_;
+  }
+
+  /**
+   * @param value string value to store as CharacterData.data.
+   */
+  set data(value: string) {
+    // TODO(KB): Restore mutation observation
+    // let oldValue = this.data;
+    this._data_ = value;
+
+    // TODO(KB): Restore mutation observation
+    // this.mutate(this, 'characterData', { value, oldValue });
+  }
+
+  /**
    * @return Returns the size of the string contained in CharacterData.data
    */
   get length(): number {
-    return this.data.length;
+    return this._data_.length;
   }
 
   /**
@@ -52,11 +72,6 @@ export abstract class CharacterData extends Node {
    * @param value string value to store as CharacterData.data.
    */
   set nodeValue(value: string) {
-    // TODO(KB): Restore mutation observation
-    // let oldValue = this.data;
     this.data = value;
-
-    // TODO(KB): Restore mutation observation
-    // this.mutate(this, 'characterData', { value, oldValue });
   }
 }
