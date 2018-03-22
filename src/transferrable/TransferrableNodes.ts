@@ -32,6 +32,7 @@ export interface TransferrableNode {
   readonly textContent: string;
 }
 
+// If a Node has been transferred once already to main thread then we need only pass its index.
 export interface SubsequentTransferNode {
   readonly _index_: number;
   readonly transferred: NumericBoolean;
