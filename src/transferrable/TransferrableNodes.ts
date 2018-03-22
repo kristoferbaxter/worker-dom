@@ -14,14 +14,25 @@
  * limitations under the License.
  */
 
-import { keyValueString } from './utils';
+import { NodeType, NodeName } from '../Node';
+import { NumericBoolean } from '../utils';
 
-export type NamespaceURI = string | null;
-export interface Attr {
-  namespaceURI: NamespaceURI;
-  name: string;
-  value: string;
+export interface TransferrableNode {
+  readonly _index_: number;
+  readonly transferred: NumericBoolean;
+  readonly nodeType: NodeType;
+  readonly nodeName: NodeName;
+  readonly attributes: Array<{
+    [index: string]: string;
+  }>;
+  readonly properties: Array<{
+    [index: string]: any;
+  }>;
+  readonly childNodes: Array<TransferrableNode | SubsequentTransferNode>;
+  readonly textContent: string;
 }
 
-export const toString = (attributes: Attr[]): string => attributes.map(({ name, value }) => keyValueString(name, value)).join(' ');
-export const matchPredicate = (namespaceURI: NamespaceURI, name: string): ((attr: Attr) => boolean) => attr => attr.namespaceURI === namespaceURI && attr.name === name;
+export interface SubsequentTransferNode {
+  readonly _index_: number;
+  readonly transferred: NumericBoolean;
+}
