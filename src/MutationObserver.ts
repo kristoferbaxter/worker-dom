@@ -57,6 +57,11 @@ export class MutationObserver {
     this.callback = callback;
   }
 
+  /**
+   * Register the MutationObserver instance to observe a Nodes mutations.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
+   * @param target Node to observe DOM mutations
+   */
   public observe(target: Node): void {
     this.disconnect();
     this.target = target;
@@ -64,6 +69,10 @@ export class MutationObserver {
     observers.push(this);
   }
 
+  /**
+   * Stop the MutationObserver instance from observing a Nodes mutations.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
+   */
   public disconnect(): void {
     this.target = null;
 
@@ -73,10 +82,19 @@ export class MutationObserver {
     }
   }
 
+  /**
+   * Empties the MutationObserver instance's record queue and returns what was in there.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
+   * @return Mutation Records stored on this MutationObserver instance.
+   */
   public takeRecords(): MutationRecord[] {
     return this._records_.splice(0, this._records_.length);
   }
 
+  /**
+   * NOTE: This method doesn't exist on native MutationObserver.
+   * @param record MutationRecord to store for this instance.
+   */
   public pushRecord(record: MutationRecord): void {
     this._records_.push(record);
   }
