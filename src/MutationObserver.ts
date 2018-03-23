@@ -26,6 +26,11 @@ const flushMutations = (): void => {
   observers.forEach(observer => observer.callback(observer.takeRecords()));
 };
 
+/**
+ * When DOM mutations occur, Nodes will call this method with MutationRecords
+ * These records are then pushed into MutationObserver instances that match the MutationRecord.target
+ * @param record MutationRecord to push into MutationObservers.
+ */
 export function mutate(record: MutationRecord): void {
   observers.forEach(observer => {
     let target: Node | null = record.target;
