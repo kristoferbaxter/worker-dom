@@ -18,6 +18,7 @@ import { NodeType } from './Node';
 import { Element } from './Element';
 import { Text } from './Text';
 import { Document } from './Document';
+import { observe } from './transfer/DocumentMutations';
 
 export function document() {
   function createElement(tagName: string): Element {
@@ -34,6 +35,7 @@ export function document() {
     let document = new Document(createElement, createElementNS, (text: string): Text => new Text(text));
     document.isConnected = true;
     document.appendChild((document.body = createElement('body')));
+    observe(document);
     return document;
   }
 

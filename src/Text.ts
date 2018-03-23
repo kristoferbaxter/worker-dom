@@ -16,6 +16,7 @@
 
 import { NodeType } from './Node';
 import { CharacterData } from './CharacterData';
+import { TransferrableNode, SubsequentTransferNode } from './transfer/TransferrableNode';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Text
 export class Text extends CharacterData {
@@ -67,5 +68,26 @@ export class Text extends CharacterData {
     }
 
     return remainderTextNode;
+  }
+
+  public _sanitize_(): TransferrableNode | SubsequentTransferNode {
+    if (this._transferred_) {
+      return {
+        _index_: this._index_,
+      };
+    }
+
+    Promise.resolve().then(_ => {
+      // After transmission of the current unsanitized form across a message, we can start to send the more compressed format.
+      this._transferred_ = true;
+    });
+    return {
+      _index_: this._index_,
+      nodeType: this.nodeType,
+      nodeName: this.nodeName,
+      attributes: null,
+      properties: [],
+      childNodes: this.childNodes.map(childNode => childNode._sanitize_()),
+    };
   }
 }

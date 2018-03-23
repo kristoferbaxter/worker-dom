@@ -61,7 +61,8 @@ export class Node {
   public childNodes: Node[] = [];
   public parentNode: Node | null = null;
   public isConnected: boolean = false;
-  public _index_: number | null = null;
+  public _index_: number;
+  protected _transferred_: boolean = false;
   private _handlers_: {
     [index: string]: EventHandler[];
   } = {};
@@ -70,7 +71,7 @@ export class Node {
     this.nodeType = nodeType;
     this.nodeName = nodeName;
 
-    mappingStoreNode(this);
+    this._index_ = mappingStoreNode(this);
   }
 
   // Unimplemented Properties

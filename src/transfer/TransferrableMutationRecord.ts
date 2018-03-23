@@ -15,7 +15,7 @@
  */
 
 import { MutationRecordType } from '../MutationRecord';
-import { TransferrableNode, SubsequentTransferNode } from './TransferrableNodes';
+import { TransferrableNode, SubsequentTransferNode } from './TransferrableNode';
 
 // The TransferrableMutationRecord interface is modification and extension of
 // the real MutationRecord, with changes to support the transferring of
@@ -24,8 +24,8 @@ import { TransferrableNode, SubsequentTransferNode } from './TransferrableNodes'
 // For more info on MutationRecords: https://developer.mozilla.org/en-US/docs/Web/API/MutationRecord
 export interface TransferrableMutationRecord {
   readonly target: TransferrableNode | SubsequentTransferNode;
-  readonly addedNodes: Array<TransferrableNode | SubsequentTransferNode>;
-  readonly removedNodes: Array<TransferrableNode | SubsequentTransferNode>;
+  readonly addedNodes: Array<TransferrableNode | SubsequentTransferNode> | null;
+  readonly removedNodes: Array<TransferrableNode | SubsequentTransferNode> | null;
   readonly previousSibling: TransferrableNode | SubsequentTransferNode | null;
   readonly nextSibling: TransferrableNode | SubsequentTransferNode | null;
   readonly attributeName: string | null;

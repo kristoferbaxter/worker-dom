@@ -20,6 +20,7 @@ import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate, 
 import { keyValueString } from './utils';
 import { mutate } from './MutationObserver';
 import { MutationRecordType } from './MutationRecord';
+import { TransferrableNode, SubsequentTransferNode } from './transfer/TransferrableNode';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
@@ -321,6 +322,27 @@ export class Element extends Node {
    */
   public getElementsByTagName(tagName: string): Element[] {
     return findMatchingChildren(this, tagName === '*' ? element => true : element => element.tagName === tagName);
+  }
+
+  public _sanitize_(): TransferrableNode | SubsequentTransferNode {
+    if (this._transferred_) {
+      return {
+        _index_: this._index_,
+      };
+    }
+
+    Promise.resolve().then(_ => {
+      // After transmission of the current unsanitized form across a message, we can start to send the more compressed format.
+      this._transferred_ = true;
+    });
+    return {
+      _index_: this._index_,
+      nodeType: this.nodeType,
+      nodeName: this.nodeName,
+      attributes: this.attributes,
+      properties: [], // TODO(KB): Properties!
+      childNodes: this.childNodes.map(childNode => childNode._sanitize_()),
+    };
   }
 }
 

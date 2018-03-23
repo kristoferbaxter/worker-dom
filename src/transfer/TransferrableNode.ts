@@ -15,11 +15,9 @@
  */
 
 import { NodeType, NodeName } from '../Node';
-import { NumericBoolean } from '../utils';
 
 export interface TransferrableNode {
   readonly _index_: number;
-  readonly transferred: NumericBoolean;
   readonly nodeType: NodeType;
   readonly nodeName: NodeName;
   readonly attributes: Array<{
@@ -35,5 +33,4 @@ export interface TransferrableNode {
 // If a Node has been transferred once already to main thread then we need only pass its index.
 export interface SubsequentTransferNode {
   readonly _index_: number;
-  readonly transferred: NumericBoolean;
 }
