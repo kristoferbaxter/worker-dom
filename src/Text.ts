@@ -39,6 +39,7 @@ export class Text extends CharacterData {
   /**
    * textContent setter, mutates underlying CharacterData data.
    * This is a different implmentation than DOMv1-4 APIs, but should be transparent to Frameworks.
+   * @param value new value
    */
   set textContent(value: string) {
     // Mutation Observation is performed by CharacterData.

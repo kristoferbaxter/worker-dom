@@ -15,6 +15,8 @@
  */
 
 import { Node, NodeName, NodeType } from './Node';
+import { mutate } from './MutationObserver';
+import { MutationRecordType } from './MutationRecord';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/CharacterData
 export abstract class CharacterData extends Node {
@@ -46,12 +48,15 @@ export abstract class CharacterData extends Node {
    * @param value string value to store as CharacterData.data.
    */
   set data(value: string) {
-    // TODO(KB): Restore mutation observation
-    // let oldValue = this.data;
+    let oldValue = this.data;
     this._data_ = value;
 
-    // TODO(KB): Restore mutation observation
-    // this.mutate(this, 'characterData', { value, oldValue });
+    mutate({
+      target: this,
+      type: MutationRecordType.CHARACTER_DATA,
+      value,
+      oldValue,
+    });
   }
 
   /**
