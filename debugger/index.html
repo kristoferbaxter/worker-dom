@@ -4,10 +4,15 @@
   <meta charset="utf-8" />
   <title>Page Title</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    code {
+      white-space: pre-wrap;
+    }
+  </style>
   <script src="build/esmodules/index.js" type="module"></script>
 </head>
 <body>
-  <p>This debugger allows you to experiment with the WorkerDom API.</p>
+  <p>This debugger allows you to experiment with the Worker DOM API.</p>
   <code>global.workerDocument = {createElement, createElementNS, createTextNode, defaultView, body, ...Element}</code>
   <pre>
     Example:
@@ -27,8 +32,7 @@
     const outputEl = document.getElementById('workerDocumentOutput');
 
     setInterval(_ => {
-      markupEl.textContent = workerDocument.body.innerHTML.toString();
-      
+      markupEl.textContent = workerDocument.body.innerHTML.toString(); 
       outputEl.innerHTML = workerDocument.body.innerHTML;
     }, 1000);
   </script>
