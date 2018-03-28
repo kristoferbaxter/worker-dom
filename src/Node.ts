@@ -175,7 +175,11 @@ export class Node {
     if (referenceNode == null) {
       // When a referenceNode is not valid, appendChild(child).
       this.appendChild(child);
-      this._reportMutation_({ addedNodes: [child] });
+      mutate({
+        addedNodes: [child],
+        type: MutationRecordType.CHILD_LIST,
+        target: this,
+      });
 
       return child;
     }
@@ -188,7 +192,12 @@ export class Node {
       this.childNodes.splice(this.childNodes.indexOf(referenceNode), 0, child);
       child.parentNode = this;
       propagate(child, 'isConnected', this.isConnected);
-      this._reportMutation_({ addedNodes: [child], nextSibling: referenceNode });
+      mutate({
+        addedNodes: [child],
+        nextSibling: referenceNode,
+        type: MutationRecordType.CHILD_LIST,
+        target: this,
+      });
 
       return child;
     }
@@ -206,7 +215,12 @@ export class Node {
     child.parentNode = this;
     propagate(child, 'isConnected', this.isConnected);
     this.childNodes.push(child);
-    this._reportMutation_({ addedNodes: [child], previousSibling: this.childNodes[this.childNodes.length - 2] });
+    mutate({
+      addedNodes: [child],
+      previousSibling: this.childNodes[this.childNodes.length - 2],
+      type: MutationRecordType.CHILD_LIST,
+      target: this,
+    });
   }
 
   /**
@@ -223,7 +237,11 @@ export class Node {
       child.parentNode = null;
       propagate(child, 'isConnected', false);
       this.childNodes.splice(index, 1);
-      this._reportMutation_({ removedNodes: [child] });
+      mutate({
+        removedNodes: [child],
+        type: MutationRecordType.CHILD_LIST,
+        target: this,
+      });
 
       return child;
     }
@@ -245,7 +263,12 @@ export class Node {
         oldChild.parentNode = null;
         propagate(oldChild, 'isConnected', false);
         this.childNodes.splice(index, 1, newChild);
-        this._reportMutation_({ addedNodes: [newChild], removedNodes: [oldChild] });
+        mutate({
+          addedNodes: [newChild],
+          removedNodes: [oldChild],
+          type: MutationRecordType.CHILD_LIST,
+          target: this,
+        });
       }
     }
 
@@ -311,19 +334,5 @@ export class Node {
       }
     } while (event.bubbles && !(event.cancelable && event._stop) && (event.target = target = target && target.parentNode));
     return !event.defaultPrevented;
-  }
-
-  /**
-   * Report tokenList mutations to MutationObserver.
-   * @param oldValue value before mutation
-   * @param value value after mutation
-   */
-  private _reportMutation_(mutation: Object): void {
-    mutate(
-      Object.assign(mutation, {
-        type: MutationRecordType.CHILD_LIST,
-        target: this,
-      }),
-    );
   }
 }
