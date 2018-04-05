@@ -14,55 +14,20 @@
  * limitations under the License.
  */
 
-import { TransferrableEvent } from './TransferrableEvent';
+// import { TransferrableEvent } from './TransferrableEvent';
 import { TransferrableMutationRecord } from './TransferrableMutationRecord';
 
 export const enum MessageType {
-  INIT = 0,
-  EVENT = 1,
+  // INIT = 0,
+  // EVENT = 1,
   HYDRATE = 2,
   MUTATE = 3,
-  NAVIGATION_PUSH_STATE = 4,
-  NAVIGATION_REPLACE_STATE = 5,
-  NAVIGATION_POP_STATE = 6,
+  // NAVIGATION_PUSH_STATE = 4,
+  // NAVIGATION_REPLACE_STATE = 5,
+  // NAVIGATION_POP_STATE = 6,
 }
 
 export interface MutationFromWorker {
   type: MessageType.HYDRATE | MessageType.MUTATE;
   mutations: TransferrableMutationRecord[];
 }
-interface HistoryFromWorker {
-  type: MessageType.NAVIGATION_PUSH_STATE | MessageType.NAVIGATION_REPLACE_STATE | MessageType.NAVIGATION_POP_STATE;
-  url: string;
-}
-
-interface EventToWorker {
-  type: MessageType.EVENT;
-  event: TransferrableEvent;
-}
-// interface InitMessageToWorker {
-//   type: "init";
-//   location: string;
-// }
-// interface EventMessageToWorker {
-//   type: "event";
-//   event: TransferrableEvent;
-// }
-// export type MessageToWorker = InitMessageToWorker | EventMessageToWorker;
-
-// interface HydrationFromWorker {
-//   type: "hydrate"; // TODO (KB) – Should this be an enum? Yes.
-//   mutations: TransferrableMutationRecord[];
-// }
-// interface MutationFromWorker {
-//   type: "mutate"; // TODO (KB) – Should this be an enum? Yes.
-//   mutations: TransferrableMutationRecord[];
-// }
-// interface HistoryFromWorker {
-//   type: "pushState" | "replaceState" | "popState"; // TODO (KB) – Should this be an enum? Yes.
-//   url: string;
-// }
-// export type MessageFromWorker = HydrationFromWorker | MutationFromWorker | HistoryFromWorker;
-// export interface MessageEventFromWorker extends MessageEvent {
-//   readonly data: HydrationFromWorker | MutationFromWorker | HistoryFromWorker;
-// }
