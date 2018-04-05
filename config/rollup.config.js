@@ -54,11 +54,17 @@ export default [
   {
     input: 'src/output/index.js',
     output: outputConfiguration(false),
-    plugins: [babel(babelConfiguration(false)), !!UGLIFY_BUNDLE && uglify()],
+    plugins: [
+      babel(babelConfiguration(false)),
+      !!UGLIFY_BUNDLE && uglify()
+    ],
   },
   {
     input: 'src/output/index.js',
     output: outputConfiguration(true),
-    plugins: [babel(babelConfiguration(true)), !!UGLIFY_BUNDLE && uglify()],
+    plugins: [
+      babel(babelConfiguration(true)), 
+      !!UGLIFY_BUNDLE && uglify()
+    ],
   },
 ];

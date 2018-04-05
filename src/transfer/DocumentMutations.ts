@@ -19,12 +19,18 @@ import { MutationRecord } from '../MutationRecord';
 import { TransferrableMutationRecord } from './TransferrableMutationRecord';
 import { Node } from '../Node';
 import { TransferrableNode, SubsequentTransferNode } from './TransferrableNode';
+import { MessageType } from './Messages';
 
+const SUPPORTS_POST_MESSAGE = typeof postMessage === 'function';
 const sanitizeNodes = (nodes: Node[] | undefined): Array<TransferrableNode | SubsequentTransferNode> | null => (nodes && nodes.map(node => node._sanitize_())) || null;
+let observing = false;
+let hydrated = false;
 
-function handleMutations(mutations: MutationRecord[]): void {
-  mutations.forEach(mutation => {
-    const transferrableMutationRecord: TransferrableMutationRecord = {
+function handleMutations(incomingMutations: MutationRecord[]): void {
+  let mutations: TransferrableMutationRecord[] = [];
+
+  incomingMutations.forEach(mutation => {
+    mutations.push({
       target: mutation.target._sanitize_(),
       addedNodes: sanitizeNodes(mutation.addedNodes),
       removedNodes: sanitizeNodes(mutation.removedNodes),
@@ -36,24 +42,25 @@ function handleMutations(mutations: MutationRecord[]): void {
       type: mutation.type,
       propertyName: mutation.propertyName || null,
       value: mutation.value || null,
-    };
-    console.info(`mutation`, transferrableMutationRecord);
+    });
   });
+
+  if (SUPPORTS_POST_MESSAGE) {
+    postMessage(
+      JSON.parse(
+        JSON.stringify({
+          type: hydrated ? MessageType.MUTATE : MessageType.HYDRATE,
+          mutations,
+        }),
+      ),
+    );
+  }
+  // console.info(`mutation`, mutations, incomingMutations);
 }
 
 export function observe(document: Document): void {
-  new document.defaultView.MutationObserver(handleMutations).observe(document.body);
+  if (!observing) {
+    new document.defaultView.MutationObserver(handleMutations).observe(document.body);
+    observing = true;
+  }
 }
-
-/*
-readonly removedNodes: Array<TransferrableNode | SubsequentTransferNode>;
-readonly previousSibling: TransferrableNode | SubsequentTransferNode | null;
-readonly nextSibling: TransferrableNode | SubsequentTransferNode | null;
-readonly attributeName: string | null;
-readonly attributeNamespace: string | null;
-readonly oldValue: string | null;
-
-readonly type: MutationRecordType;
-readonly propertyName: string | null;
-readonly value: string | null;
-*/

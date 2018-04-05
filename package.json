@@ -16,29 +16,29 @@
   "scripts": {
     "watch": "yarn tsc -w -p config/tsconfig.build.json",
     "build": "yarn tsc -p config/tsconfig.build.json",
-    "~rollup": "yarn build && yarn rollup --config config/rollup.config.js",
     "test": "rm -rf src/output && yarn tsc -p config/tsconfig.test.json && yarn ava src/output/test/",
-    "debug": "DEBUG_BUNDLE=true yarn ~rollup && node -r @std/esm debugger/server.mjs",
+    "~rollup": "yarn build && yarn rollup --config config/rollup.config.js",
+    "debug": "DEBUG_BUNDLE=true yarn ~rollup && node -r esm debugger/server.mjs",
     "bundle": "UGLIFY_BUNDLE=true yarn ~rollup"
   },
   "devDependencies": {
-    "@babel/cli": "v7.0.0-beta.42",
-    "@babel/core": "v7.0.0-beta.42",
-    "@babel/plugin-proposal-class-properties": "v7.0.0-beta.42",
-    "@babel/plugin-proposal-object-rest-spread": "v7.0.0-beta.42",
-    "@babel/preset-env": "v7.0.0-beta.42",
-    "@std/esm": "0.25.3",
+    "@babel/cli": "v7.0.0-beta.44",
+    "@babel/core": "v7.0.0-beta.44",
+    "@babel/plugin-proposal-class-properties": "v7.0.0-beta.44",
+    "@babel/plugin-proposal-object-rest-spread": "v7.0.0-beta.44",
+    "@babel/preset-env": "v7.0.0-beta.44",
     "ava": "0.25.0",
+    "esm": "3.0.16",
     "husky": "0.15.0-rc.8",
-    "lint-staged": "7.0.0",
+    "lint-staged": "7.0.4",
     "polka": "0.3.4",
     "prettier": "1.11.1",
     "rollup": "0.57.1",
     "rollup-plugin-babel": "4.0.0-beta.2",
     "rollup-plugin-uglify": "3.0.0",
     "serve-static": "1.13.2",
-    "tsickle": "0.27.2",
-    "typescript": "2.7.2"
+    "tsickle": "0.27.5",
+    "typescript": "2.7.1"
   },
   "lint-staged": {
     "*.ts": [
