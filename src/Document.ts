@@ -19,6 +19,7 @@ import { SVGElement } from './Element';
 import { Node, NodeType } from './Node';
 import { Event } from './Event';
 import { Text } from './Text';
+import { MutationObserver } from './MutationObserver';
 
 type createElementFunc = (type: string) => Element;
 type createElementNSFunc = (type: string, namespace: string) => Element;
@@ -27,8 +28,7 @@ type createTextNodeFunc = (text: string) => Text;
 export class Document extends Element {
   public defaultView: {
     document: Document;
-    // TODO(KB): Restore mutation observation
-    // MutationObserver: typeof MutationObserver;
+    MutationObserver: typeof MutationObserver;
     Document: typeof Document;
     Node: typeof Node;
     Text: typeof Text;
@@ -50,8 +50,7 @@ export class Document extends Element {
     this.createTextNode = createTextNode;
     this.defaultView = {
       document: this,
-      // TODO(KB): Restore mutation observation
-      // MutationObserver: MutationObserver,
+      MutationObserver: MutationObserver,
       Document: Document,
       Node: Node,
       Text: Text,

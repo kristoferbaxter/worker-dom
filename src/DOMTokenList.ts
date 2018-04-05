@@ -15,6 +15,8 @@
  */
 
 import { Element } from './Element';
+import { mutate } from './MutationObserver';
+import { MutationRecordType } from './MutationRecord';
 
 export class DOMTokenList extends Array {
   element: Element;
@@ -24,6 +26,8 @@ export class DOMTokenList extends Array {
   constructor(element: Element, attributeName: string, attributeNamespace: string | null) {
     super();
     this.element = element;
+    this.attributeName = attributeName;
+    this.attributeNamespace = attributeNamespace;
   }
 
   /**
@@ -39,20 +43,12 @@ export class DOMTokenList extends Array {
    * @param collection String of values space delimited to replace the current DOMTokenList with.
    */
   set value(collection: string) {
-    // TODO(KB): Restore mutation observation
-    // const oldValue = this.value;
+    const oldValue = this.value;
     const newValue = collection.trim();
 
     // Replace current tokens with new tokens.
     this.splice(0, this.length, ...(newValue !== '' ? newValue.split(/\s+/) : ''));
-
-    // TODO(KB): Restore mutation observation
-    // this.mutate(this, 'attributes', {
-    //   attributeName: this.attributeName,
-    //   attributeNamespace: this.attributeNamespace,
-    //   value: newValue,
-    //   oldValue,
-    // });
+    this._reportMutation_(oldValue, newValue);
   }
 
   /**
@@ -81,17 +77,9 @@ export class DOMTokenList extends Array {
    * @param tokens each token is a string to add to a TokenList.
    */
   public add(...tokens: string[]): void {
-    // TODO(KB): Restore mutation observation
-    // const oldValue = this.value;
+    const oldValue = this.value;
     this.splice(0, this.length, ...new Set(this.concat(tokens)));
-
-    // TODO(KB): Restore mutation observation
-    // this.mutate(this, 'attributes', {
-    //   attributeName: this.attributeName,
-    //   attributeNamespace: this.attributeNamespace,
-    //   value: this.value,
-    //   oldValue,
-    // });
+    this._reportMutation_(oldValue, this.value);
   }
 
   /**
@@ -102,17 +90,9 @@ export class DOMTokenList extends Array {
    * @param tokens each token is a string to remove from a TokenList.
    */
   public remove(...tokens: string[]): void {
-    // TODO(KB): Restore mutation observation
-    // const oldValue = this.value;
+    const oldValue = this.value;
     this.splice(0, this.length, ...new Set(this.filter(token => !tokens.includes(token))));
-
-    // TODO(KB): Restore mutation observation
-    // this.mutate(this, 'attributes', {
-    //   attributeName: this.attributeName,
-    //   attributeNamespace: this.attributeNamespace,
-    //   value: this.value,
-    //   oldValue,
-    // });
+    this._reportMutation_(oldValue, this.value);
   }
 
   /**
@@ -125,8 +105,7 @@ export class DOMTokenList extends Array {
       return;
     }
 
-    // TODO(KB): Restore mutation observation
-    // const oldValue = this.value;
+    const oldValue = this.value;
     let set = new Set(this); // foo foo bar
     if (token !== newToken) {
       set.delete(token);
@@ -135,14 +114,7 @@ export class DOMTokenList extends Array {
       }
     }
     this.splice(0, this.length, ...set);
-
-    // TODO(KB): Restore mutation observation
-    // this.mutate(this, 'attributes', {
-    //   attributeName: this.attributeName,
-    //   attributeNamespace: this.attributeNamespace,
-    //   value: this.value,
-    //   oldValue,
-    // });
+    this._reportMutation_(oldValue, this.value);
   }
 
   /**
@@ -167,5 +139,21 @@ export class DOMTokenList extends Array {
     }
 
     return true;
+  }
+
+  /**
+   * Report tokenList mutations to MutationObserver.
+   * @param oldValue value before mutation
+   * @param value value after mutation
+   */
+  private _reportMutation_(oldValue: string, value: string): void {
+    mutate({
+      type: MutationRecordType.ATTRIBUTES,
+      target: this.element,
+      attributeName: this.attributeName,
+      attributeNamespace: this.attributeNamespace,
+      value,
+      oldValue,
+    });
   }
 }

@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-import { Event } from './Event';
+import { store as mappingStoreNode } from './NodeMapping';
+import { Event, EventHandler } from './Event';
 import { toLower } from './utils';
+import { mutate } from './MutationObserver';
+import { MutationRecordType } from './MutationRecord';
 
 export const enum NodeType {
   ELEMENT_NODE = 1,
@@ -31,10 +34,6 @@ export const enum NodeType {
   DOCUMENT_FRAGMENT_NODE = 11,
   // Note: DOCUMENT_FRAGMENT_NODE is not supported in this implementation yet.
   NOTATION_NODE = 12,
-}
-type EventHandler = (event: Event) => any;
-interface EventHandlers {
-  [index: string]: EventHandler[];
 }
 export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
 
@@ -62,11 +61,16 @@ export class Node {
   public childNodes: Node[] = [];
   public parentNode: Node | null = null;
   public isConnected: boolean = false;
-  private _handlers_: EventHandlers = {};
+  public _index_: number | null = null;
+  private _handlers_: {
+    [index: string]: EventHandler[];
+  } = {};
 
   constructor(nodeType: NodeType, nodeName: NodeName) {
     this.nodeType = nodeType;
     this.nodeName = nodeName;
+
+    mappingStoreNode(this);
   }
 
   // Unimplemented Properties
@@ -171,14 +175,11 @@ export class Node {
     if (referenceNode == null) {
       // When a referenceNode is not valid, appendChild(child).
       this.appendChild(child);
-
-      // TODO(KB): Restore mutation observation
-      // this.mutate(this, 'childList', {
-      //   addedNodes: [child],
-      //   removedNodes: null,
-      //   previousSibling: null,
-      //   nextSibling: referenceNode,
-      // });
+      mutate({
+        addedNodes: [child],
+        type: MutationRecordType.CHILD_LIST,
+        target: this,
+      });
 
       return child;
     }
@@ -191,14 +192,12 @@ export class Node {
       this.childNodes.splice(this.childNodes.indexOf(referenceNode), 0, child);
       child.parentNode = this;
       propagate(child, 'isConnected', this.isConnected);
-
-      // TODO(KB): Restore mutation observation
-      // this.mutate(this, 'childList', {
-      //   addedNodes: [child],
-      //   removedNodes: null,
-      //   previousSibling: null,
-      //   nextSibling: referenceNode,
-      // });
+      mutate({
+        addedNodes: [child],
+        nextSibling: referenceNode,
+        type: MutationRecordType.CHILD_LIST,
+        target: this,
+      });
 
       return child;
     }
@@ -216,14 +215,12 @@ export class Node {
     child.parentNode = this;
     propagate(child, 'isConnected', this.isConnected);
     this.childNodes.push(child);
-
-    // TODO(KB): Restore mutation observation.
-    // this.mutate(this, 'childList', {
-    //   addedNodes: [child],
-    //   removedNodes: null,
-    //   previousSibling: this.childNodes[this.childNodes.length - 2],
-    //   nextSibling: null,
-    // });
+    mutate({
+      addedNodes: [child],
+      previousSibling: this.childNodes[this.childNodes.length - 2],
+      type: MutationRecordType.CHILD_LIST,
+      target: this,
+    });
   }
 
   /**
@@ -240,17 +237,16 @@ export class Node {
       child.parentNode = null;
       propagate(child, 'isConnected', false);
       this.childNodes.splice(index, 1);
+      mutate({
+        removedNodes: [child],
+        type: MutationRecordType.CHILD_LIST,
+        target: this,
+      });
+
       return child;
     }
-    return null;
 
-    // TODO(KB): Restore mutation observation.
-    // this.mutate(this, 'childList', {
-    //   addedNodes: null,
-    //   removedNodes: exists ? [child] : [],
-    //   previousSibling: this.childNodes[i - 1],
-    //   nextSibling: this.childNodes[i],
-    // });
+    return null;
   }
 
   // TODO(KB): Verify behaviour.
@@ -267,14 +263,12 @@ export class Node {
         oldChild.parentNode = null;
         propagate(oldChild, 'isConnected', false);
         this.childNodes.splice(index, 1, newChild);
-
-        // TODO(KB): Restore mutation observation.
-        // this.mutate(this, 'childList', {
-        //   addedNodes: [newChild],
-        //   removedNodes: [oldChild],
-        //   previousSibling: this.childNodes[index - 1],
-        //   nextSibling: this.childNodes[index + 1],
-        // });
+        mutate({
+          addedNodes: [newChild],
+          removedNodes: [oldChild],
+          type: MutationRecordType.CHILD_LIST,
+          target: this,
+        });
       }
     }
 

@@ -21,6 +21,8 @@ interface EventOptions {
   cancelable?: boolean;
 }
 
+export type EventHandler = (event: Event) => any;
+
 export class Event {
   public bubbles: boolean;
   public cancelable: boolean;

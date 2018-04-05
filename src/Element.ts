@@ -18,6 +18,8 @@ import { Node, NodeType } from './Node';
 import { DOMTokenList } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate, NamespaceURI } from './Attr';
 import { keyValueString } from './utils';
+import { mutate } from './MutationObserver';
+import { MutationRecordType } from './MutationRecord';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
@@ -35,7 +37,7 @@ function findMatchingChildren(element: Element, conditionPredicate: ConditionPre
 
 export class Element extends Node {
   public attributes: Attr[] = [];
-  public classList: DOMTokenList = new DOMTokenList(this, 'className', null);
+  public classList: DOMTokenList = new DOMTokenList(this, 'class', null);
   // No implementation necessary
   // Element.id
 
@@ -228,8 +230,7 @@ export class Element extends Node {
    */
   public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): void {
     const attr = this.attributes.find(matchAttrPredicate(namespaceURI, name));
-    // TODO(KB) – Restore mutation support
-    // const oldValue = attr.value;
+    const oldValue = (attr && attr.value) || '';
 
     if (attr) {
       attr.value = value;
@@ -241,13 +242,14 @@ export class Element extends Node {
       });
     }
 
-    // TODO(KB) – Restore mutation support
-    // this.mutate(this, 'attributes', {
-    //   attributeName: name,
-    //   attributeNamespace: ns,
-    //   value,
-    //   oldValue,
-    // });
+    mutate({
+      type: MutationRecordType.ATTRIBUTES,
+      target: this,
+      attributeName: name,
+      attributeNamespace: namespaceURI,
+      value,
+      oldValue,
+    });
   }
 
   /**
@@ -276,16 +278,16 @@ export class Element extends Node {
     const index = this.attributes.findIndex(matchAttrPredicate(namespaceURI, name));
 
     if (index >= 0) {
-      // TODO(KB) – Restore mutation support
-      // const oldValue = this.attributes[index].value;
+      const oldValue = this.attributes[index].value;
       this.attributes.splice(index, 1);
 
-      // TODO(KB) – Restore mutation support
-      // this.mutate(this, 'attributes', {
-      //   attributeName: name,
-      //   attributeNamespace: ns,
-      //   oldValue: oldValue,
-      // });
+      mutate({
+        type: MutationRecordType.ATTRIBUTES,
+        target: this,
+        attributeName: name,
+        attributeNamespace: namespaceURI,
+        oldValue,
+      });
     }
   }
 

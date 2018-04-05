@@ -24,9 +24,9 @@ export function document() {
     return new Element(NodeType.ELEMENT_NODE, String(tagName).toUpperCase());
   }
 
-  function createElementNS(ns: string, tagName: string): Element {
+  function createElementNS(namespaceURI: string, tagName: string): Element {
     let element = createElement(tagName);
-    element.namespace = ns;
+    element.namespace = namespaceURI;
     return element;
   }
 
