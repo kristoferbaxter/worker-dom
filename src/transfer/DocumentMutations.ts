@@ -19,6 +19,7 @@ import { MutationRecord } from '../MutationRecord';
 import { TransferrableMutationRecord } from './TransferrableMutationRecord';
 import { Node } from '../Node';
 import { TransferrableNode, SubsequentTransferNode } from './TransferrableNode';
+import { MutationFromWorker } from './Messages';
 import { MessageType } from './Messages';
 
 const SUPPORTS_POST_MESSAGE = typeof postMessage === 'function';
@@ -46,14 +47,12 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
   });
 
   if (SUPPORTS_POST_MESSAGE) {
-    postMessage(
-      JSON.parse(
-        JSON.stringify({
-          type: hydrated ? MessageType.MUTATE : MessageType.HYDRATE,
-          mutations,
-        }),
-      ),
-    );
+    const mutationFromWorker: MutationFromWorker = {
+      type: hydrated ? MessageType.MUTATE : MessageType.HYDRATE,
+      mutations,
+    };
+
+    postMessage(JSON.parse(JSON.stringify(mutationFromWorker)));
   }
   console.info(`mutation`, mutations, incomingMutations);
 }

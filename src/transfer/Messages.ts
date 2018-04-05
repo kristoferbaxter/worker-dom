@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import { TransferrableEvent } from './TransferrableEvent';
+import { TransferrableMutationRecord } from './TransferrableMutationRecord';
+
 export const enum MessageType {
   INIT = 0,
   EVENT = 1,
@@ -24,6 +27,19 @@ export const enum MessageType {
   NAVIGATION_POP_STATE = 6,
 }
 
+export interface MutationFromWorker {
+  type: MessageType.HYDRATE | MessageType.MUTATE;
+  mutations: TransferrableMutationRecord[];
+}
+interface HistoryFromWorker {
+  type: MessageType.NAVIGATION_PUSH_STATE | MessageType.NAVIGATION_REPLACE_STATE | MessageType.NAVIGATION_POP_STATE;
+  url: string;
+}
+
+interface EventToWorker {
+  type: MessageType.EVENT;
+  event: TransferrableEvent;
+}
 // interface InitMessageToWorker {
 //   type: "init";
 //   location: string;
