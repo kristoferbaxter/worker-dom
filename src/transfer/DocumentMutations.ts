@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { Document } from '../Document';
-import { MutationRecord } from '../MutationRecord';
+import { Document } from '../dom/Document';
+import { MutationRecord } from '../dom/MutationRecord';
 import { TransferrableMutationRecord } from './TransferrableMutationRecord';
-import { Node } from '../Node';
+import { Node } from '../dom/Node';
 import { TransferrableNode, SubsequentTransferNode } from './TransferrableNode';
 import { MutationFromWorker } from './Messages';
 import { MessageType } from './Messages';
 
-const SUPPORTS_POST_MESSAGE = typeof postMessage === 'function';
+const SUPPORTS_POST_MESSAGE = typeof postMessage !== 'undefined';
 const sanitizeNodes = (nodes: Node[] | undefined): Array<TransferrableNode | SubsequentTransferNode> | null => (nodes && nodes.map(node => node._sanitize_())) || null;
 let observing = false;
 let hydrated = false;
@@ -53,8 +53,8 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
     };
 
     postMessage(JSON.parse(JSON.stringify(mutationFromWorker)));
+    console.info(`mutation`, mutations, incomingMutations);
   }
-  console.info(`mutation`, mutations, incomingMutations);
 }
 
 export function observe(document: Document): void {

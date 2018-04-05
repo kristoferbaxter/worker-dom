@@ -18,7 +18,7 @@ import { NodeType } from './Node';
 import { Element } from './Element';
 import { Text } from './Text';
 import { Document } from './Document';
-import { observe } from './transfer/DocumentMutations';
+import { observe } from '../transfer/DocumentMutations';
 
 export function document() {
   function createElement(tagName: string): Element {

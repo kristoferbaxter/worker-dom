@@ -16,7 +16,7 @@
 
 import { NodeType } from './Node';
 import { CharacterData } from './CharacterData';
-import { TransferrableNode, SubsequentTransferNode } from './transfer/TransferrableNode';
+import { TransferrableNode, SubsequentTransferNode } from '../transfer/TransferrableNode';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Text
 export class Text extends CharacterData {

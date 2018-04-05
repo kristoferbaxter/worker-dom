@@ -17,10 +17,10 @@
 import { Node, NodeType } from './Node';
 import { DOMTokenList } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate, NamespaceURI } from './Attr';
-import { keyValueString } from './utils';
+import { keyValueString } from '../utils';
 import { mutate } from './MutationObserver';
 import { MutationRecordType } from './MutationRecord';
-import { TransferrableNode, SubsequentTransferNode } from './transfer/TransferrableNode';
+import { TransferrableNode, SubsequentTransferNode } from '../transfer/TransferrableNode';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 

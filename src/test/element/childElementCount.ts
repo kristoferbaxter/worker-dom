@@ -15,8 +15,8 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../Node';
-import { Element } from '../../Element';
+import { Node, NodeType } from '../../dom/Node';
+import { Element } from '../../dom/Element';
 
 test.beforeEach(t => {
   t.context = {

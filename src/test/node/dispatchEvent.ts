@@ -15,8 +15,8 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../Node';
-import { Event } from '../../Event';
+import { Node, NodeType } from '../../dom/Node';
+import { Event } from '../../dom/Event';
 
 test.beforeEach(t => {
   const node = new Node(NodeType.ELEMENT_NODE, 'div');

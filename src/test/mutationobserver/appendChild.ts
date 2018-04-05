@@ -15,8 +15,8 @@
  */
 
 import test from 'ava';
-import { document as workerDocument } from '../../index';
-import { MutationRecord, MutationRecordType } from '../../MutationRecord';
+import { document as workerDocument } from '../../dom/index';
+import { MutationRecord, MutationRecordType } from '../../dom/MutationRecord';
 
 test.cb('appendChild mutation observed, first node', t => {
   const document = workerDocument();

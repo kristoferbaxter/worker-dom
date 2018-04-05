@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { NodeType, NodeName } from '../Node';
+import { NodeType, NodeName } from '../dom/Node';
 
 export interface TransferrableNode {
   readonly _index_: number;

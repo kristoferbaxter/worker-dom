@@ -15,8 +15,8 @@
  */
 
 import test from 'ava';
-import { document as workerDocument } from '../../index';
-import { MutationRecord, MutationRecordType } from '../../MutationRecord';
+import { document as workerDocument } from '../../dom/index';
+import { MutationRecord, MutationRecordType } from '../../dom/MutationRecord';
 
 test.cb.serial('Element.setAttribute mutation observed, new attribute', t => {
   const document = workerDocument();
