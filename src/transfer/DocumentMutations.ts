@@ -55,7 +55,7 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
       ),
     );
   }
-  // console.info(`mutation`, mutations, incomingMutations);
+  console.info(`mutation`, mutations, incomingMutations);
 }
 
 export function observe(document: Document): void {
