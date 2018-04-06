@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { Element } from '../worker-thread/Element';
-
 export function upgradeElement(baseElement: Element) {
   const authorURL = baseElement.getAttribute('src');
   console.log(authorURL);
