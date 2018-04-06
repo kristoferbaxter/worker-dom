@@ -332,6 +332,7 @@ export class Element extends Node {
     if (this._transferred_) {
       return {
         _index_: this._index_,
+        transferred: true,
       };
     }
 
@@ -341,6 +342,7 @@ export class Element extends Node {
     });
     return {
       _index_: this._index_,
+      transferred: false,
       nodeType: this.nodeType,
       nodeName: this.nodeName,
       attributes: this.attributes,

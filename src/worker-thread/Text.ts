@@ -74,6 +74,7 @@ export class Text extends CharacterData {
     if (this._transferred_) {
       return {
         _index_: this._index_,
+        transferred: true,
         textContent: this.nodeValue,
       };
     }
@@ -84,6 +85,7 @@ export class Text extends CharacterData {
     });
     return {
       _index_: this._index_,
+      transferred: true,
       nodeType: this.nodeType,
       nodeName: this.nodeName,
       attributes: null,
