@@ -14,10 +14,11 @@
   "author": "Kristofer Baxter",
   "license": "Apache-2.0",
   "scripts": {
-    "watch": "yarn tsc -w -p config/tsconfig.build.json",
-    "build": "yarn tsc -p config/tsconfig.build.json",
-    "test": "rm -rf src/output && yarn tsc -p config/tsconfig.test.json && yarn ava src/output/test/",
-    "~rollup": "yarn build && yarn rollup --config config/rollup.config.js",
+    "pretest": "rimraf src/output && yarn tsc -p config/tsconfig.test.worker-thread.json & yarn tsc -p config/tsconfig.test.json & yarn tsc -p config/tsconfig.test.main-thread.json",
+    "test": "yarn ava src/output/test/",
+
+    "pre~rollup": "rimraf src/output && yarn tsc -p config/tsconfig.build.worker-thread.json & yarn tsc -p config/tsconfig.build.main-thread.json",
+    "~rollup": "yarn rollup --config config/rollup.config.js",
     "debug": "DEBUG_BUNDLE=true yarn ~rollup && node -r esm debugger/server.mjs",
     "bundle": "UGLIFY_BUNDLE=true yarn ~rollup"
   },
@@ -33,6 +34,7 @@
     "lint-staged": "7.0.4",
     "polka": "0.3.4",
     "prettier": "1.11.1",
+    "rimraf": "2.6.2",
     "rollup": "0.57.1",
     "rollup-plugin-babel": "4.0.0-beta.2",
     "rollup-plugin-uglify": "3.0.0",

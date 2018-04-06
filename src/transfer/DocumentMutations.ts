@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { Document } from '../dom/Document';
-import { MutationRecord } from '../dom/MutationRecord';
+import { Document } from '../worker-thread/Document';
+import { MutationRecord } from '../worker-thread/MutationRecord';
 import { TransferrableMutationRecord } from './TransferrableMutationRecord';
-import { Node } from '../dom/Node';
+import { Node } from '../worker-thread/Node';
 import { TransferrableNode, SubsequentTransferNode } from './TransferrableNode';
 import { MutationFromWorker } from './Messages';
 import { MessageType } from './Messages';

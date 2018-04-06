@@ -52,7 +52,7 @@ function babelConfiguration(esmodules) {
 
 export default [
   {
-    input: 'src/output/dom/index.js',
+    input: 'src/output/worker-thread/index.js',
     output: outputConfiguration(false),
     plugins: [
       babel(babelConfiguration(false)),
@@ -60,7 +60,7 @@ export default [
     ],
   },
   {
-    input: 'src/output/dom/index.js',
+    input: 'src/output/worker-thread/index.js',
     output: outputConfiguration(true),
     plugins: [
       babel(babelConfiguration(true)), 

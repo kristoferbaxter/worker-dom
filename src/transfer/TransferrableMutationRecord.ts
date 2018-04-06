@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { MutationRecordType } from '../dom/MutationRecord';
+import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { TransferrableNode, SubsequentTransferNode } from './TransferrableNode';
 
 // The TransferrableMutationRecord interface is modification and extension of

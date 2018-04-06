@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-// import { TransferrableEvent } from './TransferrableEvent';
+import { TransferrableEvent } from './TransferrableEvent';
 import { TransferrableMutationRecord } from './TransferrableMutationRecord';
 
 export const enum MessageType {
   // INIT = 0,
-  // EVENT = 1,
+  EVENT = 1,
   HYDRATE = 2,
   MUTATE = 3,
   // NAVIGATION_PUSH_STATE = 4,
@@ -31,3 +31,9 @@ export interface MutationFromWorker {
   type: MessageType.HYDRATE | MessageType.MUTATE;
   mutations: TransferrableMutationRecord[];
 }
+
+interface EventToWorker {
+  type: MessageType.EVENT;
+  event: TransferrableEvent;
+}
+export type MessageToWorker = EventToWorker;

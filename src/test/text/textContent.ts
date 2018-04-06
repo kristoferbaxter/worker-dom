@@ -15,7 +15,7 @@
  */
 
 import test from 'ava';
-import { Text } from '../../dom/Text';
+import { Text } from '../../worker-thread/Text';
 
 test.beforeEach(t => {
   t.context = {
