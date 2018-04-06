@@ -17,7 +17,6 @@
 import { Node, NodeType } from './Node';
 import { DOMTokenList } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate, NamespaceURI } from './Attr';
-import { keyValueString } from '../utils';
 import { mutate } from './MutationObserver';
 import { MutationRecordType } from './MutationRecord';
 import { TransferrableNode, SubsequentTransferNode } from '../transfer/TransferrableNode';
@@ -38,7 +37,7 @@ function findMatchingChildren(element: Element, conditionPredicate: ConditionPre
 
 export class Element extends Node {
   public attributes: Attr[] = [];
-  public classList: DOMTokenList = new DOMTokenList(this, 'class', null);
+  public classList: DOMTokenList = new DOMTokenList(this, 'class', null, this.storeAttributeNS.bind(this));
   // No implementation necessary
   // Element.id
 
@@ -110,7 +109,7 @@ export class Element extends Node {
    * @return string representation of serialized HTML describing the Element and its descendants.
    */
   get outerHTML(): string {
-    return `<${[this.nodeName, keyValueString('class', this.className), attrsToString(this.attributes)].join(' ').trim()}>${this.innerHTML}</${this.nodeName}>`;
+    return `<${[this.nodeName, attrsToString(this.attributes)].join(' ').trim()}>${this.innerHTML}</${this.nodeName}>`;
   }
 
   /**
@@ -230,6 +229,19 @@ export class Element extends Node {
    * @param value attribute value
    */
   public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): void {
+    const oldValue = this.storeAttributeNS(namespaceURI, name, value);
+
+    mutate({
+      type: MutationRecordType.ATTRIBUTES,
+      target: this,
+      attributeName: name,
+      attributeNamespace: namespaceURI,
+      value,
+      oldValue,
+    });
+  }
+
+  private storeAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): string {
     const attr = this.attributes.find(matchAttrPredicate(namespaceURI, name));
     const oldValue = (attr && attr.value) || '';
 
@@ -242,15 +254,7 @@ export class Element extends Node {
         value,
       });
     }
-
-    mutate({
-      type: MutationRecordType.ATTRIBUTES,
-      target: this,
-      attributeName: name,
-      attributeNamespace: namespaceURI,
-      value,
-      oldValue,
-    });
+    return oldValue;
   }
 
   /**

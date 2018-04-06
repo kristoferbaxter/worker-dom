@@ -17,17 +17,20 @@
 import { Element } from './Element';
 import { mutate } from './MutationObserver';
 import { MutationRecordType } from './MutationRecord';
+import { NamespaceURI } from './Attr';
 
 export class DOMTokenList extends Array {
   element: Element;
   attributeName: string;
   attributeNamespace: string | null = null;
+  storeAttributeMethod: (namespaceURI: NamespaceURI, name: string, value: string) => void;
 
-  constructor(element: Element, attributeName: string, attributeNamespace: string | null) {
+  constructor(element: Element, attributeName: string, attributeNamespace: string | null, storeAttributeMethod: (namespaceURI: NamespaceURI, name: string, value: string) => void) {
     super();
     this.element = element;
     this.attributeName = attributeName;
     this.attributeNamespace = attributeNamespace;
+    this.storeAttributeMethod = storeAttributeMethod;
   }
 
   /**
@@ -147,6 +150,7 @@ export class DOMTokenList extends Array {
    * @param value value after mutation
    */
   private _reportMutation_(oldValue: string, value: string): void {
+    this.storeAttributeMethod(this.attributeNamespace, this.attributeName, value);
     mutate({
       type: MutationRecordType.ATTRIBUTES,
       target: this.element,

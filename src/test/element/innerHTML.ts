@@ -38,5 +38,5 @@ test('element with a child', t => {
   const { node, child } = t.context as { node: Element; child: Element };
 
   node.appendChild(child);
-  t.is(node.innerHTML, '<div class=""></div>');
+  t.is(node.innerHTML, '<div></div>');
 });
