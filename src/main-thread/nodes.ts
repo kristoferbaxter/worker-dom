@@ -15,17 +15,7 @@
  */
 
 import { TransferrableNode } from '../transfer/TransferrableNode';
-
-interface RenderableHTMLElement extends HTMLElement {
-  _index_: number;
-}
-interface RenderableSVGElement extends SVGElement {
-  _index_: number;
-}
-interface RenderableText extends Text {
-  _index_: number;
-}
-type RenderableElement = RenderableHTMLElement | RenderableSVGElement | RenderableText;
+import { RenderableElement } from './RenderableElement';
 
 export class Nodes {
   private NODES: Map<number, RenderableElement> = new Map();

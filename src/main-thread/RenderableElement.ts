@@ -14,26 +14,16 @@
  * limitations under the License.
  */
 
-import { TransferrableEvent } from './TransferrableEvent';
-import { TransferrableMutationRecord } from './TransferrableRecord';
-
-export const enum MessageType {
-  // INIT = 0,
-  EVENT = 1,
-  HYDRATE = 2,
-  MUTATE = 3,
-  // NAVIGATION_PUSH_STATE = 4,
-  // NAVIGATION_REPLACE_STATE = 5,
-  // NAVIGATION_POP_STATE = 6,
+interface RenderableHTMLElement extends HTMLElement {
+  [key: string]: any;
+  _index_: number;
 }
-
-export interface MutationFromWorker {
-  type: MessageType.HYDRATE | MessageType.MUTATE;
-  mutations: TransferrableMutationRecord[];
+interface RenderableSVGElement extends SVGElement {
+  [key: string]: any;
+  _index_: number;
 }
-
-interface EventToWorker {
-  type: MessageType.EVENT;
-  event: TransferrableEvent;
+interface RenderableText extends Text {
+  [key: string]: any;
+  _index_: number;
 }
-export type MessageToWorker = EventToWorker;
+export type RenderableElement = RenderableHTMLElement | RenderableSVGElement | RenderableText;

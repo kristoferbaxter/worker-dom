@@ -36,3 +36,20 @@ export interface TransferrableMutationRecord {
   readonly propertyName: string | null;
   readonly value: string | null;
 }
+
+// TODO(KB): Hydrations are not allowed to contain SubsequentTransferNodes.
+// Perhaps we should create a TransferrableHydrationRecord.
+// export interface TransferrableHydrationRecord {
+//   readonly target: TransferrableNode;
+//   readonly addedNodes: Array<TransferrableNode> | null;
+//   readonly removedNodes: Array<TransferrableNode> | null;
+//   readonly previousSibling: TransferrableNode | null;
+//   readonly nextSibling: TransferrableNode | null;
+//   readonly attributeName: string | null;
+//   readonly attributeNamespace: string | null;
+//   readonly oldValue: string | null;
+
+//   readonly type: MutationRecordType;
+//   readonly propertyName: string | null;
+//   readonly value: string | null;
+// }

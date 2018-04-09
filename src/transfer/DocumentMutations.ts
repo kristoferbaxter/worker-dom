@@ -16,7 +16,7 @@
 
 import { Document } from '../worker-thread/Document';
 import { MutationRecord } from '../worker-thread/MutationRecord';
-import { TransferrableMutationRecord } from './TransferrableMutationRecord';
+import { TransferrableMutationRecord } from './TransferrableRecord';
 import { Node } from '../worker-thread/Node';
 import { TransferrableNode, SubsequentTransferNode } from './TransferrableNode';
 import { MutationFromWorker } from './Messages';
