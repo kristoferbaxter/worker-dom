@@ -14,9 +14,41 @@
  * limitations under the License.
  */
 
-export function upgradeElement(baseElement: Element) {
+import { Nodes } from './nodes';
+import { Hydration } from './hydrate';
+import { Mutation } from './mutate';
+import { createWorker } from './worker';
+import { MessageFromWorker, MessageType } from '../transfer/Messages';
+
+export function upgradeElement(baseElement: Element): void {
   const authorURL = baseElement.getAttribute('src');
-  console.log(authorURL);
+  if (authorURL === null) {
+    return;
+  }
+
+  const nodesInstance = new Nodes(baseElement);
+  const hydrationInstance = new Hydration(baseElement, nodesInstance);
+  const mutationInstance = new Mutation(nodesInstance);
+
+  console.log(`creating worker with author code: ${authorURL}`);
+  createWorker('', authorURL).then(worker => {
+    if (worker === null) {
+      return;
+    }
+
+    worker.onmessage = ({ data }: MessageFromWorker) => {
+      switch (data.type) {
+        case MessageType.HYDRATE:
+          console.info(`from worker: ${data.type}`, data.mutations);
+          hydrationInstance.hydrate(data.mutations);
+          break;
+        case MessageType.MUTATE:
+          console.info(`from worker: ${data.type}`, data.mutations);
+          mutationInstance.process(data.mutations);
+          break;
+      }
+    };
+  });
 }
 
 /*

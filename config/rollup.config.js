@@ -5,10 +5,11 @@ const {DEBUG_BUNDLE, UGLIFY_BUNDLE} = process.env;
 
 /**
  * @param {boolean} esmodules
+ * @param {boolean} forMainThread
  * @returns {Array<OutputConfig>} Rollup configurations for output.
  */
-function outputConfiguration(esmodules) {
-  const basePath = `${DEBUG_BUNDLE ? 'debugger/build' : 'build'}${(esmodules === true && '/esmodules') || ''}`;
+function output(esmodules, forMainThread) {
+  const basePath = `${DEBUG_BUNDLE ? 'debugger/build' : 'build'}${(esmodules === true && '/esmodules') || ''}${forMainThread ? '/main-thread' : ''}`;
 
   return [
     {
@@ -53,7 +54,7 @@ function babelConfiguration(esmodules) {
 export default [
   {
     input: 'src/output/worker-thread/index.js',
-    output: outputConfiguration(false),
+    output: output(false, false),
     plugins: [
       babel(babelConfiguration(false)),
       !!UGLIFY_BUNDLE && uglify()
@@ -61,7 +62,23 @@ export default [
   },
   {
     input: 'src/output/worker-thread/index.js',
-    output: outputConfiguration(true),
+    output: output(true, false),
+    plugins: [
+      babel(babelConfiguration(true)), 
+      !!UGLIFY_BUNDLE && uglify()
+    ],
+  },
+  {
+    input: 'src/output/main-thread/index.js',
+    output: output(false, true),
+    plugins: [
+      babel(babelConfiguration(false)),
+      !!UGLIFY_BUNDLE && uglify()
+    ],
+  },
+  {
+    input: 'src/output/main-thread/index.js',
+    output: output(true, true),
     plugins: [
       babel(babelConfiguration(true)), 
       !!UGLIFY_BUNDLE && uglify()

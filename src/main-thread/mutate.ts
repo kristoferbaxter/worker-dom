@@ -77,7 +77,8 @@ export class Mutation {
     this.syncFlush = this.syncFlush.bind(this);
   }
 
-  public process(lastGestureTime: number, mutations: TransferrableMutationRecord[]): void {
+  public process(mutations: TransferrableMutationRecord[]): void {
+    // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferrableMutationRecord[])
     // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {
     //   return;
     // }

@@ -31,6 +31,9 @@ export interface MutationFromWorker {
   type: MessageType.HYDRATE | MessageType.MUTATE;
   mutations: TransferrableMutationRecord[];
 }
+export interface MessageFromWorker {
+  data: MutationFromWorker;
+}
 
 interface EventToWorker {
   type: MessageType.EVENT;
