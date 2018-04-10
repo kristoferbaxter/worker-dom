@@ -15,11 +15,10 @@
  */
 
 import test from 'ava';
-import { document as workerDocument } from '../../worker-thread/index';
+import { document } from '../../worker-thread/index';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
 test.cb.serial('removeChild mutation observed, first node', t => {
-  const document = workerDocument();
   const div = document.createElement('div');
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
     t.deepEqual(mutations, [
@@ -39,7 +38,6 @@ test.cb.serial('removeChild mutation observed, first node', t => {
 });
 
 test.cb.serial('removeChild mutation observed, sibling node', t => {
-  const document = workerDocument();
   const div = document.createElement('div');
   const p = document.createElement('p');
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
@@ -61,7 +59,6 @@ test.cb.serial('removeChild mutation observed, sibling node', t => {
 });
 
 test.cb.serial('removeChild mutation observed, multiple sibling nodes', t => {
-  const document = workerDocument();
   const div = document.createElement('div');
   const p = document.createElement('p');
   const input = document.createElement('input');
@@ -91,7 +88,6 @@ test.cb.serial('removeChild mutation observed, multiple sibling nodes', t => {
 });
 
 test.cb.serial('removeChild mutation observed, tree > 1 depth', t => {
-  const document = workerDocument();
   const div = document.createElement('div');
   const p = document.createElement('p');
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {

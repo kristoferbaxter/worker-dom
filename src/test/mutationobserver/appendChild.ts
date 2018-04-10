@@ -15,11 +15,10 @@
  */
 
 import test from 'ava';
-import { document as workerDocument } from '../../worker-thread/index';
+import { document } from '../../worker-thread/index';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
-test.cb('appendChild mutation observed, first node', t => {
-  const document = workerDocument();
+test.cb.serial('appendChild mutation observed, first node', t => {
   const div = document.createElement('div');
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
     t.deepEqual(mutations, [
@@ -40,7 +39,6 @@ test.cb('appendChild mutation observed, first node', t => {
 
 // TODO(KB): Tests must be run serially, observer callbacks are not occuring otherwise.
 test.cb.serial('appendChild mutation observed, sibling node', t => {
-  const document = workerDocument();
   const div = document.createElement('div');
   const p = document.createElement('p');
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
@@ -62,7 +60,6 @@ test.cb.serial('appendChild mutation observed, sibling node', t => {
 });
 
 test.cb.serial('appendChild mutation observed, tree > 1 depth', t => {
-  const document = workerDocument();
   const div = document.createElement('div');
   const p = document.createElement('p');
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {

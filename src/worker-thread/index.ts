@@ -20,7 +20,7 @@ import { Text } from './Text';
 import { Document } from './Document';
 import { observe } from '../transfer/DocumentMutations';
 
-export function document() {
+function generateDocument() {
   function createElement(tagName: string): Element {
     return new Element(NodeType.ELEMENT_NODE, String(tagName).toUpperCase());
   }
@@ -41,3 +41,12 @@ export function document() {
 
   return createDocument();
 }
+
+export const document = generateDocument();
+
+export const monkeyPatch = {
+  document,
+  localStorage: {},
+  location: {},
+  url: '/',
+};

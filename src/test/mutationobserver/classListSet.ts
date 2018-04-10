@@ -15,11 +15,10 @@
  */
 
 import test from 'ava';
-import { document as workerDocument } from '../../worker-thread/index';
+import { document } from '../../worker-thread/index';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
 test.cb('Element.classList.set mutation observed', t => {
-  const document = workerDocument();
   const el = document.createElement('div');
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
     t.deepEqual(mutations, [

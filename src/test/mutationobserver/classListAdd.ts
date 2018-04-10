@@ -15,11 +15,10 @@
  */
 
 import test from 'ava';
-import { document as workerDocument } from '../../worker-thread/index';
+import { document } from '../../worker-thread/index';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
 test.cb.serial('Element.classList.add mutation observed, single value', t => {
-  const document = workerDocument();
   const el = document.createElement('div');
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
     t.deepEqual(mutations, [
@@ -42,7 +41,6 @@ test.cb.serial('Element.classList.add mutation observed, single value', t => {
 });
 
 test.cb.serial('Element.classList.add mutation observed, single value to existing values', t => {
-  const document = workerDocument();
   const el = document.createElement('div');
   el.classList.value = 'foo';
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
@@ -66,7 +64,6 @@ test.cb.serial('Element.classList.add mutation observed, single value to existin
 });
 
 test.cb.serial('Element.classList.add mutation observed, multiple values', t => {
-  const document = workerDocument();
   const el = document.createElement('div');
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
     t.deepEqual(mutations, [
@@ -89,7 +86,6 @@ test.cb.serial('Element.classList.add mutation observed, multiple values', t => 
 });
 
 test.cb.serial('Element.classList.add mutation observed, multiple value to existing values', t => {
-  const document = workerDocument();
   const el = document.createElement('div');
   el.classList.value = 'foo';
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
