@@ -33,7 +33,7 @@ export function output(esmodules, forMainThread) {
       format: 'iife',
       sourcemap: true,
       name: 'WorkerDom',
-      outro: DEBUG_BUNDLE ? 'window.workerDocument = document;' : '',
+      outro: DEBUG_BUNDLE ? 'window.workerDocument = monkeyPatch.document;' : '',
     },
   ];
 }
