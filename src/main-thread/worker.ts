@@ -16,8 +16,12 @@
 
 import { MessageToWorker } from '../transfer/Messages';
 
-export function createWorker(workerScriptURL: string, authorScriptURL: string): Promise<Worker | null> {
-  return Promise.all([fetch(workerScriptURL).then(response => response.text()), fetch(authorScriptURL).then(response => response.text())])
+// Supplied by Babel Transpilation
+// See: config/rollup.config.js
+declare var __WORKER_DOM_URL__: string;
+
+export function createWorker(authorScriptURL: string): Promise<Worker | null> {
+  return Promise.all([fetch(__WORKER_DOM_URL__).then(response => response.text()), fetch(authorScriptURL).then(response => response.text())])
     .then(([workerScript, authorScript]) => {
       // TODO(KB): Minify this output during build process.
       const code = `
