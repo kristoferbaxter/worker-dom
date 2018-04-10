@@ -15,7 +15,7 @@
  */
 
 import test from 'ava';
-import { document } from '../../worker-thread/index';
+import { document } from '../../worker-thread/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
 test.cb.serial('Element.classList.add mutation observed, single value', t => {

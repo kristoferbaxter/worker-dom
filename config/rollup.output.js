@@ -14,17 +14,26 @@
  * limitations under the License.
  */
 
-import { Document, document } from './Document';
+import { path, DEBUG_BUNDLE } from './rollup.utils.js';
 
-interface MonkeyWorkerGlobalScope {
-  document: Document;
-  localStorage: object;
-  location: object;
-  url: string;
+/**
+ * @param {boolean} esmodules
+ * @param {boolean} forMainThread
+ * @returns {Array<OutputConfig>} Rollup configurations for output.
+ */
+export function output(esmodules, forMainThread) {
+  return [
+    {
+      file: path(esmodules, forMainThread, 'index.module.js'),
+      format: 'es',
+      sourcemap: true,
+    },
+    {
+      file: path(esmodules, forMainThread, 'index.js'),
+      format: 'iife',
+      sourcemap: true,
+      name: 'WorkerDom',
+      outro: DEBUG_BUNDLE ? 'window.workerDocument = document;' : '',
+    },
+  ];
 }
-export const monkeyPatch: MonkeyWorkerGlobalScope = {
-  document,
-  localStorage: {},
-  location: {},
-  url: '/',
-};

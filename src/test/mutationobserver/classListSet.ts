@@ -15,7 +15,7 @@
  */
 
 import test from 'ava';
-import { document } from '../../worker-thread/index';
+import { document } from '../../worker-thread/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
 test.cb('Element.classList.set mutation observed', t => {

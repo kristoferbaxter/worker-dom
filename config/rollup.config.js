@@ -1,116 +1,36 @@
-import babel from 'rollup-plugin-babel';
-import uglify from 'rollup-plugin-uglify';
-
-const { DEBUG_BUNDLE, UGLIFY_BUNDLE = false } = process.env;
-
 /**
- * @param {boolean} esmodules
- * @param {boolean} forMainThread
- * @param {string} filename
- * @returns {string} path to filename including filename.
- */
-const path = (esmodules, forMainThread, filename) => {
-  return [!!DEBUG_BUNDLE ? 'debugger' : undefined, 'build', esmodules === true ? 'esmodules' : undefined, forMainThread === true ? 'main-thread' : undefined, filename].reduce(
-    (accumulator, currentValue) => {
-      if (accumulator === undefined) {
-        return currentValue || '';
-      } else if (currentValue !== undefined) {
-        return `${accumulator}/${currentValue}`;
-      }
-
-      return accumulator;
-    },
-  );
-};
-
-/**
- * @param {boolean} esmodules
- * @param {boolean} forMainThread
- * @returns {Array<OutputConfig>} Rollup configurations for output.
- */
-const output = (esmodules, forMainThread) => {
-  return [
-    {
-      file: path(esmodules, forMainThread, 'index.module.js'),
-      format: 'es',
-      sourcemap: true,
-    },
-    {
-      file: path(esmodules, forMainThread, 'index.js'),
-      format: 'iife',
-      sourcemap: true,
-      name: 'WorkerDom',
-      outro: DEBUG_BUNDLE ? 'window.workerDocument = document;' : '',
-    },
-  ];
-};
-
-/**
+ * Copyright 2018 The AMP HTML Authors. All Rights Reserved.
  *
- * @param {boolean} esmodules
- * @returns {Object} Babel configuration for output.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS-IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-const babelConfiguration = esmodules => {
-  const targets = (esmodules === true && { esmodules: true }) || { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] };
+
+import { plugins } from './rollup.plugins.js';
+import { output } from './rollup.output.js';
+
+const config = ({ esmodules, forMainThread }) => {
+  const inputFilename = 'index.js';
+  const threadFoldername = forMainThread ? 'main-thread' : 'worker-thread';
 
   return {
-    exclude: 'node_modules/**',
-    presets: [
-      [
-        '@babel/env',
-        {
-          targets: targets,
-          loose: true,
-          modules: false,
-        },
-      ],
-    ],
-    plugins: [
-      ['@babel/plugin-proposal-object-rest-spread'],
-      ['@babel/proposal-class-properties'],
-      [
-        'minify-replace',
-        {
-          replacements: [
-            {
-              identifierName: '__WORKER_DOM_URL__',
-              replacement: {
-                type: 'stringLiteral',
-                value: path(esmodules, false, 'index.js'),
-              },
-            },
-          ],
-        },
-      ],
-    ],
+    input: `src/output/${threadFoldername}/${inputFilename}`,
+    output: output(esmodules, forMainThread),
+    plugins: plugins(esmodules),
   };
 };
 
-/**
- * @param {boolean} esmodules 
- * @returns {Array<Plugin>}
- */
-const plugins = esmodules => (UGLIFY_BUNDLE === 'true' ? [babel(babelConfiguration(esmodules)), uglify()] : [babel(babelConfiguration(esmodules))]);
-
 export default [
-  {
-    input: 'src/output/worker-thread/index.js',
-    output: output(false, false),
-    plugins: plugins(false),
-  },
-  {
-    input: 'src/output/worker-thread/index.js',
-    output: output(true, false),
-    plugins: plugins(true),
-  },
-  {
-    input: 'src/output/main-thread/index.js',
-    output: output(false, true),
-    plugins: plugins(false),
-  },
-  {
-    input: 'src/output/main-thread/index.js',
-    output: output(true, true),
-    plugins: plugins(true),
-  },
+  config({ esmodules: false, forMainThread: false }),
+  config({ esmodules: true, forMainThread: false }),
+  config({ esmodules: false, forMainThread: true }),
+  config({ esmodules: true, forMainThread: true }),
 ];
