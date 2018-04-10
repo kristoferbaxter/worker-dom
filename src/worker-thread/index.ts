@@ -44,7 +44,13 @@ function generateDocument() {
 
 export const document = generateDocument();
 
-export const monkeyPatch = {
+interface MonkeyWorkerGlobalScope {
+  document: Document;
+  localStorage: object;
+  location: object;
+  url: string;
+}
+export const monkeyPatch: MonkeyWorkerGlobalScope = {
   document,
   localStorage: {},
   location: {},

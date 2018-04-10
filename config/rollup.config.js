@@ -4,21 +4,43 @@ import uglify from 'rollup-plugin-uglify';
 const { DEBUG_BUNDLE, UGLIFY_BUNDLE } = process.env;
 
 /**
+ * @param {boolean} esmodules 
+ * @param {boolean} forMainThread 
+ * @param {string} filename
+ * @returns {string} path to filename including filename.
+ */
+const path = (esmodules, forMainThread, filename) => {
+  return [ 
+    DEBUG_BUNDLE ? 'debugger' : undefined,
+    'build',
+    esmodules === true ? 'esmodules' : undefined,
+    forMainThread === true ? 'main-thread' : undefined,
+    filename
+  ].reduce((accumulator, currentValue) => {
+	  if (accumulator === undefined) {
+		  return currentValue || '';
+    } else if (currentValue !== undefined) {
+		  return `${accumulator}/${currentValue}`;
+    }
+
+	  return accumulator;
+  });
+}
+
+/**
  * @param {boolean} esmodules
  * @param {boolean} forMainThread
  * @returns {Array<OutputConfig>} Rollup configurations for output.
  */
 function output(esmodules, forMainThread) {
-  const basePath = `${DEBUG_BUNDLE ? 'debugger/build' : 'build'}${(esmodules === true && '/esmodules') || ''}${forMainThread ? '/main-thread' : ''}`;
-
   return [
     {
-      file: `${basePath}/index.module.js`,
+      file: path(esmodules, forMainThread, 'index.module.js'),
       format: 'es',
       sourcemap: true,
     },
     {
-      file: `${basePath}/index.js`,
+      file: path(esmodules, forMainThread, 'index.js'),
       format: 'iife',
       sourcemap: true,
       name: 'WorkerDom',
@@ -58,7 +80,7 @@ function babelConfiguration(esmodules) {
               identifierName: '__WORKER_DOM_URL__',
               replacement: {
                 type: 'stringLiteral',
-                value: 'build/esmodules/index.js',
+                value: path(esmodules, false, 'index.js'),
               },
             },
           ],

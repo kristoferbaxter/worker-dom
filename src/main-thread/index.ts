@@ -20,10 +20,6 @@ import { Mutation } from './mutate';
 import { createWorker } from './worker';
 import { MessageFromWorker, MessageType } from '../transfer/Messages';
 
-// Supplied by Babel Transpilation
-// See: config/rollup.config.js
-declare var __WORKER_DOM_URL__: string;
-
 export function upgradeElement(baseElement: Element): void {
   const authorURL = baseElement.getAttribute('src');
   if (authorURL === null) {
@@ -34,8 +30,8 @@ export function upgradeElement(baseElement: Element): void {
   const hydrationInstance = new Hydration(baseElement, nodesInstance);
   const mutationInstance = new Mutation(nodesInstance);
 
-  console.log(`creating worker, dom: ${__WORKER_DOM_URL__}, author code: ${authorURL}`);
-  createWorker(__WORKER_DOM_URL__, authorURL).then(worker => {
+  console.log(`creating worker, author code: ${authorURL}`);
+  createWorker(authorURL).then(worker => {
     if (worker === null) {
       return;
     }
@@ -54,31 +50,3 @@ export function upgradeElement(baseElement: Element): void {
     };
   });
 }
-
-/*
-return createWorker(this.element.getAttribute('src')).then(worker => {
-      const authorBaseElement = this.element.querySelector('[amp-aot]');
-      const nodesInstance = new Nodes(authorBaseElement);
-      const eventsInstance = new Events(authorBaseElement, worker);
-      const hydrationInstance = new Hydration(authorBaseElement, nodesInstance);
-      const mutationInstance = new Mutation(nodesInstance);
-
-      worker.onmessage = ({data}: MessageEventFromWorker) => {
-        switch(data.type) {
-          case 'mutate':
-            console.info(`from worker: ${data.type}`, data.mutations);
-            mutationInstance.process(eventsInstance.lastUserGesture, data.mutations);
-            break;
-          case 'hydrate':
-            console.info(`from worker: ${data.type}`, data.mutations);
-            hydrationInstance.hydrate(data.mutations);
-            break;
-        }
-      };
-
-      messageToWorker(worker, {
-        type: 'init',
-        location: location.href,
-      });
-    });
-*/
