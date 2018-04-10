@@ -1,38 +1,34 @@
 import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
 
-const { DEBUG_BUNDLE, UGLIFY_BUNDLE } = process.env;
+const { DEBUG_BUNDLE, UGLIFY_BUNDLE = false } = process.env;
 
 /**
- * @param {boolean} esmodules 
- * @param {boolean} forMainThread 
+ * @param {boolean} esmodules
+ * @param {boolean} forMainThread
  * @param {string} filename
  * @returns {string} path to filename including filename.
  */
 const path = (esmodules, forMainThread, filename) => {
-  return [ 
-    DEBUG_BUNDLE ? 'debugger' : undefined,
-    'build',
-    esmodules === true ? 'esmodules' : undefined,
-    forMainThread === true ? 'main-thread' : undefined,
-    filename
-  ].reduce((accumulator, currentValue) => {
-	  if (accumulator === undefined) {
-		  return currentValue || '';
-    } else if (currentValue !== undefined) {
-		  return `${accumulator}/${currentValue}`;
-    }
+  return [!!DEBUG_BUNDLE ? 'debugger' : undefined, 'build', esmodules === true ? 'esmodules' : undefined, forMainThread === true ? 'main-thread' : undefined, filename].reduce(
+    (accumulator, currentValue) => {
+      if (accumulator === undefined) {
+        return currentValue || '';
+      } else if (currentValue !== undefined) {
+        return `${accumulator}/${currentValue}`;
+      }
 
-	  return accumulator;
-  });
-}
+      return accumulator;
+    },
+  );
+};
 
 /**
  * @param {boolean} esmodules
  * @param {boolean} forMainThread
  * @returns {Array<OutputConfig>} Rollup configurations for output.
  */
-function output(esmodules, forMainThread) {
+const output = (esmodules, forMainThread) => {
   return [
     {
       file: path(esmodules, forMainThread, 'index.module.js'),
@@ -47,14 +43,14 @@ function output(esmodules, forMainThread) {
       outro: DEBUG_BUNDLE ? 'window.workerDocument = document;' : '',
     },
   ];
-}
+};
 
 /**
  *
  * @param {boolean} esmodules
  * @returns {Object} Babel configuration for output.
  */
-function babelConfiguration(esmodules) {
+const babelConfiguration = esmodules => {
   const targets = (esmodules === true && { esmodules: true }) || { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] };
 
   return {
@@ -88,27 +84,33 @@ function babelConfiguration(esmodules) {
       ],
     ],
   };
-}
+};
+
+/**
+ * @param {boolean} esmodules 
+ * @returns {Array<Plugin>}
+ */
+const plugins = esmodules => (UGLIFY_BUNDLE === 'true' ? [babel(babelConfiguration(esmodules)), uglify()] : [babel(babelConfiguration(esmodules))]);
 
 export default [
   {
     input: 'src/output/worker-thread/index.js',
     output: output(false, false),
-    plugins: [babel(babelConfiguration(false)), !!UGLIFY_BUNDLE && uglify()],
+    plugins: plugins(false),
   },
   {
     input: 'src/output/worker-thread/index.js',
     output: output(true, false),
-    plugins: [babel(babelConfiguration(true)), !!UGLIFY_BUNDLE && uglify()],
+    plugins: plugins(true),
   },
   {
     input: 'src/output/main-thread/index.js',
     output: output(false, true),
-    plugins: [babel(babelConfiguration(false)), !!UGLIFY_BUNDLE && uglify()],
+    plugins: plugins(false),
   },
   {
     input: 'src/output/main-thread/index.js',
     output: output(true, true),
-    plugins: [babel(babelConfiguration(true)), !!UGLIFY_BUNDLE && uglify()],
+    plugins: plugins(true),
   },
 ];
