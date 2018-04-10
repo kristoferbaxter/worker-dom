@@ -20,6 +20,8 @@ import { Mutation } from './mutate';
 import { createWorker } from './worker';
 import { MessageFromWorker, MessageType } from '../transfer/Messages';
 
+// Supplied by Babel Transpilation
+// See: config/rollup.config.js
 declare var __WORKER_DOM_URL__: string;
 
 export function upgradeElement(baseElement: Element): void {
