@@ -20,6 +20,8 @@ import { Mutation } from './mutate';
 import { createWorker } from './worker';
 import { MessageFromWorker, MessageType } from '../transfer/Messages';
 
+declare var __WORKER_DOM_URL__: string;
+
 export function upgradeElement(baseElement: Element): void {
   const authorURL = baseElement.getAttribute('src');
   if (authorURL === null) {
@@ -30,8 +32,8 @@ export function upgradeElement(baseElement: Element): void {
   const hydrationInstance = new Hydration(baseElement, nodesInstance);
   const mutationInstance = new Mutation(nodesInstance);
 
-  console.log(`creating worker with author code: ${authorURL}`);
-  createWorker('', authorURL).then(worker => {
+  console.log(`creating worker, dom: ${__WORKER_DOM_URL__}, author code: ${authorURL}`);
+  createWorker(__WORKER_DOM_URL__, authorURL).then(worker => {
     if (worker === null) {
       return;
     }

@@ -1,7 +1,7 @@
 import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
 
-const {DEBUG_BUNDLE, UGLIFY_BUNDLE} = process.env;
+const { DEBUG_BUNDLE, UGLIFY_BUNDLE } = process.env;
 
 /**
  * @param {boolean} esmodules
@@ -47,7 +47,24 @@ function babelConfiguration(esmodules) {
         },
       ],
     ],
-    plugins: [['@babel/plugin-proposal-object-rest-spread'], ['@babel/proposal-class-properties']],
+    plugins: [
+      ['@babel/plugin-proposal-object-rest-spread'],
+      ['@babel/proposal-class-properties'],
+      [
+        'minify-replace',
+        {
+          replacements: [
+            {
+              identifierName: '__WORKER_DOM_URL__',
+              replacement: {
+                type: 'stringLiteral',
+                value: 'build/esmodules/index.js',
+              },
+            },
+          ],
+        },
+      ],
+    ],
   };
 }
 
@@ -55,33 +72,21 @@ export default [
   {
     input: 'src/output/worker-thread/index.js',
     output: output(false, false),
-    plugins: [
-      babel(babelConfiguration(false)),
-      !!UGLIFY_BUNDLE && uglify()
-    ],
+    plugins: [babel(babelConfiguration(false)), !!UGLIFY_BUNDLE && uglify()],
   },
   {
     input: 'src/output/worker-thread/index.js',
     output: output(true, false),
-    plugins: [
-      babel(babelConfiguration(true)), 
-      !!UGLIFY_BUNDLE && uglify()
-    ],
+    plugins: [babel(babelConfiguration(true)), !!UGLIFY_BUNDLE && uglify()],
   },
   {
     input: 'src/output/main-thread/index.js',
     output: output(false, true),
-    plugins: [
-      babel(babelConfiguration(false)),
-      !!UGLIFY_BUNDLE && uglify()
-    ],
+    plugins: [babel(babelConfiguration(false)), !!UGLIFY_BUNDLE && uglify()],
   },
   {
     input: 'src/output/main-thread/index.js',
     output: output(true, true),
-    plugins: [
-      babel(babelConfiguration(true)), 
-      !!UGLIFY_BUNDLE && uglify()
-    ],
+    plugins: [babel(babelConfiguration(true)), !!UGLIFY_BUNDLE && uglify()],
   },
 ];
