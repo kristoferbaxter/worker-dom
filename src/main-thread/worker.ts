@@ -31,16 +31,20 @@ export function createWorker(authorScriptURL: string): Promise<Worker | null> {
           var document = this.document;
           var localStorage = this.localStorage;
           var location = this.location;
-          var Node = this.Node;
-          var Text = this.Text;
-          var Element = this.Element;
-          var SVGElement = this.SVGElement;
-          var Document = this.Document;
-          var Event = this.Event;
-          var MutationObserver = this.MutationObserver;
+          var defaultView = document.defaultView;
+          var Node = defaultView.Node;
+          var Text = defaultView.Text;
+          var Element = defaultView.Element;
+          var SVGElement = defaultView.SVGElement;
+          var Document = defaultView.Document;
+          var Event = defaultView.Event;
+          var MutationObserver = defaultView.MutationObserver;
 
           function addEventListener(type, handler) {
             return document.addEventListener(type, handler);
+          }
+          function removeEventListener(type, handler) {
+            return document.removeEventListener(type, handler);
           }
 
           try { console.assert(!WorkerGlobalScope); } catch (e) {

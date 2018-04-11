@@ -71,7 +71,7 @@ function babelConfiguration(esmodules) {
 export function plugins(esmodules) {
   const babelPlugin = babel(babelConfiguration(esmodules));
 
-  if (UGLIFY_BUNDLE === true) {
+  if (UGLIFY_BUNDLE === 'true') {
     return [babelPlugin, uglify()];
   }
   return [babelPlugin];
