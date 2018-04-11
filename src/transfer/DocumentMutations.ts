@@ -39,10 +39,10 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
       nextSibling: (mutation.nextSibling && mutation.nextSibling._sanitize_()) || null,
       attributeName: mutation.attributeName || null,
       attributeNamespace: mutation.attributeNamespace || null,
-      oldValue: mutation.oldValue || null,
+      oldValue: mutation.oldValue === '' ? '' : mutation.oldValue || null,
       type: mutation.type,
       propertyName: mutation.propertyName || null,
-      value: mutation.value || null,
+      value: mutation.value === '' ? '' : mutation.value || null,
     });
   });
 
@@ -51,9 +51,9 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
       type: hydrated ? MessageType.MUTATE : MessageType.HYDRATE,
       mutations,
     };
+    hydrated = true;
 
     postMessage(JSON.parse(JSON.stringify(mutationFromWorker)));
-    console.info(`mutation`, mutations, incomingMutations);
   }
 }
 

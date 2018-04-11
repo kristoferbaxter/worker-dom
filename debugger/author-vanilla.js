@@ -13,7 +13,7 @@ div.appendChild(input);
 document.body.appendChild(div);
 
 function toggle() {
-  span.className = span.className === 'clicked' ? '' : 'clicked';
+  span.classList.toggle('clicked');
 }
 
 span.addEventListener('click', toggle, false);
@@ -35,3 +35,5 @@ span.addEventListener('click', function handleClick() {
 span.addEventListener('click', function handleClick() {
   span.textContent = JSON.stringify(span.getAsyncBoundingClientRect());
 }, false);
+
+setInterval(toggle, 600);

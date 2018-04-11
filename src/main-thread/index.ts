@@ -39,11 +39,11 @@ export function upgradeElement(baseElement: Element): void {
     worker.onmessage = ({ data }: MessageFromWorker) => {
       switch (data.type) {
         case MessageType.HYDRATE:
-          console.info(`from worker: ${data.type}`, data.mutations);
+          console.info(`hydration from worker: ${data.type}`, data.mutations);
           hydrationInstance.hydrate(data.mutations);
           break;
         case MessageType.MUTATE:
-          console.info(`from worker: ${data.type}`, data.mutations);
+          console.info(`mutation from worker: ${data.type}`, data.mutations);
           mutationInstance.process(data.mutations);
           break;
       }

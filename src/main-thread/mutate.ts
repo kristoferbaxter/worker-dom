@@ -18,14 +18,15 @@
 import { Nodes } from './nodes';
 import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableNode } from '../transfer/TransferrableNode';
+import { MutationRecordType } from '../worker-thread/MutationRecord';
 
 // TODO(KB): Restore mutation threshold timeout.
 // const GESTURE_TO_MUTATION_THRESHOLD = 5000;
 
 const Mutators: {
-  [key: string]: (nodesInstance: Nodes, mutation: TransferrableMutationRecord) => void;
+  [key: number]: (nodesInstance: Nodes, mutation: TransferrableMutationRecord) => void;
 } = {
-  childList(nodesInstance: Nodes, { target, removedNodes, addedNodes, nextSibling }: TransferrableMutationRecord): void {
+  [MutationRecordType.CHILD_LIST]: function(nodesInstance: Nodes, { target, removedNodes, addedNodes, nextSibling }: TransferrableMutationRecord): void {
     const parent = nodesInstance.getNode(target._index_);
 
     if (removedNodes) {
@@ -47,17 +48,17 @@ const Mutators: {
       }
     }
   },
-  attributes(nodesInstance: Nodes, { target, attributeName, value }: TransferrableMutationRecord): void {
+  [MutationRecordType.ATTRIBUTES]: function(nodesInstance: Nodes, { target, attributeName, value }: TransferrableMutationRecord): void {
     if (attributeName !== null && value !== null) {
       nodesInstance.getNode(target._index_).setAttribute(attributeName, value);
     }
   },
-  characterData(nodesInstance: Nodes, { target, value }: TransferrableMutationRecord): void {
+  [MutationRecordType.CHARACTER_DATA]: function(nodesInstance: Nodes, { target, value }: TransferrableMutationRecord): void {
     if (value !== null) {
       nodesInstance.getNode(target._index_).textContent = value;
     }
   },
-  properties(nodesInstance: Nodes, { target, propertyName, value }: TransferrableMutationRecord): void {
+  [MutationRecordType.PROPERTIES]: function(nodesInstance: Nodes, { target, propertyName, value }: TransferrableMutationRecord): void {
     if (propertyName !== null && value !== null) {
       nodesInstance.getNode(target._index_)[propertyName] = value;
     }
@@ -92,9 +93,10 @@ export class Mutation {
   }
 
   private syncFlush(): void {
+    const length = this.MUTATION_QUEUE.length;
     this.MUTATION_QUEUE.forEach(mutation => Mutators[mutation.type](this.nodesInstance, mutation));
 
-    this.MUTATION_QUEUE.splice(0, this.MUTATION_QUEUE.length);
+    this.MUTATION_QUEUE.splice(0, length);
     this.pendingMutations = false;
   }
 
