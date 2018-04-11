@@ -32,8 +32,14 @@ export function output(esmodules, forMainThread) {
       file: path(esmodules, forMainThread, 'index.js'),
       format: 'iife',
       sourcemap: true,
-      name: 'WorkerDom',
-      outro: DEBUG_BUNDLE ? 'window.workerDocument = monkeyPatch.document;' : '',
+      name: forMainThread ? 'MainThread' : 'WorkerThread',
+    },
+    {
+      file: path(esmodules, forMainThread, 'debug.js'),
+      format: 'iife',
+      sourcemap: true,
+      name: forMainThread ? 'MainThread' : 'WorkerThread',
+      outro: DEBUG_BUNDLE && !forMainThread ? 'window.workerDocument = monkey.document;' : '',
     },
   ];
 }

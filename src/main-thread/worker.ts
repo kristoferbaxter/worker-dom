@@ -46,18 +46,8 @@ export function createWorker(authorScriptURL: string): Promise<Worker | null> {
           function removeEventListener(type, handler) {
             return document.removeEventListener(type, handler);
           }
-
-          try { console.assert(!WorkerGlobalScope); } catch (e) {
-            console.assert(e.message == 'WorkerGlobalScope is not defined');
-          }
-          try { console.assert(!DedicatedWorkerGlobalScope); } catch (e) {
-            console.assert(e.message == 'DedicatedWorkerGlobalScope is not defined');
-          }
-          try { console.assert(!XmlHttpRequest); } catch (e) {
-            console.assert(e.message == 'XmlHttpRequest is not defined');
-          }
           ${authorScript}
-        }).call(monkeyScope);`;
+        }).call(WorkerThread.monkey);`;
       return new Worker(URL.createObjectURL(new Blob([code])));
     })
     .catch(error => {

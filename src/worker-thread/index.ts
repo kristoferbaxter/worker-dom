@@ -22,7 +22,7 @@ interface MonkeyWorkerGlobalScope {
   location: object;
   url: string;
 }
-export const monkeyPatch: MonkeyWorkerGlobalScope = {
+export const monkey: MonkeyWorkerGlobalScope = {
   document,
   localStorage: {},
   location: {},

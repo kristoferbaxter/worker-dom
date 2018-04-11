@@ -24,7 +24,7 @@ export const { DEBUG_BUNDLE, UGLIFY_BUNDLE = false } = process.env;
  */
 export function path(esmodules, forMainThread, filename) {
   return [
-    !!DEBUG_BUNDLE ? 'debugger' : undefined,
+    DEBUG_BUNDLE === 'true' ? 'debugger' : undefined,
     'build',
     esmodules === true ? 'esmodules' : undefined,
     forMainThread === true ? 'main-thread' : undefined,
