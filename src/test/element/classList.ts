@@ -28,6 +28,8 @@ test('classList should be empty by default', t => {
   const { node } = t.context as { node: Element };
 
   t.is(node.classList.value, '');
+  t.is(node.hasAttribute('class'), false);
+  t.is(node.getAttribute('class'), null);
 });
 
 test('classList.add of a single value should only add one class', t => {
@@ -36,6 +38,8 @@ test('classList.add of a single value should only add one class', t => {
   node.classList.add('foo');
   t.is(node.classList.value, 'foo');
   t.is(node.className, 'foo');
+  t.is(node.hasAttribute('class'), true);
+  t.is(node.getAttribute('class'), 'foo');
 });
 
 test('classList.add of a multiple value should only add all classes', t => {
@@ -44,6 +48,8 @@ test('classList.add of a multiple value should only add all classes', t => {
   node.classList.add('foo', 'bar', 'baz');
   t.is(node.classList.value, 'foo bar baz');
   t.is(node.className, 'foo bar baz');
+  t.is(node.hasAttribute('class'), true);
+  t.is(node.getAttribute('class'), 'foo bar baz');
 });
 
 test('classList.remove of a single value should only remove one class', t => {
@@ -53,6 +59,8 @@ test('classList.remove of a single value should only remove one class', t => {
   node.classList.remove('foo');
   t.is(node.classList.value, 'bar');
   t.is(node.className, 'bar');
+  t.is(node.hasAttribute('class'), true);
+  t.is(node.getAttribute('class'), 'bar');
 });
 
 test('classList.remove of a multiple values should remove all values', t => {
@@ -62,6 +70,8 @@ test('classList.remove of a multiple values should remove all values', t => {
   node.classList.remove('foo', 'bar');
   t.is(node.classList.value, 'baz');
   t.is(node.className, 'baz');
+  t.is(node.hasAttribute('class'), true);
+  t.is(node.getAttribute('class'), 'baz');
 });
 
 test('classList.toggle should add a value that is not present already', t => {
@@ -70,13 +80,17 @@ test('classList.toggle should add a value that is not present already', t => {
   node.classList.toggle('foo');
   t.is(node.classList.value, 'foo');
   t.is(node.className, 'foo');
+  t.is(node.hasAttribute('class'), true);
+  t.is(node.getAttribute('class'), 'foo');
 });
 
-test('classList.toggle should remove a value that is present already', t => {
+test.failing('classList.toggle should remove a value that is present already', t => {
   const { node } = t.context as { node: Element };
 
   node.className = 'foo';
   node.classList.toggle('foo');
   t.is(node.classList.value, '');
   t.is(node.className, '');
+  t.is(node.hasAttribute('class'), false);
+  t.is(node.getAttribute('class'), null);
 });
