@@ -229,8 +229,13 @@ export class Element extends Node {
    * @param value attribute value
    */
   public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): void {
-    const oldValue = this.storeAttributeNS(namespaceURI, name, value);
+    if (namespaceURI === null && name === 'class') {
+      // TODO(KB): Abstract this when there is more than one attribute driven by a DOMTokenList.
+      this.className = value;
+      return;
+    }
 
+    const oldValue = this.storeAttributeNS(namespaceURI, name, value);
     mutate({
       type: MutationRecordType.ATTRIBUTES,
       target: this,
