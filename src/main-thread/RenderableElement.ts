@@ -14,6 +14,15 @@
  * limitations under the License.
  */
 
+/**
+ * When Rendering Elements in the main thread, attach a required property containing
+ * the numeric identifier for the element. This identifier is the key in Nodes for the Element (see Nodes.ts).
+ *
+ * This identifier is used to optimize the delivery of Node information across threads.
+ * By referencing a known monotomically increasing counter as new Nodes are passed, we can reduce the amount
+ * of transmission overhead by sending the identifier alone in some scenarios.
+ */
+
 interface RenderableHTMLElement extends HTMLElement {
   [key: string]: any;
   _index_: number;
