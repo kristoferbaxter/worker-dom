@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { path, DEBUG_BUNDLE } from './rollup.utils.js';
+const { path, envFlags: { DEBUG_BUNDLE } } = require('./config.js');
 
 /**
  * @param {boolean} esmodules

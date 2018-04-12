@@ -14,7 +14,16 @@
  * limitations under the License.
  */
 
-export const { DEBUG_BUNDLE, UGLIFY_BUNDLE = false } = process.env;
+// This file uses CJS format since it's consumed by Babel and Rollup.
+// Babel 7 .babelrc.js files must use CJS, and Rollup configuration can be either.
+// This means we must use CJS for common functionality.
+
+const { DEBUG_BUNDLE = false, UGLIFY_BUNDLE = false } = process.env;
+
+const envFlags = {
+  DEBUG_BUNDLE: DEBUG_BUNDLE === 'true',
+  UGLIFY_BUNDLE: UGLIFY_BUNDLE === 'true',
+};
 
 /**
  * @param {boolean} esmodules
@@ -22,9 +31,9 @@ export const { DEBUG_BUNDLE, UGLIFY_BUNDLE = false } = process.env;
  * @param {string} filename
  * @returns {string} path to filename including filename.
  */
-export function path(esmodules, forMainThread, filename) {
+function path(esmodules, forMainThread, filename) {
   return [
-    DEBUG_BUNDLE === 'true' ? 'debugger' : undefined,
+    envFlags.DEBUG_BUNDLE ? 'debugger' : undefined,
     'build',
     esmodules === true ? 'esmodules' : undefined,
     forMainThread === true ? 'main-thread' : undefined,
@@ -39,3 +48,8 @@ export function path(esmodules, forMainThread, filename) {
     return accumulator;
   });
 }
+
+module.exports = {
+  envFlags,
+  path
+};

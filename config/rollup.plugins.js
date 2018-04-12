@@ -16,63 +16,17 @@
 
 import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
-import { path, UGLIFY_BUNDLE } from './rollup.utils.js';
-
-const babelTargets = esmodules => {
-  if (esmodules === true) {
-    return { esmodules: true };
-  }
-  return { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] };
-};
-
-/**
- *
- * @param {boolean} esmodules
- * @returns {Object} Babel configuration for output.
- */
-function babelConfiguration(esmodules) {
-  return {
-    exclude: 'node_modules/**',
-    presets: [
-      [
-        '@babel/env',
-        {
-          targets: babelTargets(esmodules),
-          loose: true,
-          modules: false,
-        },
-      ],
-    ],
-    plugins: [
-      ['@babel/plugin-proposal-object-rest-spread'],
-      ['@babel/proposal-class-properties'],
-      [
-        'minify-replace',
-        {
-          replacements: [
-            {
-              identifierName: '__WORKER_DOM_URL__',
-              replacement: {
-                type: 'stringLiteral',
-                value: path(esmodules, false, 'index.js'),
-              },
-            },
-          ],
-        },
-      ],
-    ],
-  };
-}
+const { envFlags: { UGLIFY_BUNDLE } } = require('./config.js');
 
 /**
  * @param {boolean} esmodules
  * @returns {Array<Plugin>}
  */
 export function plugins(esmodules) {
-  const babelPlugin = babel(babelConfiguration(esmodules));
+  process.env.BABEL_ES_MODULES = esmodules;
 
-  if (UGLIFY_BUNDLE === 'true') {
-    return [babelPlugin, uglify()];
+  if (UGLIFY_BUNDLE) {
+    return [babel(), uglify()];
   }
-  return [babelPlugin];
+  return [babel()];
 }
