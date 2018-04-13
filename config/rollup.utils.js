@@ -20,10 +20,8 @@
 
 const { DEBUG_BUNDLE = false, UGLIFY_BUNDLE = false } = process.env;
 
-const envFlags = {
-  DEBUG_BUNDLE: DEBUG_BUNDLE === 'true',
-  UGLIFY_BUNDLE: UGLIFY_BUNDLE === 'true',
-};
+export let DEBUG_BUNDLE_VALUE = DEBUG_BUNDLE === 'true';
+export let UGLIFY_BUNDLE_VALUE = UGLIFY_BUNDLE === 'true';
 
 /**
  * @param {boolean} esmodules
@@ -31,9 +29,9 @@ const envFlags = {
  * @param {string} filename
  * @returns {string} path to filename including filename.
  */
-function path(esmodules, forMainThread, filename) {
+export function path(esmodules, forMainThread, filename) {
   return [
-    envFlags.DEBUG_BUNDLE ? 'debugger' : undefined,
+    DEBUG_BUNDLE_VALUE ? 'debugger' : undefined,
     'build',
     esmodules === true ? 'esmodules' : undefined,
     forMainThread === true ? 'main-thread' : undefined,
@@ -48,8 +46,3 @@ function path(esmodules, forMainThread, filename) {
     return accumulator;
   });
 }
-
-module.exports = {
-  envFlags,
-  path
-};

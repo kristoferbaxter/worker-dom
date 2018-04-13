@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const { path, envFlags: { DEBUG_BUNDLE } } = require('./config.js');
+import {path, DEBUG_BUNDLE_VALUE} from './rollup.utils.js';
 
 /**
  * @param {boolean} esmodules
@@ -39,7 +39,7 @@ export function output(esmodules, forMainThread) {
       format: 'iife',
       sourcemap: true,
       name: forMainThread ? 'MainThread' : 'WorkerThread',
-      outro: DEBUG_BUNDLE && !forMainThread ? 'window.workerDocument = monkey.document;' : '',
+      outro: DEBUG_BUNDLE_VALUE && !forMainThread ? 'window.workerDocument = monkey.document;' : '',
     },
   ];
 }
