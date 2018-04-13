@@ -21,6 +21,7 @@ import { TransferrableMutationRecord } from './TransferrableRecord';
 import { TransferrableNode, SubsequentTransferNode } from './TransferrableNode';
 import { MutationFromWorker, MessageType } from './Messages';
 
+const SUPPORTS_POST_MESSAGE = typeof postMessage !== 'undefined';
 const sanitizeNodes = (nodes: Node[] | undefined): Array<TransferrableNode | SubsequentTransferNode> | null => (nodes && nodes.map(node => node._sanitize_())) || null;
 let observing = false;
 let hydrated = false;
@@ -44,13 +45,15 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
     });
   });
 
-  const mutationFromWorker: MutationFromWorker = {
-    type: hydrated ? MessageType.MUTATE : MessageType.HYDRATE,
-    mutations,
-  };
-  hydrated = true;
+  if (SUPPORTS_POST_MESSAGE) {
+    const mutationFromWorker: MutationFromWorker = {
+      type: hydrated ? MessageType.MUTATE : MessageType.HYDRATE,
+      mutations,
+    };
+    hydrated = true;
 
-  postMessage(JSON.parse(JSON.stringify(mutationFromWorker)));
+    postMessage(JSON.parse(JSON.stringify(mutationFromWorker)));
+  }
 }
 
 export function observe(document: Document): void {
