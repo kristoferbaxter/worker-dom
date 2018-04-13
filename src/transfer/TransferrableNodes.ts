@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { NodeType, NodeName } from '../Node';
+import { NodeType, NodeName } from '../worker-thread/Node';
 import { NumericBoolean } from '../utils';
 
 export interface TransferrableNode {

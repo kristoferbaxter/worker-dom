@@ -6,7 +6,7 @@ const { PORT = 3001, PWD } = process.env;
 
 polka()
   .use(serveStatic(path.resolve(PWD)))
-  .use(serveStatic(path.resolve(PWD, 'debugger')))
+  .use(serveStatic(path.resolve(PWD, 'demo')))
   .get('/health', (req, res) => {
     res.end('OK');
   })

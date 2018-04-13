@@ -13,20 +13,23 @@
     }
   </style>
   <script src="./build/esmodules/main-thread/index.module.js" type="module"></script>
-  <script src="./build/esmodules/main-thread/index.js" nomodule></script>
-  <!-- <script src="./build/esmodules/main-thread/index.js"></script> -->
+  <script src="./build/esmodules/main-thread/index.js" nomodule defer></script>
+  <!-- <script src="./build/esmodules/main-thread/index.js" defer></script> -->
 </head>
 <body>
   <div src="author-vanilla.js" class="amp-script">Hello World!<span>spaner</span><input /></div>
   <script type="module">
-    import {upgradeElement} from './build/esmodules/main-thread/index.module.js';
-    upgradeElement(document.getElementsByClassName('amp-script')[0]);
-  </script>
-  <script nomodule defer>
     MainThread.upgradeElement(document.getElementsByClassName('amp-script')[0]);
   </script>
-  <!-- <script defer>
-    MainThread.upgradeElement(document.getElementsByClassName('amp-script')[0]);
+  <script nomodule async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementsByClassName('amp-script')[0]);
+    }, false);
+  </script>
+  <!-- <script async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementsByClassName('amp-script')[0]);
+    }, false);
   </script> -->
 </body>
 </html>

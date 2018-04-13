@@ -85,7 +85,7 @@ export class Text extends CharacterData {
     });
     return {
       _index_: this._index_,
-      transferred: true,
+      transferred: false,
       nodeType: this.nodeType,
       nodeName: this.nodeName,
       attributes: null,

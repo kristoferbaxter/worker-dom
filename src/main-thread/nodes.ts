@@ -48,7 +48,9 @@ export class Nodes {
     //   node[`${property.name}`] = property.value;
     // });
     skeleton.childNodes.forEach(childNode => {
-      !childNode.transferred && node.appendChild(this.createNode(childNode as TransferrableNode));
+      if (!childNode.transferred) {
+        node.appendChild(this.createNode(childNode as TransferrableNode));
+      }
     });
 
     this.storeNode(node, skeleton._index_);

@@ -30,21 +30,21 @@ export function upgradeElement(baseElement: Element): void {
   const hydrationInstance = new Hydration(baseElement, nodesInstance);
   const mutationInstance = new Mutation(nodesInstance);
 
-  console.log(`creating worker, author code: ${authorURL}`);
+  // console.log(`creating worker, author code: ${authorURL}`);
   createWorker(authorURL).then(worker => {
     if (worker === null) {
       return;
     }
 
-    worker.onmessage = ({ data }: MessageFromWorker) => {
-      switch (data.type) {
+    worker.onmessage = (message: MessageFromWorker) => {
+      switch (message.data.type) {
         case MessageType.HYDRATE:
-          console.info(`hydration from worker: ${data.type}`, data.mutations);
-          hydrationInstance.hydrate(data.mutations);
+          // console.info(`hydration from worker: ${data.type}`, data.mutations);
+          hydrationInstance.hydrate(message.data.mutations);
           break;
         case MessageType.MUTATE:
-          console.info(`mutation from worker: ${data.type}`, data.mutations);
-          mutationInstance.process(data.mutations);
+          // console.info(`mutation from worker: ${data.type}`, data.mutations);
+          mutationInstance.process(message.data.mutations);
           break;
       }
     };

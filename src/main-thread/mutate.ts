@@ -30,22 +30,13 @@ const Mutators: {
     const parent = nodesInstance.getNode(target._index_);
 
     if (removedNodes) {
-      let iterator = removedNodes.length;
-      for (; iterator--; ) {
-        parent.removeChild(nodesInstance.getNode(removedNodes[iterator]._index_));
-      }
+      removedNodes.forEach(node => parent.removeChild(nodesInstance.getNode(node._index_)));
     }
 
     if (addedNodes) {
-      let iterator = 0;
-      const length = addedNodes.length;
-
-      for (; iterator < length; iterator++) {
-        parent.insertBefore(
-          nodesInstance.getNode(addedNodes[iterator]._index_) || nodesInstance.createNode(addedNodes[iterator] as TransferrableNode),
-          (nextSibling && nodesInstance.getNode(nextSibling._index_)) || null,
-        );
-      }
+      addedNodes.forEach(node => {
+        parent.insertBefore(nodesInstance.getNode(node._index_) || nodesInstance.createNode(node as TransferrableNode), (nextSibling && nodesInstance.getNode(nextSibling._index_)) || null);
+      });
     }
   },
   [MutationRecordType.ATTRIBUTES]: function(nodesInstance: Nodes, { target, attributeName, value }: TransferrableMutationRecord): void {

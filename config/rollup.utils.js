@@ -31,7 +31,7 @@ export let UGLIFY_BUNDLE_VALUE = UGLIFY_BUNDLE === 'true';
  */
 export function path(esmodules, forMainThread, filename) {
   return [
-    DEBUG_BUNDLE_VALUE ? 'debugger' : undefined,
+    DEBUG_BUNDLE_VALUE ? 'demo' : undefined,
     'build',
     esmodules === true ? 'esmodules' : undefined,
     forMainThread === true ? 'main-thread' : undefined,

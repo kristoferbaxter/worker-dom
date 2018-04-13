@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
+import { Node } from '../worker-thread/Node';
 import { Document } from '../worker-thread/Document';
 import { MutationRecord } from '../worker-thread/MutationRecord';
 import { TransferrableMutationRecord } from './TransferrableRecord';
-import { Node } from '../worker-thread/Node';
 import { TransferrableNode, SubsequentTransferNode } from './TransferrableNode';
-import { MutationFromWorker } from './Messages';
-import { MessageType } from './Messages';
+import { MutationFromWorker, MessageType } from './Messages';
 
-const SUPPORTS_POST_MESSAGE = typeof postMessage !== 'undefined';
 const sanitizeNodes = (nodes: Node[] | undefined): Array<TransferrableNode | SubsequentTransferNode> | null => (nodes && nodes.map(node => node._sanitize_())) || null;
 let observing = false;
 let hydrated = false;
@@ -46,15 +44,13 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
     });
   });
 
-  if (SUPPORTS_POST_MESSAGE) {
-    const mutationFromWorker: MutationFromWorker = {
-      type: hydrated ? MessageType.MUTATE : MessageType.HYDRATE,
-      mutations,
-    };
-    hydrated = true;
+  const mutationFromWorker: MutationFromWorker = {
+    type: hydrated ? MessageType.MUTATE : MessageType.HYDRATE,
+    mutations,
+  };
+  hydrated = true;
 
-    postMessage(JSON.parse(JSON.stringify(mutationFromWorker)));
-  }
+  postMessage(JSON.parse(JSON.stringify(mutationFromWorker)));
 }
 
 export function observe(document: Document): void {

@@ -27,6 +27,7 @@ export function output(esmodules, forMainThread) {
       file: path(esmodules, forMainThread, 'index.module.js'),
       format: 'es',
       sourcemap: true,
+      outro: forMainThread ? 'window.MainThread = {upgradeElement: upgradeElement};' : '',
     },
     {
       file: path(esmodules, forMainThread, 'index.js'),
