@@ -273,7 +273,7 @@ export class Element extends Node {
   public getAttributeNS(namespaceURI: NamespaceURI, name: string): string | null {
     const attr = this.attributes.find(matchAttrPredicate(namespaceURI, name));
 
-    return (attr && attr.value) || null;
+    return attr ? attr.value : null;
   }
 
   /**

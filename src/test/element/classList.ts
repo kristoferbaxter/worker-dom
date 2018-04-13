@@ -85,5 +85,5 @@ test('classList.toggle should remove a value that is present already', t => {
   node.classList.toggle('foo');
   t.is(node.classList.value, '');
   t.is(node.className, '');
-  t.is(node.getAttribute('class'), null);
+  t.is(node.getAttribute('class'), '');
 });
