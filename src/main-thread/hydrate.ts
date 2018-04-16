@@ -15,15 +15,15 @@
  */
 
 import { Nodes } from './nodes';
-import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
-// import { RenderableElement } from '../transfer/TransferrableNode';
-import { TransferrableNode, SubsequentTransferNode } from '../transfer/TransferrableNode';
+import { TransferableMutationRecord } from '../transfer/TransferableRecord';
+import { TransferableNode, TransferredNode } from '../transfer/TransferableNodes';
 import { NodeType } from '../worker-thread/Node';
 import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { RenderableElement } from './RenderableElement';
+import { NumericBoolean } from '../utils';
 
-const allTextNodes = (nodes: NodeList | Array<TransferrableNode | SubsequentTransferNode>): boolean =>
-  nodes.length > 0 && [].every.call(nodes, (node: Node | TransferrableNode): boolean => node.nodeType === NodeType.TEXT_NODE);
+const allTextNodes = (nodes: NodeList | Array<TransferableNode | TransferredNode>): boolean =>
+  nodes.length > 0 && [].every.call(nodes, (node: Node | TransferableNode): boolean => node.nodeType === NodeType.TEXT_NODE);
 
 export class Hydration {
   nodesInstance: Nodes;
@@ -34,15 +34,15 @@ export class Hydration {
     this.baseElement = baseElement as HTMLElement;
   }
 
-  public hydrate(hydrations: TransferrableMutationRecord[]) {
-    // TODO(KB): Hydrations are not allowed to contain SubsequentTransferNodes.
+  public hydrate(hydrations: TransferableMutationRecord[]) {
+    // TODO(KB): Hydrations are not allowed to contain TransferredNodes.
     // Perhaps we should create a TransferrableHydrationRecord.
     for (let hydration of hydrations) {
       if (hydration.type === MutationRecordType.CHILD_LIST && hydration.addedNodes !== null) {
         for (let nodeToAdd of hydration.addedNodes) {
           const baseNode = this.nodesInstance.getNode(nodeToAdd._index_) || this.baseElement;
-          if (!nodeToAdd.transferred) {
-            this.hydrateNode(baseNode, nodeToAdd as TransferrableNode);
+          if (nodeToAdd.transferred === NumericBoolean.FALSE) {
+            this.hydrateNode(baseNode, nodeToAdd as TransferableNode);
           }
         }
       }
@@ -55,7 +55,7 @@ export class Hydration {
    * @param node
    * @param skeleton
    */
-  private hydrateNode(node: Node, skeleton: TransferrableNode): void {
+  private hydrateNode(node: Node, skeleton: TransferableNode): void {
     if (node.childNodes.length !== skeleton.childNodes.length) {
       // A limited number of cases when the number of childNodes doesn't match is allowable.
       if (allTextNodes(node.childNodes)) {
@@ -69,7 +69,7 @@ export class Hydration {
           // Hello, {name} => [Text('Hello, '), Text('user')]... Node.childNodes[1].textContent = 'another user';
           node.removeChild(node.childNodes[0]);
           skeleton.childNodes.forEach(skeletonChild => {
-            const skeletonText = document.createTextNode((skeletonChild as TransferrableNode).textContent);
+            const skeletonText = document.createTextNode((skeletonChild as TransferableNode).textContent);
             node.appendChild(skeletonText);
             this.nodesInstance.storeNode(skeletonText as RenderableElement, skeleton._index_);
           });
@@ -81,7 +81,7 @@ export class Hydration {
       }
 
       this.nodesInstance.storeNode(node as RenderableElement, skeleton._index_);
-      skeleton.childNodes.forEach((childNode: TransferrableNode | SubsequentTransferNode, index: number): void => this.hydrateNode(node.childNodes[index], childNode as TransferrableNode));
+      skeleton.childNodes.forEach((childNode: TransferableNode | TransferredNode, index: number): void => this.hydrateNode(node.childNodes[index], childNode as TransferableNode));
     }
   }
 }

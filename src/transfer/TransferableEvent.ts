@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { TransferrableNode, SubsequentTransferNode } from './TransferrableNode';
+import { TransferableNode, TransferredNode } from './TransferableNodes';
 
-type TransferrableTarget = TransferrableNode | SubsequentTransferNode;
+type TransferrableTarget = TransferableNode | TransferredNode;
 
-export interface TransferrableEvent {
+export interface TransferableEvent {
   readonly bubbles?: boolean;
   readonly cancelable?: boolean;
   cancelBubble?: boolean;

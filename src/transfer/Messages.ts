@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { TransferrableEvent } from './TransferrableEvent';
-import { TransferrableMutationRecord } from './TransferrableRecord';
+import { TransferableEvent } from './TransferableEvent';
+import { TransferableMutationRecord } from './TransferableRecord';
 
 export const enum MessageType {
   // INIT = 0,
@@ -29,7 +29,7 @@ export const enum MessageType {
 
 export interface MutationFromWorker {
   type: MessageType.HYDRATE | MessageType.MUTATE;
-  mutations: TransferrableMutationRecord[];
+  mutations: TransferableMutationRecord[];
 }
 export interface MessageFromWorker {
   data: MutationFromWorker;
@@ -37,6 +37,6 @@ export interface MessageFromWorker {
 
 interface EventToWorker {
   type: MessageType.EVENT;
-  event: TransferrableEvent;
+  event: TransferableEvent;
 }
 export type MessageToWorker = EventToWorker;

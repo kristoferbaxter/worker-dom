@@ -17,17 +17,17 @@
 import { Node } from '../worker-thread/Node';
 import { Document } from '../worker-thread/Document';
 import { MutationRecord } from '../worker-thread/MutationRecord';
-import { TransferrableMutationRecord } from './TransferrableRecord';
-import { TransferrableNode, SubsequentTransferNode } from './TransferrableNode';
+import { TransferableMutationRecord } from './TransferableRecord';
+import { TransferableNode, TransferredNode } from './TransferableNodes';
 import { MutationFromWorker, MessageType } from './Messages';
 
 const SUPPORTS_POST_MESSAGE = typeof postMessage !== 'undefined';
-const sanitizeNodes = (nodes: Node[] | undefined): Array<TransferrableNode | SubsequentTransferNode> | null => (nodes && nodes.map(node => node._sanitize_())) || null;
+const sanitizeNodes = (nodes: Node[] | undefined): Array<TransferableNode | TransferredNode> | null => (nodes && nodes.map(node => node._sanitize_())) || null;
 let observing = false;
 let hydrated = false;
 
 function handleMutations(incomingMutations: MutationRecord[]): void {
-  let mutations: TransferrableMutationRecord[] = [];
+  let mutations: TransferableMutationRecord[] = [];
 
   incomingMutations.forEach(mutation => {
     mutations.push({

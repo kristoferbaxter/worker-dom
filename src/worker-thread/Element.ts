@@ -19,7 +19,8 @@ import { DOMTokenList } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate, NamespaceURI } from './Attr';
 import { mutate } from './MutationObserver';
 import { MutationRecordType } from './MutationRecord';
-import { TransferrableNode, SubsequentTransferNode } from '../transfer/TransferrableNode';
+import { TransferableNode, TransferredNode } from '../transfer/TransferableNodes';
+import { NumericBoolean } from '../utils';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
@@ -333,11 +334,11 @@ export class Element extends Node {
     return findMatchingChildren(this, tagName === '*' ? element => true : element => element.tagName === tagName);
   }
 
-  public _sanitize_(): TransferrableNode | SubsequentTransferNode {
+  public _sanitize_(): TransferableNode | TransferredNode {
     if (this._transferred_) {
       return {
         _index_: this._index_,
-        transferred: true,
+        transferred: NumericBoolean.TRUE,
       };
     }
 
@@ -347,7 +348,7 @@ export class Element extends Node {
     });
     return {
       _index_: this._index_,
-      transferred: false,
+      transferred: NumericBoolean.FALSE,
       nodeType: this.nodeType,
       nodeName: this.nodeName,
       attributes: this.attributes,

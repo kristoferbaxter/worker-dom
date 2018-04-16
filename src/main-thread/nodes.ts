@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { TransferrableNode } from '../transfer/TransferrableNode';
+import { TransferableNode } from '../transfer/TransferableNodes';
 import { RenderableElement } from './RenderableElement';
+import { NumericBoolean } from '../utils';
 
 export class Nodes {
   private NODES: Map<number, RenderableElement> = new Map();
@@ -32,7 +33,7 @@ export class Nodes {
    * @example <caption>Element node</caption>
    *   createNode({ nodeType:1, nodeName:'div', attributes:[{ name:'a', value:'b' }], childNodes:[ ... ] })
    */
-  public createNode(skeleton: TransferrableNode): RenderableElement {
+  public createNode(skeleton: TransferableNode): RenderableElement {
     if (skeleton.nodeType === Node.TEXT_NODE) {
       const node = document.createTextNode(skeleton.textContent);
       this.storeNode(node, skeleton._index_);
@@ -48,8 +49,8 @@ export class Nodes {
     //   node[`${property.name}`] = property.value;
     // });
     skeleton.childNodes.forEach(childNode => {
-      if (!childNode.transferred) {
-        node.appendChild(this.createNode(childNode as TransferrableNode));
+      if (childNode.transferred === NumericBoolean.FALSE) {
+        node.appendChild(this.createNode(childNode as TransferableNode));
       }
     });
 

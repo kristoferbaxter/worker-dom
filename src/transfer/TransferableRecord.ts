@@ -15,19 +15,19 @@
  */
 
 import { MutationRecordType } from '../worker-thread/MutationRecord';
-import { TransferrableNode, SubsequentTransferNode } from './TransferrableNode';
+import { TransferableNode, TransferredNode } from './TransferableNodes';
 
-// The TransferrableMutationRecord interface is modification and extension of
+// The TransferableMutationRecord interface is modification and extension of
 // the real MutationRecord, with changes to support the transferring of
 // Mutations across threads and for properties (not currently supported by MutationRecord).
 
 // For more info on MutationRecords: https://developer.mozilla.org/en-US/docs/Web/API/MutationRecord
-export interface TransferrableMutationRecord {
-  readonly target: TransferrableNode | SubsequentTransferNode;
-  readonly addedNodes: Array<TransferrableNode | SubsequentTransferNode> | null;
-  readonly removedNodes: Array<TransferrableNode | SubsequentTransferNode> | null;
-  readonly previousSibling: TransferrableNode | SubsequentTransferNode | null;
-  readonly nextSibling: TransferrableNode | SubsequentTransferNode | null;
+export interface TransferableMutationRecord {
+  readonly target: TransferableNode | TransferredNode;
+  readonly addedNodes: Array<TransferableNode | TransferredNode> | null;
+  readonly removedNodes: Array<TransferableNode | TransferredNode> | null;
+  readonly previousSibling: TransferableNode | TransferredNode | null;
+  readonly nextSibling: TransferableNode | TransferredNode | null;
   readonly attributeName: string | null;
   readonly attributeNamespace: string | null;
   readonly oldValue: string | null;
@@ -37,14 +37,14 @@ export interface TransferrableMutationRecord {
   readonly value: string | null;
 }
 
-// TODO(KB): Hydrations are not allowed to contain SubsequentTransferNodes.
+// TODO(KB): Hydrations are not allowed to contain TransferredNodes.
 // Perhaps we should create a TransferrableHydrationRecord.
 // export interface TransferrableHydrationRecord {
-//   readonly target: TransferrableNode;
-//   readonly addedNodes: Array<TransferrableNode> | null;
-//   readonly removedNodes: Array<TransferrableNode> | null;
-//   readonly previousSibling: TransferrableNode | null;
-//   readonly nextSibling: TransferrableNode | null;
+//   readonly target: TransferableNode;
+//   readonly addedNodes: Array<TransferableNode> | null;
+//   readonly removedNodes: Array<TransferableNode> | null;
+//   readonly previousSibling: TransferableNode | null;
+//   readonly nextSibling: TransferableNode | null;
 //   readonly attributeName: string | null;
 //   readonly attributeNamespace: string | null;
 //   readonly oldValue: string | null;

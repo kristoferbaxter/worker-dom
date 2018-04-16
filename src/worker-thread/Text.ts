@@ -16,7 +16,8 @@
 
 import { NodeType } from './Node';
 import { CharacterData } from './CharacterData';
-import { TransferrableNode, SubsequentTransferNode } from '../transfer/TransferrableNode';
+import { TransferableNode, TransferredNode } from '../transfer/TransferableNodes';
+import { NumericBoolean } from '../utils';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Text
 export class Text extends CharacterData {
@@ -70,11 +71,11 @@ export class Text extends CharacterData {
     return remainderTextNode;
   }
 
-  public _sanitize_(): TransferrableNode | SubsequentTransferNode {
+  public _sanitize_(): TransferableNode | TransferredNode {
     if (this._transferred_) {
       return {
         _index_: this._index_,
-        transferred: true,
+        transferred: NumericBoolean.TRUE,
         textContent: this.nodeValue,
       };
     }
@@ -85,7 +86,7 @@ export class Text extends CharacterData {
     });
     return {
       _index_: this._index_,
-      transferred: false,
+      transferred: NumericBoolean.FALSE,
       nodeType: this.nodeType,
       nodeName: this.nodeName,
       attributes: null,
