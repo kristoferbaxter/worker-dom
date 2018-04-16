@@ -16,7 +16,7 @@
 
 import { store as mappingStoreNode } from './NodeMapping';
 import { Event, EventHandler } from './Event';
-import { toLower } from './utils';
+import { toLower } from '../utils';
 import { mutate } from './MutationObserver';
 import { MutationRecordType } from './MutationRecord';
 
@@ -61,7 +61,8 @@ export class Node {
   public childNodes: Node[] = [];
   public parentNode: Node | null = null;
   public isConnected: boolean = false;
-  public _index_: number | null = null;
+  public _index_: number;
+  protected _transferred_: boolean = false;
   private _handlers_: {
     [index: string]: EventHandler[];
   } = {};
@@ -70,7 +71,7 @@ export class Node {
     this.nodeType = nodeType;
     this.nodeName = nodeName;
 
-    mappingStoreNode(this);
+    this._index_ = mappingStoreNode(this);
   }
 
   // Unimplemented Properties

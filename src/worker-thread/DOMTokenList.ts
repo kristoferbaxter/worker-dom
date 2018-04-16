@@ -17,17 +17,20 @@
 import { Element } from './Element';
 import { mutate } from './MutationObserver';
 import { MutationRecordType } from './MutationRecord';
+import { NamespaceURI } from './Attr';
 
 export class DOMTokenList extends Array {
   element: Element;
   attributeName: string;
   attributeNamespace: string | null = null;
+  storeAttributeMethod: (namespaceURI: NamespaceURI, name: string, value: string) => void;
 
-  constructor(element: Element, attributeName: string, attributeNamespace: string | null) {
+  constructor(element: Element, attributeName: string, attributeNamespace: string | null, storeAttributeMethod: (namespaceURI: NamespaceURI, name: string, value: string) => void) {
     super();
     this.element = element;
     this.attributeName = attributeName;
     this.attributeNamespace = attributeNamespace;
+    this.storeAttributeMethod = storeAttributeMethod;
   }
 
   /**
@@ -48,7 +51,7 @@ export class DOMTokenList extends Array {
 
     // Replace current tokens with new tokens.
     this.splice(0, this.length, ...(newValue !== '' ? newValue.split(/\s+/) : ''));
-    this._reportMutation_(oldValue, newValue);
+    this.mutationCompleteHandler(oldValue, newValue);
   }
 
   /**
@@ -79,7 +82,7 @@ export class DOMTokenList extends Array {
   public add(...tokens: string[]): void {
     const oldValue = this.value;
     this.splice(0, this.length, ...new Set(this.concat(tokens)));
-    this._reportMutation_(oldValue, this.value);
+    this.mutationCompleteHandler(oldValue, this.value);
   }
 
   /**
@@ -92,7 +95,7 @@ export class DOMTokenList extends Array {
   public remove(...tokens: string[]): void {
     const oldValue = this.value;
     this.splice(0, this.length, ...new Set(this.filter(token => !tokens.includes(token))));
-    this._reportMutation_(oldValue, this.value);
+    this.mutationCompleteHandler(oldValue, this.value);
   }
 
   /**
@@ -114,7 +117,7 @@ export class DOMTokenList extends Array {
       }
     }
     this.splice(0, this.length, ...set);
-    this._reportMutation_(oldValue, this.value);
+    this.mutationCompleteHandler(oldValue, this.value);
   }
 
   /**
@@ -146,7 +149,8 @@ export class DOMTokenList extends Array {
    * @param oldValue value before mutation
    * @param value value after mutation
    */
-  private _reportMutation_(oldValue: string, value: string): void {
+  private mutationCompleteHandler(oldValue: string, value: string): void {
+    this.storeAttributeMethod(this.attributeNamespace, this.attributeName, value);
     mutate({
       type: MutationRecordType.ATTRIBUTES,
       target: this.element,

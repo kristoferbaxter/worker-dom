@@ -17,9 +17,10 @@
 import { Node, NodeType } from './Node';
 import { DOMTokenList } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate, NamespaceURI } from './Attr';
-import { keyValueString } from './utils';
 import { mutate } from './MutationObserver';
 import { MutationRecordType } from './MutationRecord';
+import { TransferableNode, TransferredNode } from '../transfer/TransferableNodes';
+import { NumericBoolean } from '../utils';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
@@ -37,7 +38,7 @@ function findMatchingChildren(element: Element, conditionPredicate: ConditionPre
 
 export class Element extends Node {
   public attributes: Attr[] = [];
-  public classList: DOMTokenList = new DOMTokenList(this, 'class', null);
+  public classList: DOMTokenList = new DOMTokenList(this, 'class', null, this.storeAttributeNS.bind(this));
   // No implementation necessary
   // Element.id
 
@@ -109,7 +110,7 @@ export class Element extends Node {
    * @return string representation of serialized HTML describing the Element and its descendants.
    */
   get outerHTML(): string {
-    return `<${[this.nodeName, keyValueString('class', this.className), attrsToString(this.attributes)].join(' ').trim()}>${this.innerHTML}</${this.nodeName}>`;
+    return `<${[this.nodeName, attrsToString(this.attributes)].join(' ').trim()}>${this.innerHTML}</${this.nodeName}>`;
   }
 
   /**
@@ -229,6 +230,24 @@ export class Element extends Node {
    * @param value attribute value
    */
   public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): void {
+    if (namespaceURI === null && name === 'class') {
+      // TODO(KB): Abstract this when there is more than one attribute driven by a DOMTokenList.
+      this.className = value;
+      return;
+    }
+
+    const oldValue = this.storeAttributeNS(namespaceURI, name, value);
+    mutate({
+      type: MutationRecordType.ATTRIBUTES,
+      target: this,
+      attributeName: name,
+      attributeNamespace: namespaceURI,
+      value,
+      oldValue,
+    });
+  }
+
+  private storeAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): string {
     const attr = this.attributes.find(matchAttrPredicate(namespaceURI, name));
     const oldValue = (attr && attr.value) || '';
 
@@ -241,15 +260,7 @@ export class Element extends Node {
         value,
       });
     }
-
-    mutate({
-      type: MutationRecordType.ATTRIBUTES,
-      target: this,
-      attributeName: name,
-      attributeNamespace: namespaceURI,
-      value,
-      oldValue,
-    });
+    return oldValue;
   }
 
   /**
@@ -263,7 +274,7 @@ export class Element extends Node {
   public getAttributeNS(namespaceURI: NamespaceURI, name: string): string | null {
     const attr = this.attributes.find(matchAttrPredicate(namespaceURI, name));
 
-    return (attr && attr.value) || null;
+    return attr ? attr.value : null;
   }
 
   /**
@@ -321,6 +332,29 @@ export class Element extends Node {
    */
   public getElementsByTagName(tagName: string): Element[] {
     return findMatchingChildren(this, tagName === '*' ? element => true : element => element.tagName === tagName);
+  }
+
+  public _sanitize_(): TransferableNode | TransferredNode {
+    if (this._transferred_) {
+      return {
+        _index_: this._index_,
+        transferred: NumericBoolean.TRUE,
+      };
+    }
+
+    Promise.resolve().then(_ => {
+      // After transmission of the current unsanitized form across a message, we can start to send the more compressed format.
+      this._transferred_ = true;
+    });
+    return {
+      _index_: this._index_,
+      transferred: NumericBoolean.FALSE,
+      nodeType: this.nodeType,
+      nodeName: this.nodeName,
+      attributes: this.attributes,
+      properties: [], // TODO(KB): Properties!
+      childNodes: this.childNodes.map(childNode => childNode._sanitize_()),
+    };
   }
 }
 

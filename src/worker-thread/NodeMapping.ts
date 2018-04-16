@@ -25,7 +25,7 @@ let mapping: Map<number, Node> = new Map();
  * @return index Node was stored with in mapping
  */
 export function store(node: Node): number {
-  if (node._index_ !== null) {
+  if (node._index_ !== undefined) {
     return node._index_;
   }
 

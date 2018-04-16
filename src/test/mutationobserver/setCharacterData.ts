@@ -15,11 +15,10 @@
  */
 
 import test from 'ava';
-import { document as workerDocument } from '../../index';
-import { MutationRecord, MutationRecordType } from '../../MutationRecord';
+import { document } from '../../worker-thread/Document';
+import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
 test.cb('Text, set data', t => {
-  const document = workerDocument();
   const text = document.createTextNode('original text');
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
     t.deepEqual(mutations, [
@@ -40,7 +39,6 @@ test.cb('Text, set data', t => {
 });
 
 test.cb.serial('Text, set textContent', t => {
-  const document = workerDocument();
   const text = document.createTextNode('original text');
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
     t.deepEqual(mutations, [

@@ -15,11 +15,10 @@
  */
 
 import test from 'ava';
-import { document as workerDocument } from '../../index';
-import { MutationRecord, MutationRecordType } from '../../MutationRecord';
+import { document } from '../../worker-thread/Document';
+import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
 test.cb.serial('Element.classList.replace mutation observed, single pre-existing value', t => {
-  const document = workerDocument();
   const el = document.createElement('div');
   el.classList.value = 'foo';
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
@@ -43,7 +42,6 @@ test.cb.serial('Element.classList.replace mutation observed, single pre-existing
 });
 
 test.cb.serial('Element.classList.replace mutation observed, multiple pre-existing values', t => {
-  const document = workerDocument();
   const el = document.createElement('div');
   el.classList.value = 'foo bar baz';
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {

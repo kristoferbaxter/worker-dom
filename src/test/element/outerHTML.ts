@@ -15,8 +15,8 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../Node';
-import { Element } from '../../Element';
+import { Node, NodeType } from '../../worker-thread/Node';
+import { Element } from '../../worker-thread/Element';
 
 test.beforeEach(t => {
   t.context = {
@@ -29,7 +29,7 @@ test.beforeEach(t => {
 test('element with no children', t => {
   const { node } = t.context as { node: Element };
 
-  t.is(node.outerHTML, '<div class=""></div>');
+  t.is(node.outerHTML, '<div></div>');
   node.className = 'test';
   t.is(node.outerHTML, '<div class="test"></div>');
 });
@@ -38,5 +38,5 @@ test('element with a child', t => {
   const { node, child } = t.context as { node: Element; child: Element };
 
   node.appendChild(child);
-  t.is(node.outerHTML, '<div class=""><div class=""></div></div>');
+  t.is(node.outerHTML, '<div><div></div></div>');
 });

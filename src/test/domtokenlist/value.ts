@@ -15,24 +15,18 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../Node';
-import { Element } from '../../Element';
-import { DOMTokenList } from '../../DOMTokenList';
-
-test.beforeEach(t => {
-  t.context = {
-    tokenList: new DOMTokenList(new Element(NodeType.ELEMENT_NODE, 'div'), 'className', null),
-  };
-});
+import { NodeType } from '../../worker-thread/Node';
+import { Element } from '../../worker-thread/Element';
+import { DOMTokenList } from '../../worker-thread/DOMTokenList';
 
 test('getter should be empty by default', t => {
-  const { tokenList } = t.context as { tokenList: DOMTokenList };
+  const tokenList = new DOMTokenList(new Element(NodeType.ELEMENT_NODE, 'div'), 'class', null, () => {});
 
   t.is(tokenList.value, '');
 });
 
 test('should accept new total values via setter', t => {
-  const { tokenList } = t.context as { tokenList: DOMTokenList };
+  const tokenList = new DOMTokenList(new Element(NodeType.ELEMENT_NODE, 'div'), 'class', null, () => {});
 
   tokenList.value = 'foo';
   t.is(tokenList.value, 'foo');
@@ -40,4 +34,15 @@ test('should accept new total values via setter', t => {
   t.is(tokenList.value, 'foo bar baz');
   tokenList.value = 'foo foo bar baz foo baz bar';
   t.is(tokenList.value, 'foo foo bar baz foo baz bar', 'duplicates are allowed and their position is retained');
+});
+
+test.cb('provided callback is fired when value changes', t => {
+  const tokenList = new DOMTokenList(new Element(NodeType.ELEMENT_NODE, 'div'), 'class', null, (namespaceURI, name, value) => {
+    t.is(namespaceURI, null);
+    t.is(name, 'class');
+    t.is(value, 'foo');
+    t.end();
+  });
+
+  tokenList.value = 'foo';
 });

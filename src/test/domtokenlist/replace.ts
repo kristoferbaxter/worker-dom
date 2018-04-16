@@ -15,13 +15,13 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../Node';
-import { Element } from '../../Element';
-import { DOMTokenList } from '../../DOMTokenList';
+import { NodeType } from '../../worker-thread/Node';
+import { Element } from '../../worker-thread/Element';
+import { DOMTokenList } from '../../worker-thread/DOMTokenList';
 
 test.beforeEach(t => {
   t.context = {
-    tokenList: new DOMTokenList(new Element(NodeType.ELEMENT_NODE, 'div'), 'className', null),
+    tokenList: new DOMTokenList(new Element(NodeType.ELEMENT_NODE, 'div'), 'class', null, () => {}),
   };
 });
 

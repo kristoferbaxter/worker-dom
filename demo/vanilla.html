@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>File Debugging</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    code {
+      white-space: pre-wrap;
+    }
+    span.clicked {
+      color: red;
+    }
+  </style>
+  <script src="./build/esmodules/main-thread/index.module.js" type="module"></script>
+  <script src="./build/esmodules/main-thread/index.js" nomodule defer></script>
+  <!-- <script src="./build/esmodules/main-thread/index.js" defer></script> -->
+</head>
+<body>
+  <div src="author-vanilla.js" class="amp-script">Hello World!<span>spaner</span><input /></div>
+  <script type="module">
+    MainThread.upgradeElement(document.getElementsByClassName('amp-script')[0]);
+  </script>
+  <script nomodule async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementsByClassName('amp-script')[0]);
+    }, false);
+  </script>
+  <!-- <script async=false defer>
+    document.addEventListener('DOMContentLoaded', function() {
+      MainThread.upgradeElement(document.getElementsByClassName('amp-script')[0]);
+    }, false);
+  </script> -->
+</body>
+</html>

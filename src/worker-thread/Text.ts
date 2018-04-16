@@ -16,6 +16,8 @@
 
 import { NodeType } from './Node';
 import { CharacterData } from './CharacterData';
+import { TransferableNode, TransferredNode } from '../transfer/TransferableNodes';
+import { NumericBoolean } from '../utils';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Text
 export class Text extends CharacterData {
@@ -67,5 +69,30 @@ export class Text extends CharacterData {
     }
 
     return remainderTextNode;
+  }
+
+  public _sanitize_(): TransferableNode | TransferredNode {
+    if (this._transferred_) {
+      return {
+        _index_: this._index_,
+        transferred: NumericBoolean.TRUE,
+        textContent: this.nodeValue,
+      };
+    }
+
+    Promise.resolve().then(_ => {
+      // After transmission of the current unsanitized form across a message, we can start to send the more compressed format.
+      this._transferred_ = true;
+    });
+    return {
+      _index_: this._index_,
+      transferred: NumericBoolean.FALSE,
+      nodeType: this.nodeType,
+      nodeName: this.nodeName,
+      attributes: null,
+      properties: [],
+      childNodes: this.childNodes.map(childNode => childNode._sanitize_()),
+      textContent: this.nodeValue,
+    };
   }
 }

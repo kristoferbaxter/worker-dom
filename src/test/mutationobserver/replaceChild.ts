@@ -15,11 +15,10 @@
  */
 
 import test from 'ava';
-import { document as workerDocument } from '../../index';
-import { MutationRecord, MutationRecordType } from '../../MutationRecord';
+import { document } from '../../worker-thread/Document';
+import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
 test.cb.serial('replaceChild mutation, only node', t => {
-  const document = workerDocument();
   const div = document.createElement('div');
   const p = document.createElement('p');
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
@@ -41,7 +40,6 @@ test.cb.serial('replaceChild mutation, only node', t => {
 });
 
 test.cb.serial('replaceChild mutation, remove sibling node', t => {
-  const document = workerDocument();
   const div = document.createElement('div');
   const p = document.createElement('p');
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {

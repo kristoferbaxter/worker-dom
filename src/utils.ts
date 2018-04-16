@@ -19,6 +19,6 @@ export const toLower = (string: string): string => string.toLowerCase();
 export const keyValueString = (key: string, value: string): string => `${key}="${value}"`;
 
 export const enum NumericBoolean {
-  TRUE = 0,
-  FALSE = 1,
+  FALSE = 0,
+  TRUE = 1,
 }

@@ -1,0 +1,60 @@
+/**
+ * Copyright 2018 The AMP HTML Authors. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS-IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { MessageToWorker } from '../transfer/Messages';
+
+// Supplied by Babel Transpilation
+// See: config/rollup.config.js
+declare var __WORKER_DOM_URL__: string;
+
+export function createWorker(authorScriptURL: string): Promise<Worker | null> {
+  return Promise.all([fetch(__WORKER_DOM_URL__).then(response => response.text()), fetch(authorScriptURL).then(response => response.text())])
+    .then(([workerScript, authorScript]) => {
+      // TODO(KB): Minify this output during build process.
+      const code = `
+        ${workerScript}
+        (function() {
+          var self = this;
+          var document = this.document;
+          var localStorage = this.localStorage;
+          var location = this.location;
+          var defaultView = document.defaultView;
+          var Node = defaultView.Node;
+          var Text = defaultView.Text;
+          var Element = defaultView.Element;
+          var SVGElement = defaultView.SVGElement;
+          var Document = defaultView.Document;
+          var Event = defaultView.Event;
+          var MutationObserver = defaultView.MutationObserver;
+
+          function addEventListener(type, handler) {
+            return document.addEventListener(type, handler);
+          }
+          function removeEventListener(type, handler) {
+            return document.removeEventListener(type, handler);
+          }
+          ${authorScript}
+        }).call(WorkerThread.monkey);`;
+      return new Worker(URL.createObjectURL(new Blob([code])));
+    })
+    .catch(error => {
+      return null;
+    });
+}
+
+export function messageToWorker(worker: Worker, message: MessageToWorker) {
+  worker.postMessage(message);
+}

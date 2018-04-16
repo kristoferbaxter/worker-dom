@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-import { keyValueString } from './utils';
+import { TransferableNode, TransferredNode } from './TransferableNodes';
 
-export type NamespaceURI = string | null;
-export interface Attr {
-  namespaceURI: NamespaceURI;
-  name: string;
-  value: string;
+type TransferableTarget = TransferableNode | TransferredNode;
+
+export interface TransferableEvent {
+  readonly bubbles?: boolean;
+  readonly cancelable?: boolean;
+  cancelBubble?: boolean;
+  readonly currentTarget?: TransferableTarget;
+  readonly defaultPrevented?: boolean;
+  readonly eventPhase?: number;
+  readonly isTrusted?: boolean;
+  returnValue?: boolean;
+  // readonly srcElement: TransferableTarget | null;
+  readonly target?: TransferableTarget | null;
+  readonly timeStamp?: number;
+  readonly type: string;
+  readonly scoped?: boolean;
 }
-
-export const toString = (attributes: Attr[]): string => attributes.map(({ name, value }) => keyValueString(name, value)).join(' ');
-export const matchPredicate = (namespaceURI: NamespaceURI, name: string): ((attr: Attr) => boolean) => attr => attr.namespaceURI === namespaceURI && attr.name === name;

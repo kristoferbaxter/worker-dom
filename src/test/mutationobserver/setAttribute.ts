@@ -15,11 +15,10 @@
  */
 
 import test from 'ava';
-import { document as workerDocument } from '../../index';
-import { MutationRecord, MutationRecordType } from '../../MutationRecord';
+import { document } from '../../worker-thread/Document';
+import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
 test.cb.serial('Element.setAttribute mutation observed, new attribute', t => {
-  const document = workerDocument();
   const el = document.createElement('div');
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
     t.deepEqual(mutations, [
@@ -42,7 +41,6 @@ test.cb.serial('Element.setAttribute mutation observed, new attribute', t => {
 });
 
 test.cb.serial('Element.setAttribute mutation observed, overwrite attribute', t => {
-  const document = workerDocument();
   const el = document.createElement('div');
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
     t.deepEqual(mutations, [
@@ -66,7 +64,6 @@ test.cb.serial('Element.setAttribute mutation observed, overwrite attribute', t 
 });
 
 test.cb.serial('Element.setAttribute mutation observed, new attribute with namespace', t => {
-  const document = workerDocument();
   const el = document.createElement('div');
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
     t.deepEqual(mutations, [
@@ -89,7 +86,6 @@ test.cb.serial('Element.setAttribute mutation observed, new attribute with names
 });
 
 test.cb.serial('Element.setAttribute mutation observed, overwrite attribute with namespace', t => {
-  const document = workerDocument();
   const el = document.createElement('div');
   const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
     t.deepEqual(mutations, [

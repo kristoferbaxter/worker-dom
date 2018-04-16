@@ -1,64 +1,36 @@
-import babel from 'rollup-plugin-babel';
-import uglify from 'rollup-plugin-uglify';
-
-const {DEBUG_BUNDLE, UGLIFY_BUNDLE} = process.env;
-
 /**
- * @param {boolean} esmodules
- * @returns {Array<OutputConfig>} Rollup configurations for output.
- */
-function outputConfiguration(esmodules) {
-  const basePath = `${DEBUG_BUNDLE ? 'debugger/build' : 'build'}${(esmodules === true && '/esmodules') || ''}`;
-
-  return [
-    {
-      file: `${basePath}/index.module.js`,
-      format: 'es',
-      sourcemap: true,
-    },
-    {
-      file: `${basePath}/index.js`,
-      format: 'iife',
-      sourcemap: true,
-      name: 'WorkerDom',
-      outro: DEBUG_BUNDLE ? 'window.workerDocument = document();' : '',
-    },
-  ];
-}
-
-/**
+ * Copyright 2018 The AMP HTML Authors. All Rights Reserved.
  *
- * @param {boolean} esmodules
- * @returns {Object} Babel configuration for output.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS-IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-function babelConfiguration(esmodules) {
-  const targets = (esmodules === true && { esmodules: true }) || { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] };
+
+import { plugins } from './rollup.plugins.js';
+import { output } from './rollup.output.js';
+
+const config = ({ esmodules, forMainThread }) => {
+  const inputFilename = 'index.js';
+  const threadFoldername = forMainThread ? 'main-thread' : 'worker-thread';
 
   return {
-    exclude: 'node_modules/**',
-    presets: [
-      [
-        '@babel/env',
-        {
-          targets: targets,
-          loose: true,
-          modules: false,
-        },
-      ],
-    ],
-    plugins: [['@babel/plugin-proposal-object-rest-spread'], ['@babel/proposal-class-properties']],
+    input: `src/output/${threadFoldername}/${inputFilename}`,
+    output: output(esmodules, forMainThread),
+    plugins: plugins(esmodules),
   };
-}
+};
 
 export default [
-  {
-    input: 'src/output/index.js',
-    output: outputConfiguration(false),
-    plugins: [babel(babelConfiguration(false)), !!UGLIFY_BUNDLE && uglify()],
-  },
-  {
-    input: 'src/output/index.js',
-    output: outputConfiguration(true),
-    plugins: [babel(babelConfiguration(true)), !!UGLIFY_BUNDLE && uglify()],
-  },
+  config({ esmodules: false, forMainThread: false }),
+  config({ esmodules: true, forMainThread: false }),
+  config({ esmodules: false, forMainThread: true }),
+  config({ esmodules: true, forMainThread: true }),
 ];
