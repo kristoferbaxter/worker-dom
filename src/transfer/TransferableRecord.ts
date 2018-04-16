@@ -38,8 +38,8 @@ export interface TransferableMutationRecord {
 }
 
 // TODO(KB): Hydrations are not allowed to contain TransferredNodes.
-// Perhaps we should create a TransferrableHydrationRecord.
-// export interface TransferrableHydrationRecord {
+// Perhaps we should create a TransferableHydrationRecord.
+// export interface TransferableHydrationRecord {
 //   readonly target: TransferableNode;
 //   readonly addedNodes: Array<TransferableNode> | null;
 //   readonly removedNodes: Array<TransferableNode> | null;

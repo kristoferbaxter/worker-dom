@@ -36,7 +36,7 @@ export class Hydration {
 
   public hydrate(hydrations: TransferableMutationRecord[]) {
     // TODO(KB): Hydrations are not allowed to contain TransferredNodes.
-    // Perhaps we should create a TransferrableHydrationRecord.
+    // Perhaps we should create a TransferableHydrationRecord.
     for (let hydration of hydrations) {
       if (hydration.type === MutationRecordType.CHILD_LIST && hydration.addedNodes !== null) {
         for (let nodeToAdd of hydration.addedNodes) {
@@ -65,7 +65,7 @@ export class Hydration {
           this.nodesInstance.storeNode(node as RenderableElement, skeleton._index_);
         } else if (allTextNodes(skeleton.childNodes)) {
           // Node with single textContent represented by multiple Text siblings.
-          // Some frameworks will create multiple Text nodes for a "static" string, since it means they can update specific segments by direct reference.
+          // Some frameworks will create multiple Text nodes for a string, since it means they can update specific segments by direct reference.
           // Hello, {name} => [Text('Hello, '), Text('user')]... Node.childNodes[1].textContent = 'another user';
           node.removeChild(node.childNodes[0]);
           skeleton.childNodes.forEach(skeletonChild => {

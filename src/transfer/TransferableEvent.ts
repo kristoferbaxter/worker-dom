@@ -16,19 +16,19 @@
 
 import { TransferableNode, TransferredNode } from './TransferableNodes';
 
-type TransferrableTarget = TransferableNode | TransferredNode;
+type TransferableTarget = TransferableNode | TransferredNode;
 
 export interface TransferableEvent {
   readonly bubbles?: boolean;
   readonly cancelable?: boolean;
   cancelBubble?: boolean;
-  readonly currentTarget?: TransferrableTarget;
+  readonly currentTarget?: TransferableTarget;
   readonly defaultPrevented?: boolean;
   readonly eventPhase?: number;
   readonly isTrusted?: boolean;
   returnValue?: boolean;
-  // readonly srcElement: TransferrableTarget | null;
-  readonly target?: TransferrableTarget | null;
+  // readonly srcElement: TransferableTarget | null;
+  readonly target?: TransferableTarget | null;
   readonly timeStamp?: number;
   readonly type: string;
   readonly scoped?: boolean;
