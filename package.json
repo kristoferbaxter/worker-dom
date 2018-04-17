@@ -19,7 +19,7 @@
     "pre~rollup": "rimraf src/output build && yarn tsc -p config/tsconfig.build.worker-thread.json & yarn tsc -p config/tsconfig.build.main-thread.json",
     "~rollup": "yarn rollup --config config/rollup.config.js",
     "debug": "DEBUG_BUNDLE=true yarn ~rollup && node -r esm demo/server.mjs",
-    "bundle": "UGLIFY_BUNDLE=true yarn ~rollup"
+    "bundle": "UGLIFY_BUNDLE=true COMPRESS_BUNDLE=true yarn ~rollup"
   },
   "devDependencies": {
     "@babel/cli": "v7.0.0-beta.44",
@@ -38,6 +38,8 @@
     "rimraf": "2.6.2",
     "rollup": "0.58.0",
     "rollup-plugin-babel": "4.0.0-beta.4",
+    "rollup-plugin-brotli": "1.1.0",
+    "rollup-plugin-gzip": "1.3.0",
     "rollup-plugin-uglify": "3.0.0",
     "serve-static": "1.13.2",
     "tsickle": "0.27.5",

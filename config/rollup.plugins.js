@@ -16,7 +16,9 @@
 
 import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
-import { path, UGLIFY_BUNDLE_VALUE, DEBUG_BUNDLE_VALUE } from './rollup.utils.js';
+import brotli from 'rollup-plugin-brotli';
+import gzip from "rollup-plugin-gzip";
+import { path, UGLIFY_BUNDLE_VALUE, DEBUG_BUNDLE_VALUE, COMPRESS_BUNDLE_VALUE } from './rollup.utils.js';
 
 const excludeFromConsoleRemoval = DEBUG_BUNDLE_VALUE ? ['error', 'warn', 'info', 'log'] : [];
 const targets = esmodules => esmodules ? { esmodules: true } : { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] };
@@ -54,14 +56,40 @@ const babelConfiguration = esmodules => {
     ],
   };
 }
+const brotliConfiguration = {
+  options: {
+    mode: 0,
+    quality: 11,
+    lgwin: 22,
+    lgblock: 0,
+    disable_literal_context_modeling: false,
+    size_hint: 0,
+    large_window: false,
+    npostfix: 0,
+    ndirect: 0,
+  },
+  minSize: 0
+};
+const gzipConfiguration = {
+  algorithm: 'zopfli',
+  options: {
+    numiterations: 1000,
+  }
+}
 
 /**
  * @param {boolean} esmodules
  * @returns {Array<Plugin>}
  */
 export function plugins(esmodules) {
+  let plugins = [babel(babelConfiguration(esmodules))];
+
   if (UGLIFY_BUNDLE_VALUE) {
-    return [babel(babelConfiguration(esmodules)), uglify()];
+    plugins.push(uglify());
   }
-  return [babel(babelConfiguration(esmodules))];
+  if (COMPRESS_BUNDLE_VALUE) {
+    plugins.push(brotli(brotliConfiguration), gzip(gzipConfiguration));
+  }
+
+  return plugins;
 }

@@ -18,10 +18,11 @@
 // Babel 7 .babelrc.js files must use CJS, and Rollup configuration can be either.
 // This means we must use CJS for common functionality.
 
-const { DEBUG_BUNDLE = false, UGLIFY_BUNDLE = false } = process.env;
+const { DEBUG_BUNDLE = false, UGLIFY_BUNDLE = false, COMPRESS_BUNDLE = false } = process.env;
 
 export let DEBUG_BUNDLE_VALUE = DEBUG_BUNDLE === 'true';
 export let UGLIFY_BUNDLE_VALUE = UGLIFY_BUNDLE === 'true';
+export let COMPRESS_BUNDLE_VALUE = COMPRESS_BUNDLE === 'true';
 
 /**
  * @param {boolean} esmodules
