@@ -17,9 +17,7 @@
 import { NodeType, NodeName } from '../worker-thread/Node';
 import { NumericBoolean } from '../utils';
 
-export interface TransferableNode {
-  readonly _index_: number;
-  readonly transferred: NumericBoolean;
+export interface TransferableNode extends TransferredNode {
   readonly nodeType: NodeType;
   readonly nodeName: NodeName;
   readonly attributes: Array<{
