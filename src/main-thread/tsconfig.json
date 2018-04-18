@@ -1,6 +1,9 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
+    "lib": [
+      "es2017",
+    ],
     "outDir": "../output",
     "sourceMap": true,
     "moduleResolution": "node",

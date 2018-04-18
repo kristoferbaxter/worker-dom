@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { TransferableNode, TransferredNode } from './TransferableNodes';
+import { TransferredNode } from './TransferableNodes';
 
-type TransferableTarget = TransferableNode | TransferredNode;
+type TransferableTarget = TransferredNode;
 
 export interface TransferableEvent {
   readonly bubbles?: boolean;

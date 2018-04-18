@@ -22,7 +22,8 @@ import { TransferableNode, TransferredNode } from './TransferableNodes';
 import { MutationFromWorker, MessageType } from './Messages';
 
 const SUPPORTS_POST_MESSAGE = typeof postMessage !== 'undefined';
-const sanitizeNodes = (nodes: Node[] | undefined): Array<TransferableNode | TransferredNode> | null => (nodes && nodes.map(node => node._sanitize_())) || null;
+const sanitizeNodes = (nodes: Node[] | undefined): Array<TransferableNode | TransferredNode> | null =>
+  (nodes && nodes.map(node => node._sanitize_())) || null;
 let observing = false;
 let hydrated = false;
 

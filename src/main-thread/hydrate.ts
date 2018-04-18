@@ -34,7 +34,7 @@ export class Hydration {
     this.baseElement = baseElement as HTMLElement;
   }
 
-  public hydrate(hydrations: TransferableMutationRecord[]) {
+  public process(hydrations: TransferableMutationRecord[]) {
     // TODO(KB): Hydrations are not allowed to contain TransferredNodes.
     // Perhaps we should create a TransferableHydrationRecord.
     for (let hydration of hydrations) {
@@ -81,7 +81,9 @@ export class Hydration {
       }
 
       this.nodesInstance.storeNode(node as RenderableElement, skeleton._index_);
-      skeleton.childNodes.forEach((childNode: TransferableNode | TransferredNode, index: number): void => this.hydrateNode(node.childNodes[index], childNode as TransferableNode));
+      skeleton.childNodes.forEach((childNode: TransferableNode | TransferredNode, index: number): void =>
+        this.hydrateNode(node.childNodes[index], childNode as TransferableNode),
+      );
     }
   }
 }

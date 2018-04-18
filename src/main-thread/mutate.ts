@@ -26,7 +26,10 @@ import { MutationRecordType } from '../worker-thread/MutationRecord';
 const Mutators: {
   [key: number]: (nodesInstance: Nodes, mutation: TransferableMutationRecord) => void;
 } = {
-  [MutationRecordType.CHILD_LIST]: function(nodesInstance: Nodes, { target, removedNodes, addedNodes, nextSibling }: TransferableMutationRecord): void {
+  [MutationRecordType.CHILD_LIST]: function(
+    nodesInstance: Nodes,
+    { target, removedNodes, addedNodes, nextSibling }: TransferableMutationRecord,
+  ): void {
     const parent = nodesInstance.getNode(target._index_);
 
     if (removedNodes) {
@@ -35,7 +38,10 @@ const Mutators: {
 
     if (addedNodes) {
       addedNodes.forEach(node => {
-        parent.insertBefore(nodesInstance.getNode(node._index_) || nodesInstance.createNode(node as TransferableNode), (nextSibling && nodesInstance.getNode(nextSibling._index_)) || null);
+        parent.insertBefore(
+          nodesInstance.getNode(node._index_) || nodesInstance.createNode(node as TransferableNode),
+          (nextSibling && nodesInstance.getNode(nextSibling._index_)) || null,
+        );
       });
     }
   },
