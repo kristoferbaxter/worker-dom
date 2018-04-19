@@ -60,7 +60,7 @@ export function propagate(): void {
             eventPhase: event.eventPhase,
             isTrusted: event.isTrusted,
             returnValue: event.returnValue,
-            target: get((event.target || { _index_: null })._index_),
+            target: get(event.target ? event.target._index_ : null),
             timeStamp: event.timeStamp,
             scoped: event.scoped,
           }),
