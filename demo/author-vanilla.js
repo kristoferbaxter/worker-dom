@@ -28,12 +28,12 @@ input.addEventListener('input', event => {
   }
 }, false);
 
-span.addEventListener('click', function handleClick() {
-  span.textContent = JSON.stringify(span.getBoundingClientRect());
-}, false);
+// span.addEventListener('click', function handleClick() {
+//   span.textContent = JSON.stringify(span.getBoundingClientRect());
+// }, false);
 
-span.addEventListener('click', function handleClick() {
-  span.textContent = JSON.stringify(span.getAsyncBoundingClientRect());
-}, false);
+// span.addEventListener('click', function handleClick() {
+//   span.textContent = JSON.stringify(span.getAsyncBoundingClientRect());
+// }, false);
 
-setInterval(toggle, 600);
+// setInterval(toggle, 600);

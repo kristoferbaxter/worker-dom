@@ -32,12 +32,6 @@ export interface MutationFromWorker {
   type: MessageType.HYDRATE | MessageType.MUTATE;
   mutations: TransferableMutationRecord[];
 }
-// export interface CommandFromWorker {
-//   type: MessageType.COMMAND;
-//   addEvents: TransferableEventSubscriptionChange[] | null;
-//   removeEvents: TransferableEventSubscriptionChange[] | null;
-//   measure: TransferredNode[] | null;
-// }
 export interface MessageFromWorker {
   data: MutationFromWorker;
 }

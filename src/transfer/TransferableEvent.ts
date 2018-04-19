@@ -15,10 +15,15 @@
  */
 
 import { TransferredNode } from './TransferableNodes';
+import { MessageToWorker, MessageType } from './Messages';
+import { get } from '../worker-thread/NodeMapping';
+import { Node } from '../worker-thread/Node';
+import { Event } from '../worker-thread/Event';
 
 type TransferableTarget = TransferredNode;
 
 export interface TransferableEvent {
+  readonly _index_: number;
   readonly bubbles?: boolean;
   readonly cancelable?: boolean;
   cancelBubble?: boolean;
@@ -37,4 +42,30 @@ export interface TransferableEvent {
 export interface TransferableEventSubscriptionChange {
   readonly type: string;
   readonly index: number;
+}
+
+export function propagate(): void {
+  if (typeof addEventListener !== 'undefined') {
+    addEventListener('message', ({ data: { type, event } }: { data: MessageToWorker }) => {
+      if (type !== MessageType.EVENT) {
+        return;
+      }
+
+      const node: Node | null = get(event._index_);
+      if (node) {
+        node.dispatchEvent(
+          Object.assign(new Event(event.type, { bubbles: event.bubbles, cancelable: event.cancelable }), {
+            cancelBubble: event.cancelBubble,
+            defaultPrevented: event.defaultPrevented,
+            eventPhase: event.eventPhase,
+            isTrusted: event.isTrusted,
+            returnValue: event.returnValue,
+            target: get((event.target || { _index_: null })._index_),
+            timeStamp: event.timeStamp,
+            scoped: event.scoped,
+          }),
+        );
+      }
+    });
+  }
 }

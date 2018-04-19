@@ -24,10 +24,11 @@ import { TransferableMutationRecord } from '../transfer/TransferableRecord';
 
 let knownListeners: Array<(event: Event) => any> = [];
 
-const eventHandler = (worker: Worker) => (event: Event): void => {
+const eventHandler = (worker: Worker, _index_: number) => (event: Event): void => {
   messageToWorker(worker, {
     type: MessageType.EVENT,
     event: {
+      _index_,
       bubbles: event.bubbles,
       cancelable: event.cancelable,
       cancelBubble: event.cancelBubble,
@@ -58,11 +59,9 @@ export function process(nodesInstance: Nodes, worker: Worker, mutation: Transfer
     );
   }
   if ((events = mutation.addedEvents)) {
-    events.forEach(listener =>
-      (nodesInstance.getNode(mutation.target._index_) as EventTarget).addEventListener(
-        listener.type,
-        (knownListeners[listener.index] = eventHandler(worker)),
-      ),
-    );
+    events.forEach(listener => {
+      const index: number = mutation.target._index_;
+      (nodesInstance.getNode(index) as EventTarget).addEventListener(listener.type, (knownListeners[listener.index] = eventHandler(worker, index)));
+    });
   }
 }
