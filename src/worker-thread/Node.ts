@@ -292,11 +292,18 @@ export class Node {
    */
   public addEventListener(type: string, handler: EventHandler): void {
     let handlers: EventHandler[] = this._handlers_[toLower(type)];
+    let index: number = 0;
     if (handlers && handlers.length > 0) {
-      handlers.push(handler);
+      index = handlers.push(handler);
     } else {
       this._handlers_[toLower(type)] = [handler];
     }
+
+    mutate({
+      target: this,
+      type: MutationRecordType.COMMAND,
+      addedEvents: [{ type, index }],
+    });
   }
 
   /**
@@ -311,6 +318,11 @@ export class Node {
 
     if (index >= 0) {
       handlers.splice(index, 1);
+      mutate({
+        target: this,
+        type: MutationRecordType.COMMAND,
+        removedEvents: [{ type, index }],
+      });
     }
   }
 

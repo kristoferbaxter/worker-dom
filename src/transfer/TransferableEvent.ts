@@ -33,3 +33,8 @@ export interface TransferableEvent {
   readonly type: string;
   readonly scoped?: boolean;
 }
+
+export interface TransferableEventSubscriptionChange {
+  readonly type: string;
+  readonly index: number;
+}

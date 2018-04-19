@@ -35,6 +35,9 @@ export interface MutationRecord {
   readonly propertyName?: string | null;
   // Mutation of attributes or properties must pass a value representing the new value.
   readonly value?: string | null;
+  // Event subscription mutations
+  readonly addedEvents?: EventSubscriptionChange[];
+  readonly removedEvents?: EventSubscriptionChange[];
 }
 
 // Add a new type of MutationRecord 'properties' to enable MutationRecords to capture properties changes on Nodes.
@@ -43,4 +46,10 @@ export const enum MutationRecordType {
   CHARACTER_DATA = 1,
   CHILD_LIST = 2,
   PROPERTIES = 3,
+  COMMAND = 4,
+}
+
+interface EventSubscriptionChange {
+  readonly type: string;
+  readonly index: number;
 }

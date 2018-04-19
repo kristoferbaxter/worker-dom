@@ -16,8 +16,6 @@
 
 import { TransferableEvent } from './TransferableEvent';
 import { TransferableMutationRecord } from './TransferableRecord';
-import { TransferredNode } from 'TransferableNodes';
-import { Event } from '../worker-thread/Event';
 
 export const enum MessageType {
   // INIT = 0,
@@ -34,14 +32,14 @@ export interface MutationFromWorker {
   type: MessageType.HYDRATE | MessageType.MUTATE;
   mutations: TransferableMutationRecord[];
 }
-export interface CommandFromWorker {
-  type: MessageType.COMMAND;
-  addListener: Array<{ target: TransferredNode; type: Event['type']; index: number }> | null;
-  removeListener: Array<{ target: TransferredNode; type: Event['type']; index: number }> | null;
-  measure: TransferredNode[] | null;
-}
+// export interface CommandFromWorker {
+//   type: MessageType.COMMAND;
+//   addEvents: TransferableEventSubscriptionChange[] | null;
+//   removeEvents: TransferableEventSubscriptionChange[] | null;
+//   measure: TransferredNode[] | null;
+// }
 export interface MessageFromWorker {
-  data: MutationFromWorker | CommandFromWorker;
+  data: MutationFromWorker;
 }
 
 interface EventToWorker {

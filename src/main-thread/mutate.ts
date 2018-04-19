@@ -19,15 +19,18 @@ import { Nodes } from './nodes';
 import { TransferableMutationRecord } from '../transfer/TransferableRecord';
 import { TransferableNode } from '../transfer/TransferableNodes';
 import { MutationRecordType } from '../worker-thread/MutationRecord';
+import { MutationFromWorker } from '../transfer/Messages';
+import { process } from './command';
 
 // TODO(KB): Restore mutation threshold timeout.
 // const GESTURE_TO_MUTATION_THRESHOLD = 5000;
 
 const Mutators: {
-  [key: number]: (nodesInstance: Nodes, mutation: TransferableMutationRecord) => void;
+  [key: number]: (nodesInstance: Nodes, worker: Worker, mutation: TransferableMutationRecord) => void;
 } = {
   [MutationRecordType.CHILD_LIST]: function(
     nodesInstance: Nodes,
+    worker: Worker,
     { target, removedNodes, addedNodes, nextSibling }: TransferableMutationRecord,
   ): void {
     const parent = nodesInstance.getNode(target._index_);
@@ -45,21 +48,27 @@ const Mutators: {
       });
     }
   },
-  [MutationRecordType.ATTRIBUTES]: function(nodesInstance: Nodes, { target, attributeName, value }: TransferableMutationRecord): void {
+  [MutationRecordType.ATTRIBUTES]: function(
+    nodesInstance: Nodes,
+    worker: Worker,
+    { target, attributeName, value }: TransferableMutationRecord,
+  ): void {
     if (attributeName !== null && value !== null) {
       nodesInstance.getNode(target._index_).setAttribute(attributeName, value);
     }
   },
-  [MutationRecordType.CHARACTER_DATA]: function(nodesInstance: Nodes, { target, value }: TransferableMutationRecord): void {
+  [MutationRecordType.CHARACTER_DATA]: function(nodesInstance: Nodes, worker: Worker, { target, value }: TransferableMutationRecord): void {
     if (value !== null) {
       nodesInstance.getNode(target._index_).textContent = value;
     }
   },
-  [MutationRecordType.PROPERTIES]: function(nodesInstance: Nodes, { target, propertyName, value }: TransferableMutationRecord): void {
+  [MutationRecordType.PROPERTIES]: function(nodesInstance: Nodes, worker: Worker, { target, propertyName, value }: TransferableMutationRecord): void {
     if (propertyName !== null && value !== null) {
       nodesInstance.getNode(target._index_)[propertyName] = value;
     }
   },
+  [MutationRecordType.COMMAND]: (nodesInstance: Nodes, worker: Worker, mutation: TransferableMutationRecord) =>
+    process(nodesInstance, worker, mutation),
 };
 
 export class Mutation {
@@ -67,22 +76,25 @@ export class Mutation {
   private pendingMutations: boolean = false;
   // private lastGestureTime: number;
   private nodesInstance: Nodes;
+  private worker: Worker;
 
-  constructor(nodesInstance: Nodes) {
+  constructor(nodesInstance: Nodes, worker: Worker) {
     this.nodesInstance = nodesInstance;
+    this.worker = worker;
 
     this.process = this.process.bind(this);
     this.syncFlush = this.syncFlush.bind(this);
   }
 
-  public process(mutations: TransferableMutationRecord[]): void {
+  public process(mutationFromWorker: MutationFromWorker): void {
+    //mutations: TransferableMutationRecord[]): void {
     // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferableMutationRecord[])
     // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {
     //   return;
     // }
 
     // this.lastGestureTime = lastGestureTime;
-    this.MUTATION_QUEUE = this.MUTATION_QUEUE.concat(mutations);
+    this.MUTATION_QUEUE = this.MUTATION_QUEUE.concat(mutationFromWorker.mutations);
     if (!this.pendingMutations) {
       this.pendingMutations = true;
       requestAnimationFrame(this.syncFlush);
@@ -91,7 +103,7 @@ export class Mutation {
 
   private syncFlush(): void {
     const length = this.MUTATION_QUEUE.length;
-    this.MUTATION_QUEUE.forEach(mutation => Mutators[mutation.type](this.nodesInstance, mutation));
+    this.MUTATION_QUEUE.forEach(mutation => Mutators[mutation.type](this.nodesInstance, this.worker, mutation));
 
     this.MUTATION_QUEUE.splice(0, length);
     this.pendingMutations = false;

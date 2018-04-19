@@ -14,62 +14,55 @@
  * limitations under the License.
  */
 
-import { CommandFromWorker, MessageType } from '../transfer/Messages';
+import { MessageType } from '../transfer/Messages';
 import { Nodes } from './nodes';
 import { messageToWorker } from './worker';
-import { RenderableElement } from 'RenderableElement';
+import { RenderableElement } from './RenderableElement';
 import { NumericBoolean } from '../utils';
+import { TransferableEventSubscriptionChange } from '../transfer/TransferableEvent';
+import { TransferableMutationRecord } from '../transfer/TransferableRecord';
 
-export class Command {
-  private worker: Worker;
-  private nodesInstance: Nodes;
-  private knownListeners: Array<(event: Event) => any> = [];
+let knownListeners: Array<(event: Event) => any> = [];
 
-  constructor(worker: Worker, nodesInstance: Nodes) {
-    this.worker = worker;
-    this.nodesInstance = nodesInstance;
-  }
-
-  public process(command: CommandFromWorker): void {
-    if (command.removeListener) {
-      command.removeListener.forEach(listener =>
-        (this.nodesInstance.getNode(listener.target._index_) as EventTarget).removeEventListener(listener.type, this.knownListeners[listener.index]),
-      );
-    }
-    if (command.addListener) {
-      command.addListener.forEach(listener =>
-        (this.nodesInstance.getNode(listener.target._index_) as EventTarget).addEventListener(
-          listener.type,
-          (this.knownListeners[listener.index] = this.eventHandler),
-        ),
-      );
-    }
-    // TODO(KB): Implement measurements
-  }
-
-  private eventHandler(event: Event): void {
-    messageToWorker(this.worker, {
-      type: MessageType.EVENT,
-      event: {
-        bubbles: event.bubbles,
-        cancelable: event.cancelable,
-        cancelBubble: event.cancelBubble,
-        currentTarget: {
-          _index_: (event.currentTarget as RenderableElement)._index_,
-          transferred: NumericBoolean.TRUE,
-        },
-        defaultPrevented: event.defaultPrevented,
-        eventPhase: event.eventPhase,
-        isTrusted: event.isTrusted,
-        returnValue: event.returnValue,
-        target: {
-          _index_: (event.target as RenderableElement)._index_,
-          transferred: NumericBoolean.TRUE,
-        },
-        timeStamp: event.timeStamp,
-        type: event.type,
-        scoped: event.scoped,
+const eventHandler = (worker: Worker) => (event: Event): void => {
+  messageToWorker(worker, {
+    type: MessageType.EVENT,
+    event: {
+      bubbles: event.bubbles,
+      cancelable: event.cancelable,
+      cancelBubble: event.cancelBubble,
+      currentTarget: {
+        _index_: (event.currentTarget as RenderableElement)._index_,
+        transferred: NumericBoolean.TRUE,
       },
-    });
+      defaultPrevented: event.defaultPrevented,
+      eventPhase: event.eventPhase,
+      isTrusted: event.isTrusted,
+      returnValue: event.returnValue,
+      target: {
+        _index_: (event.target as RenderableElement)._index_,
+        transferred: NumericBoolean.TRUE,
+      },
+      timeStamp: event.timeStamp,
+      type: event.type,
+      scoped: event.scoped,
+    },
+  });
+};
+
+export function process(nodesInstance: Nodes, worker: Worker, mutation: TransferableMutationRecord): void {
+  let events: TransferableEventSubscriptionChange[] | null;
+  if ((events = mutation.removedEvents)) {
+    events.forEach(listener =>
+      (nodesInstance.getNode(mutation.target._index_) as EventTarget).removeEventListener(listener.type, knownListeners[listener.index]),
+    );
+  }
+  if ((events = mutation.addedEvents)) {
+    events.forEach(listener =>
+      (nodesInstance.getNode(mutation.target._index_) as EventTarget).addEventListener(
+        listener.type,
+        (knownListeners[listener.index] = eventHandler(worker)),
+      ),
+    );
   }
 }

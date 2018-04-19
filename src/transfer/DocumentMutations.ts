@@ -43,6 +43,9 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
       type: mutation.type,
       propertyName: mutation.propertyName || null,
       value: mutation.value === '' ? '' : mutation.value || null,
+      addedEvents: mutation.addedEvents || null,
+      removedEvents: mutation.removedEvents || null,
+      measure: null,
     });
   });
 

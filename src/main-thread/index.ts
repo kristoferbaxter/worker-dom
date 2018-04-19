@@ -17,7 +17,6 @@
 import { Nodes } from './nodes';
 import { Hydration } from './hydrate';
 import { Mutation } from './mutate';
-import { Command } from './command';
 import { createWorker } from './worker';
 import { MessageFromWorker, MessageType } from '../transfer/Messages';
 
@@ -28,8 +27,6 @@ export function upgradeElement(baseElement: Element): void {
   }
 
   const nodesInstance = new Nodes(baseElement);
-  const hydrationInstance = new Hydration(baseElement, nodesInstance);
-  const mutationInstance = new Mutation(nodesInstance);
 
   // console.log(`creating worker, author code: ${authorURL}`);
   createWorker(authorURL).then(worker => {
@@ -37,19 +34,18 @@ export function upgradeElement(baseElement: Element): void {
       return;
     }
 
-    const commandInstance = new Command(worker, nodesInstance);
-    worker.onmessage = (message: MessageFromWorker) => {
-      switch (message.data.type) {
+    const hydrationInstance = new Hydration(baseElement, nodesInstance, worker);
+    const mutationInstance = new Mutation(nodesInstance, worker);
+
+    worker.onmessage = ({ data }: MessageFromWorker) => {
+      switch (data.type) {
         case MessageType.HYDRATE:
           // console.info(`hydration from worker: ${data.type}`, data.mutations);
-          hydrationInstance.process(message.data.mutations);
+          hydrationInstance.process(data);
           break;
         case MessageType.MUTATE:
           // console.info(`mutation from worker: ${data.type}`, data.mutations);
-          mutationInstance.process(message.data.mutations);
-          break;
-        case MessageType.COMMAND:
-          commandInstance.process(message.data);
+          mutationInstance.process(data);
           break;
       }
     };
