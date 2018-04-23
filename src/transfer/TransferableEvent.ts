@@ -44,6 +44,11 @@ export interface TransferableEventSubscriptionChange {
   readonly index: number;
 }
 
+/**
+ * When an event is dispatched from the main thread, it needs to be propagated in the worker thread.
+ * Propagate adds an event listener to the worker global scope and uses the WorkerDOM Node.dispatchEvent
+ * method to dispatch the transfered event in the worker thread.
+ */
 export function propagate(): void {
   if (typeof addEventListener !== 'undefined') {
     addEventListener('message', ({ data: { type, event } }: { data: MessageToWorker }) => {

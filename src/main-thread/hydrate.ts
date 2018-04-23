@@ -63,7 +63,7 @@ export class Hydration {
    * Compares the current node in DOM versus the skeleton provided during Hydration from worker thread.
    * Also, attempt to rationalize equivalence in output, but different by transmission nature.
    * @param node Real Node in DOM
-   * @param skeleton Skeleton Node representation created by Worker DOM and transmitted across threads.
+   * @param skeleton Skeleton Node representation created by WorkerDOM and transmitted across threads.
    */
   private hydrateNode(node: Node, skeleton: TransferableNode): void {
     if (node.childNodes.length !== skeleton.childNodes.length) {

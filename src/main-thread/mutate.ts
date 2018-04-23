@@ -86,6 +86,10 @@ export class Mutation {
     this.syncFlush = this.syncFlush.bind(this);
   }
 
+  /**
+   * Process MutationRecord from worker thread applying changes to the existing DOM.
+   * @param hydrationFromWorker contains mutations to apply
+   */
   public process(mutationFromWorker: MutationFromWorker): void {
     //mutations: TransferableMutationRecord[]): void {
     // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferableMutationRecord[])
@@ -101,6 +105,12 @@ export class Mutation {
     }
   }
 
+  /**
+   * Apply all stored mutations syncronously. This method works well, but can cause jank if there are too many
+   * mutations to apply in a single frame.
+   *
+   * Investigations in using asyncFlush to resolve are worth considering.
+   */
   private syncFlush(): void {
     const length = this.MUTATION_QUEUE.length;
     this.MUTATION_QUEUE.forEach(mutation => Mutators[mutation.type](this.nodesInstance, this.worker, mutation));

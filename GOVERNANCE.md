@@ -1,6 +1,6 @@
 # AMP Project open source governance
 
-This document describes the governance model for the AMP open source project, and in particular the [Worker DOM GitHub project](https://github.com/ampproject/worker-dom).
+This document describes the governance model for the AMP open source project, and in particular the [WorkerDOM GitHub project](https://github.com/ampproject/worker-dom).
 
 Our governance model is as follows:
 
