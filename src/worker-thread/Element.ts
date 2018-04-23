@@ -20,7 +20,8 @@ import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate, 
 import { mutate } from './MutationObserver';
 import { MutationRecordType } from './MutationRecord';
 import { TransferableNode, TransferredNode } from '../transfer/TransferableNodes';
-import { NumericBoolean } from '../utils';
+import { NumericBoolean, toLower } from '../utils';
+import { Text } from './Text';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
@@ -110,7 +111,8 @@ export class Element extends Node {
    * @return string representation of serialized HTML describing the Element and its descendants.
    */
   get outerHTML(): string {
-    return `<${[this.nodeName, attrsToString(this.attributes)].join(' ').trim()}>${this.innerHTML}</${this.nodeName}>`;
+    const outputTagName = toLower(this.nodeName);
+    return `<${[outputTagName, attrsToString(this.attributes)].join(' ').trim()}>${this.innerHTML}</${outputTagName}>`;
   }
 
   /**
@@ -124,6 +126,16 @@ export class Element extends Node {
       return childNodes.map(child => (child.nodeType === NodeType.ELEMENT_NODE ? child.outerHTML : child.textContent)).join('');
     }
     return '';
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent
+   * @param text new text replacing all childNodes content.
+   */
+  set textContent(text: string) {
+    // TODO(KB): Investigate removing all children in a single .splice to childNodes.
+    this.childNodes.forEach(childNode => childNode.remove());
+    this.appendChild(new Text(text));
   }
 
   /**

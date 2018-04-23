@@ -70,7 +70,7 @@ export abstract class CharacterData extends Node {
    * @return Returns the string contained in CharacterData.data
    */
   get nodeValue(): string {
-    return this.data;
+    return this._data_;
   }
 
   /**
