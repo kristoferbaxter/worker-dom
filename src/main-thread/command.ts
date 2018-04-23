@@ -24,6 +24,12 @@ import { TransferableMutationRecord } from '../transfer/TransferableRecord';
 
 let knownListeners: Array<(event: Event) => any> = [];
 
+/**
+ * Register an event handler for dispatching events to worker thread
+ * @param worker whom to dispatch events toward
+ * @param _index_ node index the event comes from (used to dispatchEvent in worker thread).
+ * @return eventHandler function consuming event and dispatching to worker thread
+ */
 const eventHandler = (worker: Worker, _index_: number) => (event: Event): void => {
   messageToWorker(worker, {
     type: MessageType.EVENT,
@@ -51,6 +57,12 @@ const eventHandler = (worker: Worker, _index_: number) => (event: Event): void =
   });
 };
 
+/**
+ * Process commands transfered from worker thread to main thread.
+ * @param nodesInstance nodes instance to execute commands against.
+ * @param worker whom to dispatch events toward.
+ * @param mutation mutation record containing commands to execute.
+ */
 export function process(nodesInstance: Nodes, worker: Worker, mutation: TransferableMutationRecord): void {
   let events: TransferableEventSubscriptionChange[] | null;
   if ((events = mutation.removedEvents)) {

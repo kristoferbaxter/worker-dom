@@ -37,7 +37,11 @@ export class Hydration {
     this.worker = worker;
   }
 
-  public process(hydrationFromWorker: MutationFromWorker) {
+  /**
+   * Process MutationRecord from worker thread by comparing it versus the current DOM.
+   * @param hydrationFromWorker contains mutations to compare or apply
+   */
+  public process(hydrationFromWorker: MutationFromWorker): void {
     // TODO(KB): Hydrations are not allowed to contain TransferredNodes.
     // Perhaps we should create a TransferableHydrationRecord.
     hydrationFromWorker.mutations.forEach(hydration => {
@@ -56,9 +60,10 @@ export class Hydration {
   }
 
   /**
-   *
-   * @param node
-   * @param skeleton
+   * Compares the current node in DOM versus the skeleton provided during Hydration from worker thread.
+   * Also, attempt to rationalize equivalence in output, but different by transmission nature.
+   * @param node Real Node in DOM
+   * @param skeleton Skeleton Node representation created by Worker DOM and transmitted across threads.
    */
   private hydrateNode(node: Node, skeleton: TransferableNode): void {
     if (node.childNodes.length !== skeleton.childNodes.length) {
