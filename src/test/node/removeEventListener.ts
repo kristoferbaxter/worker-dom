@@ -25,27 +25,35 @@ test.beforeEach(t => {
   };
 });
 
-test('event handlers are undefined by default', t => {
-  const { node } = t.context;
-
-  t.is(node._handlers_['click'], undefined);
-});
-
-test('adding an event listener increases total registered events from 0 to 1 on a Node', t => {
-  const { node } = t.context;
-  const callback = () => undefined;
+test('removing the only registered callback retains array with zero length', t => {
+  const { node, callback } = t.context;
 
   node.addEventListener('click', callback);
-  t.is(node._handlers_['click'].length, 1);
-  t.is(node._handlers_['click'][0], callback);
+  node.removeEventListener('click', callback);
+  t.deepEqual(node._handlers_['click'], []);
 });
 
-test('adding a second event listener increases total registered events from 0 to 1 on a Node', t => {
+test('removing a callback when multiple are registered reduces the number attached to a specific callback type', t => {
   const { node, callback, callbackTwo } = t.context;
 
   node.addEventListener('click', callback);
   node.addEventListener('click', callbackTwo);
-  t.is(node._handlers_['click'].length, 2);
-  t.is(node._handlers_['click'][0], callback);
-  t.is(node._handlers_['click'][1], callbackTwo);
+  node.removeEventListener('click', callback);
+  t.deepEqual(node._handlers_['click'], [callbackTwo]);
+});
+
+test('removing an unknown callback when callbacks are registerd to a type does nothing', t => {
+  const { node, callback, callbackTwo } = t.context;
+
+  node.addEventListener('click', callback);
+  node.addEventListener('click', callbackTwo);
+  node.removeEventListener('click', () => undefined);
+  t.deepEqual(node._handlers_['click'], [callback, callbackTwo]);
+});
+
+test.failing('removing an unknown callback for a unknown type does nothing', t => {
+  const { node } = t.context;
+
+  node.removeEventListener('click', () => undefined);
+  t.is(node._handlers_['click'], undefined);
 });
