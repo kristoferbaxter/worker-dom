@@ -79,7 +79,7 @@ const gzipConfiguration = {
 
 /**
  * @param {boolean} esmodules
- * @returns {Array<Plugin>}
+ * @return {Array<Plugin>}
  */
 export function plugins(esmodules) {
   let plugins = [babel(babelConfiguration(esmodules))];

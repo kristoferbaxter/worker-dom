@@ -61,7 +61,7 @@ export class Nodes {
   /**
    * Returns the real DOM Element corresponding to a serialized Element object.
    * @param id
-   * @returns
+   * @return
    */
   public getNode(id: number): RenderableElement {
     const node = this.NODES.get(id);
