@@ -329,7 +329,7 @@ export class Node {
    */
   public removeEventListener(type: string, handler: EventHandler): void {
     const handlers = this._handlers_[toLower(type)];
-    const index = handlers.indexOf(handler);
+    const index = !!handlers ? handlers.indexOf(handler) : -1;
 
     if (index >= 0) {
       handlers.splice(index, 1);

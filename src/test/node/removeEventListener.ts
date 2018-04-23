@@ -51,7 +51,7 @@ test('removing an unknown callback when callbacks are registerd to a type does n
   t.deepEqual(node._handlers_['click'], [callback, callbackTwo]);
 });
 
-test.failing('removing an unknown callback for a unknown type does nothing', t => {
+test('removing an unknown callback for a unknown type does nothing', t => {
   const { node } = t.context;
 
   node.removeEventListener('click', () => undefined);
