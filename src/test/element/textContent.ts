@@ -35,12 +35,23 @@ test('textContent setter adds a child text node to Element.', t => {
   t.is(element.childNodes.length, 1);
 });
 
+test('clearing textContent via setter removes value stored as text inside element', t => {
+  const { element, text } = t.context as { element: Element; text: Text };
+
+  element.appendChild(text);
+  t.is(element.childNodes[0].data, 'default text');
+
+  element.textContent = '';
+  t.is(element.childNodes[0].data, '');
+});
+
 test('textContent setter replaces childNodes with single text node.', t => {
   const { element, child, text } = t.context as { element: Element; child: Element; text: Text };
 
   child.appendChild(text);
   element.appendChild(child);
   t.deepEqual(element.childNodes, [child]);
+  t.is(element.childNodes[0].childNodes[0].data, 'default text');
 
   element.textContent = 'foo';
   t.is(element.childNodes.length, 1);

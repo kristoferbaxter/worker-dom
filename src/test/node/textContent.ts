@@ -41,7 +41,7 @@ test('textContent getter returns the value of direct childNodes when there are n
   t.is(node.textContent, 'text in node');
 });
 
-test('textContent getter returns the value of all depths childNodes when there are children with no textContent', t => {
+test('textContent getter returns the value of all depths childNodes even when there are children with no textContent', t => {
   const { node, child, nodeText } = t.context as { node: Node; child: Node; nodeText: Text };
 
   node.appendChild(nodeText);
