@@ -33,11 +33,12 @@ test('removing the only registered callback retains array with zero length', t =
   t.deepEqual(node._handlers_['click'], []);
 });
 
-test('removing a callback when multiple are registered reduces the number attached to a specific callback type', t => {
+test('removing a specific callback from list with more than one callback reduces the list to the remaining callback', t => {
   const { node, callback, callbackTwo } = t.context;
 
   node.addEventListener('click', callback);
   node.addEventListener('click', callbackTwo);
+  t.deepEqual(node._handlers_['click'], [callback, callbackTwo]);
   node.removeEventListener('click', callback);
   t.deepEqual(node._handlers_['click'], [callbackTwo]);
 });
@@ -47,6 +48,7 @@ test('removing an unknown callback when callbacks are registerd to a type does n
 
   node.addEventListener('click', callback);
   node.addEventListener('click', callbackTwo);
+  t.deepEqual(node._handlers_['click'], [callback, callbackTwo]);
   node.removeEventListener('click', () => undefined);
   t.deepEqual(node._handlers_['click'], [callback, callbackTwo]);
 });
