@@ -19,7 +19,6 @@ import { Nodes } from './nodes';
 import { TransferableMutationRecord } from '../transfer/TransferableRecord';
 import { TransferableNode } from '../transfer/TransferableNodes';
 import { MutationRecordType } from '../worker-thread/MutationRecord';
-import { MutationFromWorker } from '../transfer/Messages';
 import { process } from './command';
 
 // TODO(KB): Restore mutation threshold timeout.
@@ -90,7 +89,7 @@ export class Mutation {
    * Process MutationRecord from worker thread applying changes to the existing DOM.
    * @param hydrationFromWorker contains mutations to apply
    */
-  public process(mutationFromWorker: MutationFromWorker): void {
+  public process(mutations: TransferableMutationRecord[]): void {
     //mutations: TransferableMutationRecord[]): void {
     // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferableMutationRecord[])
     // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {
@@ -98,7 +97,7 @@ export class Mutation {
     // }
 
     // this.lastGestureTime = lastGestureTime;
-    this.MUTATION_QUEUE = this.MUTATION_QUEUE.concat(mutationFromWorker.mutations);
+    this.MUTATION_QUEUE = this.MUTATION_QUEUE.concat(mutations);
     if (!this.pendingMutations) {
       this.pendingMutations = true;
       requestAnimationFrame(this.syncFlush);

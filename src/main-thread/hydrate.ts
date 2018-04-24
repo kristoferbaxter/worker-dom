@@ -20,8 +20,8 @@ import { NodeType } from '../worker-thread/Node';
 import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { RenderableElement } from './RenderableElement';
 import { NumericBoolean } from '../utils';
-import { MutationFromWorker } from '../transfer/Messages';
 import { process } from './command';
+import { TransferableMutationRecord } from '../transfer/TransferableRecord';
 
 const allTextNodes = (nodes: NodeList | Array<TransferableNode | TransferredNode>): boolean =>
   nodes.length > 0 && [].every.call(nodes, (node: Node | TransferableNode): boolean => node.nodeType === NodeType.TEXT_NODE);
@@ -41,10 +41,10 @@ export class Hydration {
    * Process MutationRecord from worker thread by comparing it versus the current DOM.
    * @param hydrationFromWorker contains mutations to compare or apply
    */
-  public process(hydrationFromWorker: MutationFromWorker): void {
+  public process(mutations: TransferableMutationRecord[]): void {
     // TODO(KB): Hydrations are not allowed to contain TransferredNodes.
     // Perhaps we should create a TransferableHydrationRecord.
-    hydrationFromWorker.mutations.forEach(hydration => {
+    mutations.forEach(hydration => {
       if (hydration.type === MutationRecordType.CHILD_LIST && hydration.addedNodes !== null) {
         hydration.addedNodes.forEach(nodeToAdd => {
           const baseNode = this.nodesInstance.getNode(nodeToAdd._index_) || this.baseElement;
