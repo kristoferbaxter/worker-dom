@@ -19,14 +19,19 @@ import { Nodes } from './nodes';
 import { TransferableMutationRecord } from '../transfer/TransferableRecord';
 import { TransferableNode } from '../transfer/TransferableNodes';
 import { MutationRecordType } from '../worker-thread/MutationRecord';
+import { process } from './command';
 
 // TODO(KB): Restore mutation threshold timeout.
 // const GESTURE_TO_MUTATION_THRESHOLD = 5000;
 
 const Mutators: {
-  [key: number]: (nodesInstance: Nodes, mutation: TransferableMutationRecord) => void;
+  [key: number]: (nodesInstance: Nodes, worker: Worker, mutation: TransferableMutationRecord) => void;
 } = {
-  [MutationRecordType.CHILD_LIST]: function(nodesInstance: Nodes, { target, removedNodes, addedNodes, nextSibling }: TransferableMutationRecord): void {
+  [MutationRecordType.CHILD_LIST]: function(
+    nodesInstance: Nodes,
+    worker: Worker,
+    { target, removedNodes, addedNodes, nextSibling }: TransferableMutationRecord,
+  ): void {
     const parent = nodesInstance.getNode(target._index_);
 
     if (removedNodes) {
@@ -35,25 +40,34 @@ const Mutators: {
 
     if (addedNodes) {
       addedNodes.forEach(node => {
-        parent.insertBefore(nodesInstance.getNode(node._index_) || nodesInstance.createNode(node as TransferableNode), (nextSibling && nodesInstance.getNode(nextSibling._index_)) || null);
+        parent.insertBefore(
+          nodesInstance.getNode(node._index_) || nodesInstance.createNode(node as TransferableNode),
+          (nextSibling && nodesInstance.getNode(nextSibling._index_)) || null,
+        );
       });
     }
   },
-  [MutationRecordType.ATTRIBUTES]: function(nodesInstance: Nodes, { target, attributeName, value }: TransferableMutationRecord): void {
+  [MutationRecordType.ATTRIBUTES]: function(
+    nodesInstance: Nodes,
+    worker: Worker,
+    { target, attributeName, value }: TransferableMutationRecord,
+  ): void {
     if (attributeName !== null && value !== null) {
       nodesInstance.getNode(target._index_).setAttribute(attributeName, value);
     }
   },
-  [MutationRecordType.CHARACTER_DATA]: function(nodesInstance: Nodes, { target, value }: TransferableMutationRecord): void {
+  [MutationRecordType.CHARACTER_DATA]: function(nodesInstance: Nodes, worker: Worker, { target, value }: TransferableMutationRecord): void {
     if (value !== null) {
       nodesInstance.getNode(target._index_).textContent = value;
     }
   },
-  [MutationRecordType.PROPERTIES]: function(nodesInstance: Nodes, { target, propertyName, value }: TransferableMutationRecord): void {
+  [MutationRecordType.PROPERTIES]: function(nodesInstance: Nodes, worker: Worker, { target, propertyName, value }: TransferableMutationRecord): void {
     if (propertyName !== null && value !== null) {
       nodesInstance.getNode(target._index_)[propertyName] = value;
     }
   },
+  [MutationRecordType.COMMAND]: (nodesInstance: Nodes, worker: Worker, mutation: TransferableMutationRecord) =>
+    process(nodesInstance, worker, mutation),
 };
 
 export class Mutation {
@@ -61,15 +75,22 @@ export class Mutation {
   private pendingMutations: boolean = false;
   // private lastGestureTime: number;
   private nodesInstance: Nodes;
+  private worker: Worker;
 
-  constructor(nodesInstance: Nodes) {
+  constructor(nodesInstance: Nodes, worker: Worker) {
     this.nodesInstance = nodesInstance;
+    this.worker = worker;
 
     this.process = this.process.bind(this);
     this.syncFlush = this.syncFlush.bind(this);
   }
 
+  /**
+   * Process MutationRecord from worker thread applying changes to the existing DOM.
+   * @param hydrationFromWorker contains mutations to apply
+   */
   public process(mutations: TransferableMutationRecord[]): void {
+    //mutations: TransferableMutationRecord[]): void {
     // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferableMutationRecord[])
     // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {
     //   return;
@@ -83,9 +104,15 @@ export class Mutation {
     }
   }
 
+  /**
+   * Apply all stored mutations syncronously. This method works well, but can cause jank if there are too many
+   * mutations to apply in a single frame.
+   *
+   * Investigations in using asyncFlush to resolve are worth considering.
+   */
   private syncFlush(): void {
     const length = this.MUTATION_QUEUE.length;
-    this.MUTATION_QUEUE.forEach(mutation => Mutators[mutation.type](this.nodesInstance, mutation));
+    this.MUTATION_QUEUE.forEach(mutation => Mutators[mutation.type](this.nodesInstance, this.worker, mutation));
 
     this.MUTATION_QUEUE.splice(0, length);
     this.pendingMutations = false;

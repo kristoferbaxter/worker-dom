@@ -16,6 +16,7 @@
 
 import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { TransferableNode, TransferredNode } from './TransferableNodes';
+import { TransferableEventSubscriptionChange } from './TransferableEvent';
 
 // The TransferableMutationRecord interface is modification and extension of
 // the real MutationRecord, with changes to support the transferring of
@@ -35,6 +36,9 @@ export interface TransferableMutationRecord {
   readonly type: MutationRecordType;
   readonly propertyName: string | null;
   readonly value: string | null;
+  readonly addedEvents: TransferableEventSubscriptionChange[] | null;
+  readonly removedEvents: TransferableEventSubscriptionChange[] | null;
+  readonly measure: TransferredNode[] | null;
 }
 
 // TODO(KB): Hydrations are not allowed to contain TransferredNodes.

@@ -15,45 +15,55 @@
  */
 
 import { Nodes } from './nodes';
-import { TransferableMutationRecord } from '../transfer/TransferableRecord';
 import { TransferableNode, TransferredNode } from '../transfer/TransferableNodes';
 import { NodeType } from '../worker-thread/Node';
 import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { RenderableElement } from './RenderableElement';
 import { NumericBoolean } from '../utils';
+import { process } from './command';
+import { TransferableMutationRecord } from '../transfer/TransferableRecord';
 
 const allTextNodes = (nodes: NodeList | Array<TransferableNode | TransferredNode>): boolean =>
   nodes.length > 0 && [].every.call(nodes, (node: Node | TransferableNode): boolean => node.nodeType === NodeType.TEXT_NODE);
 
 export class Hydration {
-  nodesInstance: Nodes;
-  baseElement: HTMLElement;
+  private nodesInstance: Nodes;
+  private baseElement: HTMLElement;
+  private worker: Worker;
 
-  constructor(baseElement: Element, nodesInstance: Nodes) {
+  constructor(baseElement: Element, nodesInstance: Nodes, worker: Worker) {
     this.nodesInstance = nodesInstance;
     this.baseElement = baseElement as HTMLElement;
+    this.worker = worker;
   }
 
-  public hydrate(hydrations: TransferableMutationRecord[]) {
+  /**
+   * Process MutationRecord from worker thread by comparing it versus the current DOM.
+   * @param hydrationFromWorker contains mutations to compare or apply
+   */
+  public process(mutations: TransferableMutationRecord[]): void {
     // TODO(KB): Hydrations are not allowed to contain TransferredNodes.
     // Perhaps we should create a TransferableHydrationRecord.
-    for (let hydration of hydrations) {
+    mutations.forEach(hydration => {
       if (hydration.type === MutationRecordType.CHILD_LIST && hydration.addedNodes !== null) {
-        for (let nodeToAdd of hydration.addedNodes) {
+        hydration.addedNodes.forEach(nodeToAdd => {
           const baseNode = this.nodesInstance.getNode(nodeToAdd._index_) || this.baseElement;
           if (nodeToAdd.transferred === NumericBoolean.FALSE) {
             this.hydrateNode(baseNode, nodeToAdd as TransferableNode);
           }
-        }
+        });
+        // TODO(KB): Hydration can include changes to props and attrs. Let's allow mutation of attrs/props during hydration.
+      } else if (hydration.type === MutationRecordType.COMMAND) {
+        process(this.nodesInstance, this.worker, hydration);
       }
-      // TODO(KB): Hydration can include changes to props and attrs. Let's allow mutation of attrs/props during hydration.
-    }
+    });
   }
 
   /**
-   *
-   * @param node
-   * @param skeleton
+   * Compares the current node in DOM versus the skeleton provided during Hydration from worker thread.
+   * Also, attempt to rationalize equivalence in output, but different by transmission nature.
+   * @param node Real Node in DOM
+   * @param skeleton Skeleton Node representation created by WorkerDOM and transmitted across threads.
    */
   private hydrateNode(node: Node, skeleton: TransferableNode): void {
     if (node.childNodes.length !== skeleton.childNodes.length) {
@@ -81,7 +91,9 @@ export class Hydration {
       }
 
       this.nodesInstance.storeNode(node as RenderableElement, skeleton._index_);
-      skeleton.childNodes.forEach((childNode: TransferableNode | TransferredNode, index: number): void => this.hydrateNode(node.childNodes[index], childNode as TransferableNode));
+      skeleton.childNodes.forEach((childNode: TransferableNode | TransferredNode, index: number): void =>
+        this.hydrateNode(node.childNodes[index], childNode as TransferableNode),
+      );
     }
   }
 }

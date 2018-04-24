@@ -28,7 +28,7 @@ export let COMPRESS_BUNDLE_VALUE = COMPRESS_BUNDLE === 'true';
  * @param {boolean} esmodules
  * @param {boolean} forMainThread
  * @param {string} filename
- * @returns {string} path to filename including filename.
+ * @return {string} path to filename including filename.
  */
 export function path(esmodules, forMainThread, filename) {
   return [

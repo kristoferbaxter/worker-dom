@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-import { TransferableNode, TransferredNode } from './TransferableNodes';
+import { TransferredNode } from './TransferableNodes';
+import { MessageToWorker, MessageType } from './Messages';
+import { get } from '../worker-thread/NodeMapping';
+import { Node } from '../worker-thread/Node';
+import { Event } from '../worker-thread/Event';
 
-type TransferableTarget = TransferableNode | TransferredNode;
+type TransferableTarget = TransferredNode;
 
 export interface TransferableEvent {
+  readonly _index_: number;
   readonly bubbles?: boolean;
   readonly cancelable?: boolean;
   cancelBubble?: boolean;
@@ -32,4 +37,40 @@ export interface TransferableEvent {
   readonly timeStamp?: number;
   readonly type: string;
   readonly scoped?: boolean;
+}
+
+export interface TransferableEventSubscriptionChange {
+  readonly type: string;
+  readonly index: number;
+}
+
+/**
+ * When an event is dispatched from the main thread, it needs to be propagated in the worker thread.
+ * Propagate adds an event listener to the worker global scope and uses the WorkerDOM Node.dispatchEvent
+ * method to dispatch the transfered event in the worker thread.
+ */
+export function propagate(): void {
+  if (typeof addEventListener !== 'undefined') {
+    addEventListener('message', ({ data: { type, event } }: { data: MessageToWorker }) => {
+      if (type !== MessageType.EVENT) {
+        return;
+      }
+
+      const node: Node | null = get(event._index_);
+      if (node) {
+        node.dispatchEvent(
+          Object.assign(new Event(event.type, { bubbles: event.bubbles, cancelable: event.cancelable }), {
+            cancelBubble: event.cancelBubble,
+            defaultPrevented: event.defaultPrevented,
+            eventPhase: event.eventPhase,
+            isTrusted: event.isTrusted,
+            returnValue: event.returnValue,
+            target: get(event.target ? event.target._index_ : null),
+            timeStamp: event.timeStamp,
+            scoped: event.scoped,
+          }),
+        );
+      }
+    });
+  }
 }

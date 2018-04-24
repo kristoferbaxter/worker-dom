@@ -27,8 +27,6 @@ export function upgradeElement(baseElement: Element): void {
   }
 
   const nodesInstance = new Nodes(baseElement);
-  const hydrationInstance = new Hydration(baseElement, nodesInstance);
-  const mutationInstance = new Mutation(nodesInstance);
 
   // console.log(`creating worker, author code: ${authorURL}`);
   createWorker(authorURL).then(worker => {
@@ -36,15 +34,18 @@ export function upgradeElement(baseElement: Element): void {
       return;
     }
 
-    worker.onmessage = (message: MessageFromWorker) => {
-      switch (message.data.type) {
+    const hydrationInstance = new Hydration(baseElement, nodesInstance, worker);
+    const mutationInstance = new Mutation(nodesInstance, worker);
+
+    worker.onmessage = ({ data }: MessageFromWorker) => {
+      switch (data.type) {
         case MessageType.HYDRATE:
           // console.info(`hydration from worker: ${data.type}`, data.mutations);
-          hydrationInstance.hydrate(message.data.mutations);
+          hydrationInstance.process(data.mutations);
           break;
         case MessageType.MUTATE:
           // console.info(`mutation from worker: ${data.type}`, data.mutations);
-          mutationInstance.process(message.data.mutations);
+          mutationInstance.process(data.mutations);
           break;
       }
     };

@@ -88,12 +88,27 @@ export class Node {
 
   // Implemented at Element/Text layer
   // Node.nodeValue – https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeValue
-  // Node.textContent – https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent
   // Node.cloneNode – https://developer.mozilla.org/en-US/docs/Web/API/Node/cloneNode
 
   /**
+   * Getter returning the text representation of Element.childNodes.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent
+   * @return text from all childNodes.
+   */
+  get textContent(): string {
+    let textContent = '';
+    const childNodes = this.childNodes;
+
+    if (childNodes.length) {
+      childNodes.forEach(childNode => (textContent += childNode.textContent));
+      return textContent;
+    }
+    return '';
+  }
+
+  /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/firstChild
-   * @returns Node's first child in the tree, or null if the node has no children.
+   * @return Node's first child in the tree, or null if the node has no children.
    */
   get firstChild(): Node | null {
     return this.childNodes.length > 0 ? this.childNodes[0] : null;
@@ -101,7 +116,7 @@ export class Node {
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/lastChild
-   * @returns The last child of a node, or null if there are no child elements.
+   * @return The last child of a node, or null if there are no child elements.
    */
   get lastChild(): Node | null {
     return this.childNodes.length > 0 ? this.childNodes[this.childNodes.length - 1] : null;
@@ -109,7 +124,7 @@ export class Node {
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/nextSibling
-   * @returns node immediately following the specified one in it's parent's childNodes, or null if one doesn't exist.
+   * @return node immediately following the specified one in it's parent's childNodes, or null if one doesn't exist.
    */
   get nextSibling(): Node | null {
     if (this.parentNode === null) {
@@ -122,7 +137,7 @@ export class Node {
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/previousSibling
-   * @returns node immediately preceding the specified one in its parent's childNodes, or null if the specified node is the first in that list.
+   * @return node immediately preceding the specified one in its parent's childNodes, or null if the specified node is the first in that list.
    */
   get previousSibling(): Node | null {
     if (this.parentNode === null) {
@@ -135,7 +150,7 @@ export class Node {
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/hasChildNodes
-   * @returns boolean if the Node has childNodes.
+   * @return boolean if the Node has childNodes.
    */
   public hasChildNodes(): boolean {
     return this.childNodes.length > 0;
@@ -144,7 +159,7 @@ export class Node {
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/contains
    * @param otherNode
-   * @returns whether a Node is a descendant of a given Node
+   * @return whether a Node is a descendant of a given Node
    */
   public contains(otherNode: Node | null): boolean {
     if (this.childNodes.length > 0) {
@@ -161,7 +176,7 @@ export class Node {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/insertBefore
    * @param child
    * @param referenceNode
-   * @returns child after it has been inserted.
+   * @return child after it has been inserted.
    */
   public insertBefore(child: Node | null, referenceNode: Node | undefined | null): Node | null {
     if (child === null) {
@@ -228,7 +243,7 @@ export class Node {
    * Removes a child node from the current element.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/removeChild
    * @param child Child Node to remove from this Node.
-   * @returns Node removed from the tree or null if the node wasn't attached to this tree.
+   * @return Node removed from the tree or null if the node wasn't attached to this tree.
    */
   public removeChild(child: Node): Node | null {
     const index = this.childNodes.indexOf(child);
@@ -292,11 +307,18 @@ export class Node {
    */
   public addEventListener(type: string, handler: EventHandler): void {
     let handlers: EventHandler[] = this._handlers_[toLower(type)];
+    let index: number = 0;
     if (handlers && handlers.length > 0) {
-      handlers.push(handler);
+      index = handlers.push(handler);
     } else {
       this._handlers_[toLower(type)] = [handler];
     }
+
+    mutate({
+      target: this,
+      type: MutationRecordType.COMMAND,
+      addedEvents: [{ type, index }],
+    });
   }
 
   /**
@@ -307,10 +329,15 @@ export class Node {
    */
   public removeEventListener(type: string, handler: EventHandler): void {
     const handlers = this._handlers_[toLower(type)];
-    const index = handlers.indexOf(handler);
+    const index = !!handlers ? handlers.indexOf(handler) : -1;
 
     if (index >= 0) {
       handlers.splice(index, 1);
+      mutate({
+        target: this,
+        type: MutationRecordType.COMMAND,
+        removedEvents: [{ type, index }],
+      });
     }
   }
 

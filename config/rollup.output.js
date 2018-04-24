@@ -19,7 +19,7 @@ import {path, DEBUG_BUNDLE_VALUE} from './rollup.utils.js';
 /**
  * @param {boolean} esmodules
  * @param {boolean} forMainThread
- * @returns {Array<OutputConfig>} Rollup configurations for output.
+ * @return {Array<OutputConfig>} Rollup configurations for output.
  */
 export function output(esmodules, forMainThread) {
   return [

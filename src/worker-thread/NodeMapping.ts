@@ -38,6 +38,6 @@ export function store(node: Node): number {
  * @param index location in map to retrieve a Node for
  * @return either the Node represented in index position, or null if not available.
  */
-export function get(index: number): Node | null {
-  return mapping.get(index) || null;
+export function get(index: number | null): Node | null {
+  return (!!index && mapping.get(index)) || null;
 }

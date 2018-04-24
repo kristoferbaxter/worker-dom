@@ -22,9 +22,10 @@ export const enum MessageType {
   EVENT = 1,
   HYDRATE = 2,
   MUTATE = 3,
-  // NAVIGATION_PUSH_STATE = 4,
-  // NAVIGATION_REPLACE_STATE = 5,
-  // NAVIGATION_POP_STATE = 6,
+  COMMAND = 4,
+  // NAVIGATION_PUSH_STATE = 5,
+  // NAVIGATION_REPLACE_STATE = 6,
+  // NAVIGATION_POP_STATE = 7,
 }
 
 export interface MutationFromWorker {

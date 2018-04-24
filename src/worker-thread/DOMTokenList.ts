@@ -25,7 +25,12 @@ export class DOMTokenList extends Array {
   attributeNamespace: string | null = null;
   storeAttributeMethod: (namespaceURI: NamespaceURI, name: string, value: string) => void;
 
-  constructor(element: Element, attributeName: string, attributeNamespace: string | null, storeAttributeMethod: (namespaceURI: NamespaceURI, name: string, value: string) => void) {
+  constructor(
+    element: Element,
+    attributeName: string,
+    attributeNamespace: string | null,
+    storeAttributeMethod: (namespaceURI: NamespaceURI, name: string, value: string) => void,
+  ) {
     super();
     this.element = element;
     this.attributeName = attributeName;

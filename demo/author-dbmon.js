@@ -117,7 +117,7 @@ function h(nodeName, attributes) {
  *  Copy all properties from `props` onto `obj`.
  *  @param {Object} obj		Object onto which properties should be copied.
  *  @param {Object} props	Object from which to copy properties.
- *  @returns obj
+ *  @return obj
  *  @private
  */
 function extend(obj, props) {
@@ -191,7 +191,7 @@ function isNamedNode(node, nodeName) {
  * Own-properties of `defaultProps` not present in `vnode.attributes` are added.
  *
  * @param {VNode} vnode
- * @returns {Object} props
+ * @return {Object} props
  */
 function getNodeProps(vnode) {
   var props = extend({}, vnode.attributes);
@@ -212,7 +212,7 @@ function getNodeProps(vnode) {
 /** Create an element with the given nodeName.
  *	@param {String} nodeName
  *	@param {Boolean} [isSvg=false]	If `true`, creates an element within the SVG namespace.
- *	@returns {Element} node
+ *	@return {Element} node
  */
 function createNode(nodeName, isSvg) {
 	var node = isSvg ? document.createElementNS('http://www.w3.org/2000/svg', nodeName) : document.createElement(nodeName);
@@ -325,7 +325,7 @@ function flushMounts() {
 /** Apply differences in a given vnode (and it's deep children) to a real DOM Node.
  *	@param {Element} [dom=null]		A DOM node to mutate into the shape of the `vnode`
  *	@param {VNode} vnode			A VNode (with descendants forming a tree) representing the desired DOM structure
- *	@returns {Element} dom			The created/mutated element
+ *	@return {Element} dom			The created/mutated element
  *	@private
  */
 function diff(dom, vnode, context, mountAll, parent, componentRoot) {
@@ -817,7 +817,7 @@ function renderComponent(component, opts, mountAll, isChild) {
 /** Apply the Component referenced by a VNode to the DOM.
  *	@param {Element} dom	The DOM node to mutate
  *	@param {VNode} vnode	A Component-referencing VNode
- *	@returns {Element} dom	The created/mutated element
+ *	@return {Element} dom	The created/mutated element
  *	@private
  */
 function buildComponentFromVNode(dom, vnode, context, mountAll) {
@@ -927,7 +927,7 @@ extend(Component.prototype, {
   *	@param {object} nextProps
   *	@param {object} nextState
   *	@param {object} nextContext
-  *	@returns {Boolean} should the component re-render
+  *	@return {Boolean} should the component re-render
   *	@name shouldComponentUpdate
   *	@function
   */
@@ -960,7 +960,7 @@ extend(Component.prototype, {
   *	@param {object} props		Props (eg: JSX attributes) received from parent element/component
   *	@param {object} state		The component's current state
   *	@param {object} context		Context object (if a parent component has provided context)
-  *	@returns VNode
+  *	@return VNode
   */
 	render: function render() {}
 });

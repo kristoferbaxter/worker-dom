@@ -20,7 +20,8 @@ import { Node, NodeType } from './Node';
 import { Event } from './Event';
 import { Text } from './Text';
 import { MutationObserver } from './MutationObserver';
-import { observe } from '../transfer/DocumentMutations';
+import { observe as observeMutations } from '../transfer/DocumentMutations';
+import { propagate as propagateEvents } from '../transfer/TransferableEvent';
 
 type createElementFunc = (type: string) => Element;
 type createElementNSFunc = (type: string, namespace: string) => Element;
@@ -77,7 +78,9 @@ export const document = (function() {
     let document = new Document(createElement, createElementNS, (text: string): Text => new Text(text));
     document.isConnected = true;
     document.appendChild((document.body = createElement('body')));
-    observe(document);
+    observeMutations(document);
+    propagateEvents();
+
     return document;
   }
 
