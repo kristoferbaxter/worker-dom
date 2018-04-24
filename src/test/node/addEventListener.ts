@@ -40,7 +40,7 @@ test('adding an event listener increases total registered events from 0 to 1 on 
   t.is(node._handlers_['click'][0], callback);
 });
 
-test('adding a second event listener increases total registered events from 0 to 1 on a Node', t => {
+test('adding a second event listener increases total registered events from 1 to 2 on a Node', t => {
   const { node, callback, callbackTwo } = t.context;
 
   node.addEventListener('click', callback);
