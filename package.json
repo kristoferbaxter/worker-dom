@@ -14,10 +14,11 @@
   "author": "Kristofer Baxter",
   "license": "Apache-2.0",
   "scripts": {
-    "pretest": "rimraf src/output && yarn tsc -p config/tsconfig.test.worker-thread.json & yarn tsc -p config/tsconfig.test.json & yarn tsc -p config/tsconfig.test.main-thread.json",
-    "test": "yarn ava src/output/test/",
-    "pre~rollup": "rimraf src/output build && yarn tsc -p config/tsconfig.build.worker-thread.json & yarn tsc -p config/tsconfig.build.main-thread.json",
-    "~rollup": "yarn rollup --config config/rollup.config.js",
+    "lint": "tslint -c config/tslint.json src/*/**.ts",
+    "pretest": "rimraf src/output && tsc -p config/tsconfig.test.worker-thread.json & tsc -p config/tsconfig.test.json & tsc -p config/tsconfig.test.main-thread.json",
+    "test": "ava src/output/test/",
+    "pre~rollup": "rimraf src/output build && tsc -p config/tsconfig.build.worker-thread.json & tsc -p config/tsconfig.build.main-thread.json",
+    "~rollup": "rollup --config config/rollup.config.js",
     "debug": "DEBUG_BUNDLE=true yarn ~rollup && node -r esm demo/server.mjs",
     "bundle": "UGLIFY_BUNDLE=true COMPRESS_BUNDLE=true yarn ~rollup"
   },
@@ -43,6 +44,7 @@
     "rollup-plugin-uglify": "3.0.0",
     "serve-static": "1.13.2",
     "tsickle": "0.27.5",
+    "tslint": "^5.9.1",
     "typescript": "2.7.2"
   },
   "lint-staged": {
