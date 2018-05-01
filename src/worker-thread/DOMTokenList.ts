@@ -114,7 +114,7 @@ export class DOMTokenList extends Array {
     }
 
     const oldValue = this.value;
-    let set = new Set(this); // foo foo bar
+    const set = new Set(this);
     if (token !== newToken) {
       set.delete(token);
       if (newToken !== '') {

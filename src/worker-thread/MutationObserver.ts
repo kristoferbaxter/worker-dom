@@ -17,7 +17,7 @@
 import { Node } from './Node';
 import { MutationRecord } from './MutationRecord';
 
-let observers: MutationObserver[] = [];
+const observers: MutationObserver[] = [];
 let pendingMutations = false;
 
 const match = (observerTarget: Node | null, target: Node): boolean => observerTarget !== null && target._index_ === observerTarget._index_;

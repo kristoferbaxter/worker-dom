@@ -17,7 +17,7 @@
 import { Node } from './Node';
 
 let count: number = 0;
-let mapping: Map<number, Node> = new Map();
+const mapping: Map<number, Node> = new Map();
 
 /**
  * Stores a node in mapping, and makes the index available on the Node directly.

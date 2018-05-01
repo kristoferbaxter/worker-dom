@@ -22,7 +22,7 @@ import { NumericBoolean } from '../utils';
 import { TransferableEventSubscriptionChange } from '../transfer/TransferableEvent';
 import { TransferableMutationRecord } from '../transfer/TransferableRecord';
 
-let knownListeners: Array<(event: Event) => any> = [];
+const knownListeners: Array<(event: Event) => any> = [];
 
 /**
  * Register an event handler for dispatching events to worker thread
