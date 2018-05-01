@@ -63,19 +63,19 @@ export class Document extends Element {
   }
 }
 
-export const document = (function() {
+export const document = (() => {
   function createElement(tagName: string): Element {
     return new Element(NodeType.ELEMENT_NODE, String(tagName).toUpperCase());
   }
 
   function createElementNS(namespaceURI: string, tagName: string): Element {
-    let element = createElement(tagName);
+    const element = createElement(tagName);
     element.namespace = namespaceURI;
     return element;
   }
 
   function createDocument(): Document {
-    let document = new Document(createElement, createElementNS, (text: string): Text => new Text(text));
+    const document = new Document(createElement, createElementNS, (text: string): Text => new Text(text));
     document.isConnected = true;
     document.appendChild((document.body = createElement('body')));
     observeMutations(document);

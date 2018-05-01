@@ -48,7 +48,7 @@ export abstract class CharacterData extends Node {
    * @param value string value to store as CharacterData.data.
    */
   set data(value: string) {
-    let oldValue = this.data;
+    const oldValue = this.data;
     this._data_ = value;
 
     mutate({

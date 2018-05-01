@@ -28,7 +28,7 @@ let observing = false;
 let hydrated = false;
 
 function handleMutations(incomingMutations: MutationRecord[]): void {
-  let mutations: TransferableMutationRecord[] = [];
+  const mutations: TransferableMutationRecord[] = [];
 
   incomingMutations.forEach(mutation => {
     mutations.push({

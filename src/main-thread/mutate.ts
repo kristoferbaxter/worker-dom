@@ -24,14 +24,14 @@ import { process } from './command';
 // TODO(KB): Restore mutation threshold timeout.
 // const GESTURE_TO_MUTATION_THRESHOLD = 5000;
 
-const Mutators: {
+const mutators: {
   [key: number]: (nodesInstance: Nodes, worker: Worker, mutation: TransferableMutationRecord) => void;
 } = {
-  [MutationRecordType.CHILD_LIST]: function(
+  [MutationRecordType.CHILD_LIST]: (
     nodesInstance: Nodes,
     worker: Worker,
     { target, removedNodes, addedNodes, nextSibling }: TransferableMutationRecord,
-  ): void {
+  ) => {
     const parent = nodesInstance.getNode(target._index_);
 
     if (removedNodes) {
@@ -47,21 +47,17 @@ const Mutators: {
       });
     }
   },
-  [MutationRecordType.ATTRIBUTES]: function(
-    nodesInstance: Nodes,
-    worker: Worker,
-    { target, attributeName, value }: TransferableMutationRecord,
-  ): void {
+  [MutationRecordType.ATTRIBUTES]: (nodesInstance: Nodes, worker: Worker, { target, attributeName, value }: TransferableMutationRecord) => {
     if (attributeName !== null && value !== null) {
       nodesInstance.getNode(target._index_).setAttribute(attributeName, value);
     }
   },
-  [MutationRecordType.CHARACTER_DATA]: function(nodesInstance: Nodes, worker: Worker, { target, value }: TransferableMutationRecord): void {
+  [MutationRecordType.CHARACTER_DATA]: (nodesInstance: Nodes, worker: Worker, { target, value }: TransferableMutationRecord) => {
     if (value !== null) {
       nodesInstance.getNode(target._index_).textContent = value;
     }
   },
-  [MutationRecordType.PROPERTIES]: function(nodesInstance: Nodes, worker: Worker, { target, propertyName, value }: TransferableMutationRecord): void {
+  [MutationRecordType.PROPERTIES]: (nodesInstance: Nodes, worker: Worker, { target, propertyName, value }: TransferableMutationRecord) => {
     if (propertyName !== null && value !== null) {
       nodesInstance.getNode(target._index_)[propertyName] = value;
     }
@@ -112,7 +108,7 @@ export class Mutation {
    */
   private syncFlush(): void {
     const length = this.MUTATION_QUEUE.length;
-    this.MUTATION_QUEUE.forEach(mutation => Mutators[mutation.type](this.nodesInstance, this.worker, mutation));
+    this.MUTATION_QUEUE.forEach(mutation => mutators[mutation.type](this.nodesInstance, this.worker, mutation));
 
     this.MUTATION_QUEUE.splice(0, length);
     this.pendingMutations = false;
@@ -127,7 +123,7 @@ export class Mutation {
   //   let removed = 0;
 
   //   for (let mutation of this.MUTATION_QUEUE) {
-  //     Mutators[mutation.type](this.nodesInstance, mutation);
+  //     mutators[mutation.type](this.nodesInstance, mutation);
   //     removed++;
 
   //     if (performance.now() - start > 1) {

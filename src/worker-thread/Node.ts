@@ -306,7 +306,7 @@ export class Node {
    * @param handler Function called when event is dispatched.
    */
   public addEventListener(type: string, handler: EventHandler): void {
-    let handlers: EventHandler[] = this._handlers_[toLower(type)];
+    const handlers: EventHandler[] = this._handlers_[toLower(type)];
     let index: number = 0;
     if (handlers && handlers.length > 0) {
       index = handlers.push(handler);
