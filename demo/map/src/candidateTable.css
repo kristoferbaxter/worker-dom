@@ -1,16 +1,17 @@
 .victor {
   padding-right: 6px;
   vertical-align: middle;
+  display: inline;
+  opacity: 0;
+}
+.displayVictor {
+  opacity: 1;
 }
 
 .name,
 .shortName {
   color: #000;
   vertical-align: middle;
-}
-
-.notVictorName {
-  padding-left: 30px;
 }
 
 .party,

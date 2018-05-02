@@ -22,11 +22,11 @@ const Candidate = ({victor, name, party, votes, percent}) => {
   return (
 		<tr>
 			<td>
-				{victor && <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class={styles.victor}><path d="M20.285 2L9 13.567 3.714 8.556 0 12.272 9 21 24 5.715z"/></svg>}
-				<span class={objstr({
-          [styles.name]: true,
-          [styles.notVictorName]: !victor
-        })}>{name}</span>
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class={objstr({
+          [styles.victor]: true,
+          [styles.displayVictor]: victor
+        })}><path d="M20.285 2L9 13.567 3.714 8.556 0 12.272 9 21 24 5.715z"/></svg>
+				<span class={styles.name}>{name}</span>
 			</td>
 			<td>
 				<span class={styles.party}>{party}</span>
@@ -46,6 +46,8 @@ const Candidate = ({victor, name, party, votes, percent}) => {
 }
 
 export const CandidateTable = ({victor, totalData, regionData, votes, focusedRegion}) => {
+  const focusedRegionData = focusedRegion !== null && regionData[focusedRegion].candidates;
+  const winnerIndex = focusedRegionData && focusedRegionData.indexOf(Math.max(...focusedRegionData));
   return (
     <table>
       <thead>
@@ -58,7 +60,8 @@ export const CandidateTable = ({victor, totalData, regionData, votes, focusedReg
       </thead>
       <tbody>
         {totalData.map((candidate, index) => {
-          return <Candidate victor={candidate.victor} name={candidate.name} party={candidate.party} votes={candidate.votes} percent={candidate.votes/votes} />;
+          const isVictor = winnerIndex !== null ? winnerIndex === index : candidate.victor;
+          return <Candidate victor={isVictor} name={candidate.name} party={candidate.party} votes={candidate.votes} percent={candidate.votes/votes} />;
         })}
       </tbody>
     </table>
