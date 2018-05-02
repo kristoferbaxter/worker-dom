@@ -231,6 +231,7 @@ export class Node {
     child.parentNode = this;
     propagate(child, 'isConnected', this.isConnected);
     this.childNodes.push(child);
+
     mutate({
       addedNodes: [child],
       previousSibling: this.childNodes[this.childNodes.length - 2],

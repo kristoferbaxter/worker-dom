@@ -44,6 +44,8 @@ export class Hydration {
   public process(mutations: TransferableMutationRecord[]): void {
     // TODO(KB): Hydrations are not allowed to contain TransferredNodes.
     // Perhaps we should create a TransferableHydrationRecord.
+    const commands: TransferableMutationRecord[] = [];
+
     mutations.forEach(hydration => {
       if (hydration.type === MutationRecordType.CHILD_LIST && hydration.addedNodes !== null) {
         hydration.addedNodes.forEach(nodeToAdd => {
@@ -54,9 +56,11 @@ export class Hydration {
         });
         // TODO(KB): Hydration can include changes to props and attrs. Let's allow mutation of attrs/props during hydration.
       } else if (hydration.type === MutationRecordType.COMMAND) {
-        process(this.nodesInstance, this.worker, hydration);
+        commands.push(hydration);
       }
     });
+
+    commands.forEach(hydration => process(this.nodesInstance, this.worker, hydration));
   }
 
   /**
