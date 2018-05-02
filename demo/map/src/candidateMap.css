@@ -1,0 +1,17 @@
+.tooltip {
+  position: absolute;
+  top: -30px;
+  width: 360px;
+  display: none;
+  text-align: center;
+  background: #ff0;
+  padding: 1em 0;
+}
+
+.showTooltip {
+  display: block;
+}
+
+.wrapper {
+  position: relative;
+}
