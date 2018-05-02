@@ -60,7 +60,7 @@ export const CandidateTable = ({victor, totalData, regionData, votes, focusedReg
       </thead>
       <tbody>
         {totalData.map((candidate, index) => {
-          const isVictor = winnerIndex !== null ? winnerIndex === index : candidate.victor;
+          const isVictor = focusedRegion !== null ? winnerIndex === index : candidate.victor;
           return <Candidate victor={isVictor} name={candidate.name} party={candidate.party} votes={candidate.votes} percent={candidate.votes/votes} />;
         })}
       </tbody>
