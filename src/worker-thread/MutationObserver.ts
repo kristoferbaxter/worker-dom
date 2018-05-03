@@ -15,15 +15,21 @@
  */
 
 import { Node } from './Node';
-import { MutationRecord } from './MutationRecord';
+import { MutationRecord, MutationRecordType } from './MutationRecord';
 
 const observers: MutationObserver[] = [];
 let pendingMutations = false;
 
 const match = (observerTarget: Node | null, target: Node): boolean => observerTarget !== null && target._index_ === observerTarget._index_;
-const flushMutations = (): void => {
-  pendingMutations = false;
-  observers.forEach(observer => observer.callback(observer.takeRecords()));
+const pushMutation = (observer: MutationObserver, record: MutationRecord): void => {
+  observer.pushRecord(record);
+  if (!pendingMutations) {
+    pendingMutations = true;
+    Promise.resolve().then((): void => {
+      pendingMutations = false;
+      observers.forEach(observer => observer.callback(observer.takeRecords()));
+    });
+  }
 };
 
 /**
@@ -33,6 +39,11 @@ const flushMutations = (): void => {
  */
 export function mutate(record: MutationRecord): void {
   observers.forEach(observer => {
+    if (record.type === MutationRecordType.COMMAND) {
+      pushMutation(observer, record);
+      return;
+    }
+
     let target: Node | null = record.target;
     let matched = match(observer.target, target);
     if (!matched) {
@@ -44,11 +55,7 @@ export function mutate(record: MutationRecord): void {
     }
 
     if (matched) {
-      observer.pushRecord(record);
-      if (!pendingMutations) {
-        pendingMutations = true;
-        Promise.resolve().then(flushMutations);
-      }
+      pushMutation(observer, record);
     }
   });
 }
