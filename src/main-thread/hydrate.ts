@@ -67,6 +67,22 @@ export class Hydration {
   }
 
   /**
+   * Stores the passed node and ensures all valid childNodes are hydrated.
+   * @param node Real Node in DOM.
+   * @param skeleton Skeleton Node representation created by WorkerDOM and transmitted across threads.
+   */
+  private hydrateElement(node: RenderableElement, skeleton: TransferableNode): void {
+    if (skeleton.textContent) {
+      node.textContent = skeleton.textContent;
+    }
+
+    this.nodesInstance.storeNode(node as RenderableElement, skeleton._index_);
+    skeleton.childNodes.forEach((childNode: TransferableNode | TransferredNode, index: number): void =>
+      this.hydrateNode(node.childNodes[index], childNode as TransferableNode),
+    );
+  }
+
+  /**
    * Compares the current node in DOM versus the skeleton provided during Hydration from worker thread.
    * Also, attempt to rationalize equivalence in output, but different by transmission nature.
    * @param node Real Node in DOM
@@ -91,16 +107,17 @@ export class Hydration {
             this.nodesInstance.storeNode(skeletonText as RenderableElement, skeleton._index_);
           });
         }
-      }
-    } else {
-      if (skeleton.textContent) {
-        node.textContent = skeleton.textContent;
+        return;
       }
 
-      this.nodesInstance.storeNode(node as RenderableElement, skeleton._index_);
-      skeleton.childNodes.forEach((childNode: TransferableNode | TransferredNode, index: number): void =>
-        this.hydrateNode(node.childNodes[index], childNode as TransferableNode),
+      const validSkeletonChildren: TransferableNode[] = (skeleton.childNodes as TransferableNode[]).filter(
+        childNode => !(childNode.nodeType === NodeType.TEXT_NODE && childNode.textContent === ''),
       );
+      if (validSkeletonChildren.length === node.childNodes.length) {
+        this.hydrateElement(node as RenderableElement, skeleton);
+      }
+    } else {
+      this.hydrateElement(node as RenderableElement, skeleton);
     }
   }
 }
