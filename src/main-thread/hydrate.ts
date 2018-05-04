@@ -111,7 +111,7 @@ export class Hydration {
       }
 
       const validSkeletonChildren: TransferableNode[] = (skeleton.childNodes as TransferableNode[]).filter(
-        childNode => childNode.nodeType !== NodeType.TEXT_NODE || childNode.textContent !== '',
+        childNode => !(childNode.nodeType === NodeType.TEXT_NODE && childNode.textContent === ''),
       );
       if (validSkeletonChildren.length === node.childNodes.length) {
         this.hydrateElement(node as RenderableElement, skeleton);
