@@ -29,7 +29,7 @@ export const CSSStyleDeclaration: StyleDeclaration = {
     return Object.keys(this.__proto__)
       .reduce(
         (accumulator, currentKey) =>
-          accumulator + (currentKey !== 'cssText' && !!this[currentKey] ? `${formatKey(currentKey)}: ${this[currentKey]}; ` : ''),
+          `${accumulator}${currentKey !== 'cssText' && !!this[currentKey] ? `${formatKey(currentKey)}: ${this[currentKey]}; ` : ''}`,
         '',
       )
       .trim();
