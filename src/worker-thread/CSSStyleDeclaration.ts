@@ -36,7 +36,7 @@ export const CSSStyleDeclaration: StyleDeclaration = {
   },
 };
 
-export function appendKeys(keys: Array<string>): void {
+export const appendKeys = (keys: Array<string>): void => {
   keys.forEach(key => {
     if (/\D/.test(key) && key !== 'cssText') {
       Object.defineProperties(CSSStyleDeclaration, {
@@ -52,4 +52,4 @@ export function appendKeys(keys: Array<string>): void {
       });
     }
   });
-}
+};
