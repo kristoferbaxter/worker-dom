@@ -18,12 +18,20 @@ interface StyleDeclaration {
   [key: string]: string;
 }
 
+const formatKey = (key: string): string =>
+  key
+    .replace(/(webkit|ms|moz|khtml)/g, '-$1')
+    .replace(/([a-zA-Z])(?=[A-Z])/g, '$1-')
+    .toLowerCase();
+
 export const CSSStyleDeclaration: StyleDeclaration = {
   get cssText(): string {
     const keys = Object.keys(this.__proto__);
-    return keys.reduce((accumulator, currentKey) => {
-      return accumulator + (currentKey !== 'cssText' && !!this[currentKey] ? `${currentKey}: ${this[currentKey]};` : '');
-    }, '');
+    return keys
+      .reduce((accumulator, currentKey) => {
+        return accumulator + (currentKey !== 'cssText' && !!this[currentKey] ? `${formatKey(currentKey)}: ${this[currentKey]}; ` : '');
+      }, '')
+      .trim();
   },
 };
 
