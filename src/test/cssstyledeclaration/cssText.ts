@@ -23,10 +23,10 @@ test.serial('cssText is empty by default', t => {
   t.is(declaration.cssText, '');
 });
 
-// test.serial('cssText is empty by default', t => {
-//   const declaration = Object.create(CSSStyleDeclaration);
+test.serial('cssText contains single mutated property', t => {
+  const declaration = Object.create(CSSStyleDeclaration);
 
-//   appendKeys(["width"]);
-//   declaration.width = "100px";
-//   t.is(declaration.cssText, "width: 100px;");
-// });
+  appendKeys(['width']);
+  declaration.width = '100px';
+  t.is(declaration.cssText, 'width: 100px;');
+});

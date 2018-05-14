@@ -22,7 +22,7 @@ export const CSSStyleDeclaration: StyleDeclaration = {
   get cssText(): string {
     const keys = Object.keys(this.__proto__);
     return keys.reduce((accumulator, currentKey) => {
-      return accumulator + (currentKey !== 'cssText' && !this[currentKey] ? `${currentKey}=${this[currentKey]};` : '');
+      return accumulator + (currentKey !== 'cssText' && !!this[currentKey] ? `${currentKey}: ${this[currentKey]};` : '');
     }, '');
   },
 };
