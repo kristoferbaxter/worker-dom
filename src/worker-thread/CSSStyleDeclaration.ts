@@ -26,11 +26,12 @@ const formatKey = (key: string): string =>
 
 export const CSSStyleDeclaration: StyleDeclaration = {
   get cssText(): string {
-    const keys = Object.keys(this.__proto__);
-    return keys
-      .reduce((accumulator, currentKey) => {
-        return accumulator + (currentKey !== 'cssText' && !!this[currentKey] ? `${formatKey(currentKey)}: ${this[currentKey]}; ` : '');
-      }, '')
+    return Object.keys(this.__proto__)
+      .reduce(
+        (accumulator, currentKey) =>
+          accumulator + (currentKey !== 'cssText' && !!this[currentKey] ? `${formatKey(currentKey)}: ${this[currentKey]}; ` : ''),
+        '',
+      )
       .trim();
   },
 };
