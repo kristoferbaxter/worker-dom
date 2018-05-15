@@ -20,12 +20,18 @@ interface StyleDeclaration {
 
 const declarationKeyToCssText = (key: string): string =>
   key
-    .replace(/(webkit|ms|moz|khtml)/g, '-$1') // Key with prefix, add a dash before the prefix.
-    .replace(/([a-zA-Z])(?=[A-Z])/g, '$1-') // Key with multiple terms (ie. lineHeight), add a dash between lowercase letter and capital letter.
+    // Key with prefix, add a dash before the prefix.
+    .replace(/(webkit|ms|moz|khtml)/g, '-$1')
+    // Key with multiple terms (ie. lineHeight), add a dash between lowercase letter and capital letter.
+    .replace(/([a-zA-Z])(?=[A-Z])/g, '$1-')
     .toLowerCase();
 
 const cssTextToDeclarationKey = (text: string): string =>
-  text.replace(/(?:-)(webkit|ms|moz|khtml)/g, '$1').replace(/(?:-)([a-z])/g, (match: any, p1: string): string => `${p1.toUpperCase()}`);
+  text
+    // text with vendor prefix, remove dash before prefix
+    .replace(/(?:-)(webkit|ms|moz|khtml)/g, '$1')
+    // text with multiple terms are seperated by a dash, convert this to camelCase.
+    .replace(/(?:-)([a-z])/g, (match: any, p1: string): string => `${p1.toUpperCase()}`);
 
 export const CSSStyleDeclaration: StyleDeclaration = {
   /**
