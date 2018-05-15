@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-interface StyleDeclaration {
-  [key: string]: string;
+export interface StyleDeclaration {
+  mutate?: (newValue: string) => void;
+  [key: string]: any;
 }
 
 const declarationKeyToCssText = (key: string): string =>
@@ -100,6 +101,7 @@ export const appendKeys = (keys: Array<string>): void => {
           },
           set(val: string): void {
             this[`_${key}`] = val;
+            !!this.mutate && this.mutate(this.cssText);
           },
         },
       });
