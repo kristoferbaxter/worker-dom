@@ -64,11 +64,20 @@ test.serial('setting cssText with multiple values stores the values', t => {
   t.is(declaration.height, '12px');
 });
 
-test.failing.serial('setting cssText with a single value requiring key conversion', t => {
+test.serial('setting cssText with a single value requiring key conversion', t => {
   const declaration = Object.create(CSSStyleDeclaration);
   appendKeys(['lineHeight']);
 
   t.is(declaration.cssText, '');
   declaration.cssText = 'line-height: 10px';
   t.is(declaration.lineHeight, '10px');
+});
+
+test.serial('setting cssText with a single value requiring key conversion with vendor prefix', t => {
+  const declaration = Object.create(CSSStyleDeclaration);
+  appendKeys(['webkitLineHeight']);
+
+  t.is(declaration.cssText, '');
+  declaration.cssText = '-webkit-line-height: 10px';
+  t.is(declaration.webkitLineHeight, '10px');
 });

@@ -18,11 +18,14 @@ interface StyleDeclaration {
   [key: string]: string;
 }
 
-const keyToCssTextFormat = (key: string): string =>
+const declarationKeyToCssText = (key: string): string =>
   key
-    .replace(/(webkit|ms|moz|khtml)/g, '-$1')
-    .replace(/([a-zA-Z])(?=[A-Z])/g, '$1-')
+    .replace(/(webkit|ms|moz|khtml)/g, '-$1') // Key with prefix, add a dash before the prefix.
+    .replace(/([a-zA-Z])(?=[A-Z])/g, '$1-') // Key with multiple terms (ie. lineHeight), add a dash between lowercase letter and capital letter.
     .toLowerCase();
+
+const cssTextToDeclarationKey = (text: string): string =>
+  text.replace(/(?:-)(webkit|ms|moz|khtml)/g, '$1').replace(/(?:-)([a-z])/g, (match: any, p1: string): string => `${p1.toUpperCase()}`);
 
 export const CSSStyleDeclaration: StyleDeclaration = {
   /**
@@ -33,7 +36,7 @@ export const CSSStyleDeclaration: StyleDeclaration = {
     return Object.keys(this.__proto__)
       .reduce(
         (accumulator, currentKey) =>
-          `${accumulator}${currentKey !== 'cssText' && !!this[currentKey] ? `${keyToCssTextFormat(currentKey)}: ${this[currentKey]}; ` : ''}`,
+          `${accumulator}${currentKey !== 'cssText' && !!this[currentKey] ? `${declarationKeyToCssText(currentKey)}: ${this[currentKey]}; ` : ''}`,
         '',
       )
       .trim();
@@ -47,7 +50,7 @@ export const CSSStyleDeclaration: StyleDeclaration = {
     const length = values.length;
     let index = 0;
     while (index + 1 < length) {
-      toSet[values[index].trim()] = values[index + 1].trim();
+      toSet[cssTextToDeclarationKey(values[index].trim())] = values[index + 1].trim();
       index += 2;
     }
 
