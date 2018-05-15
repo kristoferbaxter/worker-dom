@@ -18,27 +18,50 @@ interface StyleDeclaration {
   [key: string]: string;
 }
 
-const formatKey = (key: string): string =>
+const keyToCssTextFormat = (key: string): string =>
   key
     .replace(/(webkit|ms|moz|khtml)/g, '-$1')
     .replace(/([a-zA-Z])(?=[A-Z])/g, '$1-')
     .toLowerCase();
 
 export const CSSStyleDeclaration: StyleDeclaration = {
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/cssText
+   * @return css text string for styles declared with valid values.
+   */
   get cssText(): string {
     return Object.keys(this.__proto__)
       .reduce(
         (accumulator, currentKey) =>
-          `${accumulator}${currentKey !== 'cssText' && !!this[currentKey] ? `${formatKey(currentKey)}: ${this[currentKey]}; ` : ''}`,
+          `${accumulator}${currentKey !== 'cssText' && !!this[currentKey] ? `${keyToCssTextFormat(currentKey)}: ${this[currentKey]}; ` : ''}`,
         '',
       )
       .trim();
+  },
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/cssText
+   */
+  set cssText(value: string) {
+    const toSet: StyleDeclaration = {};
+    const values = value.split(/[:;]/);
+    const length = values.length;
+    let index = 0;
+    while (index + 1 < length) {
+      toSet[values[index].trim()] = values[index + 1].trim();
+      index += 2;
+    }
+
+    Object.keys(this.__proto__).forEach(key => {
+      if (key !== 'cssText') {
+        this[key] = toSet[key] !== undefined ? toSet[key] : '';
+      }
+    });
   },
 };
 
 export const appendKeys = (keys: Array<string>): void => {
   keys.forEach(key => {
-    if (/\D/.test(key) && key !== 'cssText') {
+    if (/\D/.test(key) && key !== 'cssText' && CSSStyleDeclaration[key] !== '') {
       Object.defineProperties(CSSStyleDeclaration, {
         [key]: {
           enumerable: true,
