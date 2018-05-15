@@ -33,8 +33,20 @@ const cssTextToDeclarationKey = (text: string): string =>
     // text with multiple terms are seperated by a dash, convert this to camelCase.
     .replace(/(?:-)([a-z])/g, (match: any, p1: string): string => `${p1.toUpperCase()}`);
 
+/**
+ * A few notes about CSSStyleDeclaration implementation.
+ *
+ * Q: Why is this.__proto__ used when getting and setting cssText?
+ * A: Because the valid getter/setter keys are stored on a CSSStyleDeclaration.
+ *    Usages are expected via Object.create(CSSStyleDeclaration).
+ *
+ * Q: Why do the getter and setter store values on a direct instance instead of in the prototype?
+ * A: The value of the key is stored locally on instances of a CSSStyleDeclaration to allow each instance to have its own values.
+ *    But this allows all instances to share the known set of valid keys for getters/setters.
+ */
 export const CSSStyleDeclaration: StyleDeclaration = {
   /**
+   * Getting cssText requires converting declaration properties to a known string output format.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/cssText
    * @return css text string for styles declared with valid values.
    */
@@ -48,7 +60,9 @@ export const CSSStyleDeclaration: StyleDeclaration = {
       .trim();
   },
   /**
+   * Setting cssText removes all known style declaration properties, and applies those from the string passed.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/cssText
+   * @param value new cssText value to store.
    */
   set cssText(value: string) {
     const toSet: StyleDeclaration = {};
@@ -68,6 +82,13 @@ export const CSSStyleDeclaration: StyleDeclaration = {
   },
 };
 
+/**
+ * Defines new keys for all CSSStyleDeclaration Objects.
+ * These keys will be used to create getters and setters.
+ *
+ * Keys are known from either a static list (in node), or a sentinel element (in browser main thread).
+ * @param keys camelCase keys to create getters and setters for.
+ */
 export const appendKeys = (keys: Array<string>): void => {
   keys.forEach(key => {
     if (/\D/.test(key) && key !== 'cssText' && CSSStyleDeclaration[key] !== '') {
