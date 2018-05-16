@@ -31,7 +31,7 @@ test.serial('cssText contains single mutated property', t => {
   t.is(declaration.cssText, 'width: 100px;');
 });
 
-test.serial('cssText dasherizes only capitals after lowercase letters', t => {
+test.serial('cssText hyphenates only capitals after lowercase letters', t => {
   const declaration = Object.create(CSSStyleDeclaration);
 
   appendKeys(['linebreakFoo']);
@@ -80,7 +80,7 @@ test.serial('cssText contains khtml vendor prefixed propertiy', t => {
   t.is(declaration.cssText, '-khtml-line-break: normal;');
 });
 
-test.serial('cssText does not prefix dasherize keys containing vendor prefixes not in the first position', t => {
+test.serial('cssText does not prefix hyphenated keys containing vendor prefixes not in the first position', t => {
   const declaration = Object.create(CSSStyleDeclaration);
 
   appendKeys(['lineKhtmlBreak']);
