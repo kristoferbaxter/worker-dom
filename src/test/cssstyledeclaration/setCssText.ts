@@ -25,16 +25,6 @@ test.serial('setting cssText to empty from empty', t => {
   t.is(declaration.cssText, '');
 });
 
-test.serial('setting cssText to empty removes stored values', t => {
-  const declaration = Object.create(CSSStyleDeclaration);
-  appendKeys(['width']);
-  declaration.width = '10px';
-
-  t.is(declaration.width, '10px');
-  declaration.cssText = '';
-  t.is(declaration.width, '');
-});
-
 test.serial('setting cssText to empty makes cssText empty', t => {
   const declaration = Object.create(CSSStyleDeclaration);
   appendKeys(['width']);
@@ -43,6 +33,16 @@ test.serial('setting cssText to empty makes cssText empty', t => {
   t.is(declaration.cssText, 'width: 10px;');
   declaration.cssText = '';
   t.is(declaration.cssText, '');
+});
+
+test.serial('setting cssText to empty removes stored values', t => {
+  const declaration = Object.create(CSSStyleDeclaration);
+  appendKeys(['width']);
+  declaration.width = '10px';
+
+  t.is(declaration.width, '10px');
+  declaration.cssText = '';
+  t.is(declaration.width, '');
 });
 
 test.serial('setting cssText with a value stores the value', t => {
