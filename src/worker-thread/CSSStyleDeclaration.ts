@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-export interface StyleDeclaration {
-  mutate?: (newValue: string) => void;
-  [key: string]: any;
+interface StyleDeclarationKeys {
+  [key: string]: string | ((newValue: string) => void);
+}
+export interface StyleDeclaration extends StyleDeclarationKeys {
+  mutate: (newValue: string) => void;
 }
 
 const declarationKeyToCssText = (key: string): string =>
@@ -46,7 +48,7 @@ const cssTextToDeclarationKey = (text: string): string =>
  * A: The value of the key is stored locally on instances of a CSSStyleDeclaration to allow each instance to have its own values.
  *    But this allows all instances to share the known set of valid keys for getters/setters.
  */
-export const CSSStyleDeclaration: StyleDeclaration = {
+export const CSSStyleDeclaration: StyleDeclarationKeys = {
   /**
    * Getting cssText requires converting declaration properties to a known string output format.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/cssText
@@ -55,7 +57,7 @@ export const CSSStyleDeclaration: StyleDeclaration = {
   get cssText(): string {
     return Object.keys(this.__proto__)
       .reduce(
-        (accumulator, currentKey) =>
+        (accumulator: string, currentKey: string): string =>
           `${accumulator}${currentKey !== 'cssText' && !!this[currentKey] ? `${declarationKeyToCssText(currentKey)}: ${this[currentKey]}; ` : ''}`,
         '',
       )
@@ -67,19 +69,26 @@ export const CSSStyleDeclaration: StyleDeclaration = {
    * @param value new cssText value to store.
    */
   set cssText(value: string) {
-    const toSet: StyleDeclaration = {};
+    const toSet: StyleDeclarationKeys = {};
     const values = value.split(/[:;]/);
     const length = values.length;
     for (let index = 0; index + 1 < length; index += 2) {
       toSet[cssTextToDeclarationKey(values[index].trim())] = values[index + 1].trim();
     }
 
-    Object.keys(this.__proto__).forEach(key => {
+    Object.keys(this.__proto__).forEach((key: string): void => {
       if (key !== 'cssText') {
         this[key] = toSet[key] !== undefined ? toSet[key] : '';
       }
     });
   },
+
+  // Unimplemented Methods
+  // CSSStyleDeclaration.getPropertyPriority() – Returns the optional priority, "important".
+  // CSSStyleDeclaration.getPropertyValue() – Returns the property value given a property name.
+  // CSSStyleDeclaration.item() – Returns a property name.
+  // CSSStyleDeclaration.removeProperty() - Removes a property from the CSS declaration block.
+  // CSSStyleDeclaration.setProperty() - Modifies an existing CSS property or creates a new CSS property in the declaration block/.
 };
 
 /**
