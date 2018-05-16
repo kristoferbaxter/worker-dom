@@ -81,3 +81,12 @@ test.serial('setting cssText with a single value requiring key conversion with v
   declaration.cssText = '-webkit-line-height: 10px';
   t.is(declaration.webkitLineHeight, '10px');
 });
+
+test.serial('setting cssText with a single miscapitalized value requiring key conversion with vendor prefix', t => {
+  const declaration = Object.create(CSSStyleDeclaration);
+  appendKeys(['webkitLineHeight']);
+
+  t.is(declaration.cssText, '');
+  declaration.cssText = '-webkit-linE-height: 10px';
+  t.is(declaration.webkitLineHeight, '10px');
+});

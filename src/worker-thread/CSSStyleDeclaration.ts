@@ -29,6 +29,7 @@ const declarationKeyToCssText = (key: string): string =>
 
 const cssTextToDeclarationKey = (text: string): string =>
   text
+    .toLowerCase()
     // text with vendor prefix, remove dash before prefix
     .replace(/(?:-)(webkit|ms|moz|khtml)/g, '$1')
     // text with multiple terms are seperated by a dash, convert this to camelCase.
