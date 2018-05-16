@@ -33,7 +33,7 @@ const cssTextToDeclarationKey = (text: string): string =>
     // text with vendor prefix, remove dash before prefix
     .replace(/(?:-)(webkit|ms|moz|khtml)/g, '$1')
     // text with multiple terms are seperated by a dash, convert this to camelCase.
-    .replace(/(?:-)([a-z])/g, (match: any, p1: string): string => `${p1.toUpperCase()}`);
+    .replace(/(?:-)([a-z])/g, (match: any, p1: string): string => p1.toUpperCase());
 
 /**
  * A few notes about CSSStyleDeclaration implementation.
