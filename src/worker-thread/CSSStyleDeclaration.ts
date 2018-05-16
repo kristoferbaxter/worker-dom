@@ -70,10 +70,8 @@ export const CSSStyleDeclaration: StyleDeclaration = {
     const toSet: StyleDeclaration = {};
     const values = value.split(/[:;]/);
     const length = values.length;
-    let index = 0;
-    while (index + 1 < length) {
+    for (let index = 0; index + 1 < length; index += 2) {
       toSet[cssTextToDeclarationKey(values[index].trim())] = values[index + 1].trim();
-      index += 2;
     }
 
     Object.keys(this.__proto__).forEach(key => {
