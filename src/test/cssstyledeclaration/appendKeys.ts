@@ -23,7 +23,7 @@ test.beforeEach(t => {
   t.context = {
     node: new Element(NodeType.ELEMENT_NODE, 'div'),
     storeAttributeMethod: () => {},
-    declaration: new CSSStyleDeclaration(new Element(NodeType.ELEMENT_NODE, 'div'), () => {}),
+    declaration: new CSSStyleDeclaration(new Element(NodeType.ELEMENT_NODE, 'div'), () => ''),
   };
 });
 

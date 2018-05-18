@@ -22,7 +22,7 @@ import { NodeType } from '../../worker-thread/Node';
 test.beforeEach(t => {
   t.context = {
     node: new Element(NodeType.ELEMENT_NODE, 'div'),
-    storeAttributeMethod: () => {},
+    storeAttributeMethod: () => '',
   };
 });
 

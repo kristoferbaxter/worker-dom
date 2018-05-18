@@ -90,10 +90,10 @@ export class CSSStyleDeclaration implements StyleDeclaration {
     | ((key: string, value: string) => void)
     | ((namespaceURI: NamespaceURI, name: string, value: string) => void);
   $$properties: StyleProperties = {};
-  private storeAttributeMethod: (namespaceURI: NamespaceURI, name: string, value: string) => void;
+  private storeAttributeMethod: (namespaceURI: NamespaceURI, name: string, value: string) => string;
   private element: Element;
 
-  constructor(element: Element, storeAttributeMethod: (namespaceURI: NamespaceURI, name: string, value: string) => void) {
+  constructor(element: Element, storeAttributeMethod: (namespaceURI: NamespaceURI, name: string, value: string) => string) {
     this.storeAttributeMethod = storeAttributeMethod;
     this.element = element;
   }
@@ -107,14 +107,14 @@ export class CSSStyleDeclaration implements StyleDeclaration {
   setProperty(key: string, value: string): void {
     this.$$properties[key] = value;
 
-    const oldValue = this.cssText;
-    this.storeAttributeMethod(null, 'style', value);
+    const newValue = this.cssText;
+    const oldValue = this.storeAttributeMethod(null, 'style', newValue);
     mutate({
       type: MutationRecordType.ATTRIBUTES,
       target: this.element,
       attributeName: 'style',
       attributeNamespace: null,
-      value,
+      value: newValue,
       oldValue,
     });
   }
@@ -124,7 +124,6 @@ export class CSSStyleDeclaration implements StyleDeclaration {
       .trim();
   }
   set cssText(value: string) {
-    const oldValue = this.cssText;
     this.$$properties = {};
 
     const values = value.split(/[:;]/);
@@ -132,6 +131,7 @@ export class CSSStyleDeclaration implements StyleDeclaration {
     for (let index = 0; index + 1 < length; index += 2) {
       this.$$properties[values[index].trim().toLowerCase()] = values[index + 1].trim();
     }
+    const oldValue = this.storeAttributeMethod(null, 'style', value);
     mutate({
       type: MutationRecordType.ATTRIBUTES,
       target: this.element,
