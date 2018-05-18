@@ -14,105 +14,131 @@
  * limitations under the License.
  */
 
-interface StyleDeclarationKeys {
-  [key: string]: string | ((newValue: string) => void);
+import { NamespaceURI } from './Attr';
+import { mutate } from './MutationObserver';
+import { MutationRecordType } from './MutationRecord';
+import { Element } from './Element';
+
+interface StyleProperties {
+  [key: string]: string | null;
 }
-export interface StyleDeclaration extends StyleDeclarationKeys {
-  mutate: (newValue: string) => void;
+interface StyleDeclaration {
+  $$properties: StyleProperties;
+  getPropertyValue: (key: string) => string;
+  removeProperty: (key: string) => void;
+  setProperty: (key: string, value: string) => void;
+  cssText: string;
+  [key: string]:
+    | string
+    | number
+    | StyleProperties
+    | ((key: string) => string)
+    | ((key: string) => void)
+    | ((key: string, value: string) => void)
+    | ((namespaceURI: NamespaceURI, name: string, value: string) => void);
 }
 
-const declarationKeyToCssText = (key: string): string =>
+const hyphenateKey = (key: string): string =>
   key
-    // Key with prefix, add a dash before the prefix.
     .replace(/(webkit|ms|moz|khtml)/g, '-$1')
-    // Key with multiple terms (ie. lineHeight), add a dash between lowercase letter and capital letter.
     .replace(/([a-zA-Z])(?=[A-Z])/g, '$1-')
     .toLowerCase();
 
-const cssTextToDeclarationKey = (text: string): string =>
-  text
-    .toLowerCase()
-    // text with vendor prefix, remove dash before prefix
-    .replace(/(?:-)(webkit|ms|moz|khtml)/g, '$1')
-    // text with multiple terms are seperated by a dash, convert this to camelCase.
-    .replace(/(?:-)([a-z])/g, (match: any, p1: string): string => p1.toUpperCase());
+export const appendKeys = (keys: Array<string>): void => {
+  let keysToAppend = keys.filter(key => !CSSStyleDeclaration.prototype.hasOwnProperty(key));
+  const previousPrototypeLength = (CSSStyleDeclaration.prototype.length || 0) as number;
 
-/**
- * A few notes about CSSStyleDeclaration implementation.
- *
- * Q: Why is this.__proto__ used when getting and setting cssText?
- * A: Because the valid getter/setter keys are stored on a CSSStyleDeclaration.
- *    Usages are expected via Object.create(CSSStyleDeclaration).
- *
- * Q: Why do the getter and setter store values on a direct instance instead of in the prototype?
- * A: The value of the key is stored locally on instances of a CSSStyleDeclaration to allow each instance to have its own values.
- *    But this allows all instances to share the known set of valid keys for getters/setters.
- */
-export const CSSStyleDeclaration: StyleDeclarationKeys = {
-  /**
-   * Getting cssText requires converting declaration properties to a known string output format.
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/cssText
-   * @return css text string for styles declared with valid values.
-   */
-  get cssText(): string {
-    return Object.keys(this.__proto__)
-      .reduce(
-        (accumulator: string, currentKey: string): string =>
-          `${accumulator}${currentKey !== 'cssText' && !!this[currentKey] ? `${declarationKeyToCssText(currentKey)}: ${this[currentKey]}; ` : ''}`,
-        '',
-      )
-      .trim();
-  },
-  /**
-   * Setting cssText removes all known style declaration properties, and applies those from the string passed.
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/cssText
-   * @param value new cssText value to store.
-   */
-  set cssText(value: string) {
-    const toSet: StyleDeclarationKeys = {};
-    const values = value.split(/[:;]/);
-    const length = values.length;
-    for (let index = 0; index + 1 < length; index += 2) {
-      toSet[cssTextToDeclarationKey(values[index].trim())] = values[index + 1].trim();
+  if (keysToAppend.length > 0) {
+    if (previousPrototypeLength !== 0) {
+      CSSStyleDeclaration.prototype.length = previousPrototypeLength + keysToAppend.length;
+    } else {
+      Object.defineProperty(CSSStyleDeclaration.prototype, 'length', {
+        configurable: true,
+        writable: true,
+        value: keysToAppend.length,
+      });
     }
 
-    Object.keys(this.__proto__).forEach((key: string): void => {
-      if (key !== 'cssText') {
-        this[key] = toSet[key] !== undefined ? toSet[key] : '';
-      }
-    });
-  },
+    keysToAppend.forEach((key: string, index: number): void => {
+      const hyphenatedKey = hyphenateKey(key);
+      CSSStyleDeclaration.prototype[index + previousPrototypeLength] = hyphenatedKey;
 
-  // Unimplemented Methods
-  // CSSStyleDeclaration.getPropertyPriority() – Returns the optional priority, "important".
-  // CSSStyleDeclaration.getPropertyValue() – Returns the property value given a property name.
-  // CSSStyleDeclaration.item() – Returns a property name.
-  // CSSStyleDeclaration.removeProperty() - Removes a property from the CSS declaration block.
-  // CSSStyleDeclaration.setProperty() - Modifies an existing CSS property or creates a new CSS property in the declaration block/.
-};
-
-/**
- * Defines new keys for all CSSStyleDeclaration Objects.
- * These keys will be used to create getters and setters.
- *
- * Keys are known from either a static list (in node), or a sentinel element (in browser main thread).
- * @param keys camelCase keys to create getters and setters for.
- */
-export const appendKeys = (keys: Array<string>): void => {
-  keys.forEach(key => {
-    if (/\D/.test(key) && key !== 'cssText' && CSSStyleDeclaration[key] !== '') {
-      Object.defineProperties(CSSStyleDeclaration, {
+      Object.defineProperties(CSSStyleDeclaration.prototype, {
+        [index + previousPrototypeLength]: {
+          value: hyphenatedKey,
+        },
         [key]: {
-          enumerable: true,
-          get(): string {
-            return this[`_${key}`] || '';
+          get() {
+            return this.getPropertyValue(hyphenatedKey);
           },
-          set(val: string): void {
-            this[`_${key}`] = val;
-            !!this.mutate && this.mutate(this.cssText);
+          set(value) {
+            this.setProperty(hyphenatedKey, value);
           },
         },
       });
-    }
-  });
+    });
+  }
 };
+
+export class CSSStyleDeclaration implements StyleDeclaration {
+  [key: string]:
+    | string
+    | number
+    | StyleProperties
+    | ((key: string) => string)
+    | ((key: string) => void)
+    | ((key: string, value: string) => void)
+    | ((namespaceURI: NamespaceURI, name: string, value: string) => void);
+  $$properties: StyleProperties = {};
+  private storeAttributeMethod: (namespaceURI: NamespaceURI, name: string, value: string) => void;
+  private element: Element;
+
+  constructor(element: Element, storeAttributeMethod: (namespaceURI: NamespaceURI, name: string, value: string) => void) {
+    this.storeAttributeMethod = storeAttributeMethod;
+    this.element = element;
+  }
+
+  getPropertyValue(key: string): string {
+    return this.$$properties[key] || '';
+  }
+  removeProperty(key: string): void {
+    this.$$properties[key] = null;
+  }
+  setProperty(key: string, value: string): void {
+    this.$$properties[key] = value;
+
+    const oldValue = this.cssText;
+    this.storeAttributeMethod(null, 'style', value);
+    mutate({
+      type: MutationRecordType.ATTRIBUTES,
+      target: this.element,
+      attributeName: 'style',
+      attributeNamespace: null,
+      value,
+      oldValue,
+    });
+  }
+  get cssText(): string {
+    return Object.keys(this.$$properties)
+      .reduce((accumulator, key) => accumulator + (this.$$properties[key] !== '' ? `${key}: ${this.$$properties[key]}; ` : ''), '')
+      .trim();
+  }
+  set cssText(value: string) {
+    const oldValue = this.cssText;
+    this.$$properties = {};
+
+    const values = value.split(/[:;]/);
+    const length = values.length;
+    for (let index = 0; index + 1 < length; index += 2) {
+      this.$$properties[values[index].trim().toLowerCase()] = values[index + 1].trim();
+    }
+    mutate({
+      type: MutationRecordType.ATTRIBUTES,
+      target: this.element,
+      attributeName: 'style',
+      attributeNamespace: null,
+      value,
+      oldValue,
+    });
+  }
+}

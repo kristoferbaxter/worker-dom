@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Node, NodeType, NodeName } from './Node';
+import { Node, NodeType } from './Node';
 import { DOMTokenList } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate, NamespaceURI } from './Attr';
 import { mutate } from './MutationObserver';
@@ -22,7 +22,7 @@ import { MutationRecordType } from './MutationRecord';
 import { TransferableNode, TransferredNode } from '../transfer/TransferableNodes';
 import { NumericBoolean, toLower } from '../utils';
 import { Text } from './Text';
-import { StyleDeclaration, CSSStyleDeclaration } from './CSSStyleDeclaration';
+import { CSSStyleDeclaration } from './CSSStyleDeclaration';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
@@ -41,22 +41,7 @@ function findMatchingChildren(element: Element, conditionPredicate: ConditionPre
 export class Element extends Node {
   public attributes: Attr[] = [];
   public classList: DOMTokenList = new DOMTokenList(this, 'class', null, this.storeAttributeNS.bind(this));
-  public style: StyleDeclaration = Object.create(CSSStyleDeclaration);
-
-  constructor(nodeType: NodeType, nodeName: NodeName) {
-    super(nodeType, nodeName);
-    this.style.mutate = (value: string): void => {
-      const oldValue = this.storeAttributeNS(null, 'style', value);
-      mutate({
-        type: MutationRecordType.ATTRIBUTES,
-        target: this,
-        attributeName: 'style',
-        attributeNamespace: null,
-        value,
-        oldValue,
-      });
-    };
-  }
+  public style: CSSStyleDeclaration = new CSSStyleDeclaration(this, this.storeAttributeNS.bind(this));
 
   // No implementation necessary
   // Element.id

@@ -16,17 +16,26 @@
 
 import test from 'ava';
 import { CSSStyleDeclaration, appendKeys } from '../../worker-thread/CSSStyleDeclaration';
+import { Element } from '../../worker-thread/Element';
+import { NodeType } from '../../worker-thread/Node';
 
-test.serial('setting cssText to empty from empty', t => {
-  const declaration = Object.create(CSSStyleDeclaration);
+test.beforeEach(t => {
+  t.context = {
+    node: new Element(NodeType.ELEMENT_NODE, 'div'),
+    storeAttributeMethod: () => {},
+  };
+});
+
+test('setting cssText to empty from empty', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
 
   t.is(declaration.cssText, '');
   declaration.cssText = '';
   t.is(declaration.cssText, '');
 });
 
-test.serial('setting cssText to empty makes cssText empty', t => {
-  const declaration = Object.create(CSSStyleDeclaration);
+test('setting cssText to empty makes cssText empty', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
   appendKeys(['width']);
   declaration.width = '10px';
 
@@ -35,8 +44,8 @@ test.serial('setting cssText to empty makes cssText empty', t => {
   t.is(declaration.cssText, '');
 });
 
-test.serial('setting cssText to empty removes stored values', t => {
-  const declaration = Object.create(CSSStyleDeclaration);
+test('setting cssText to empty removes stored values', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
   appendKeys(['width']);
   declaration.width = '10px';
 
@@ -45,8 +54,8 @@ test.serial('setting cssText to empty removes stored values', t => {
   t.is(declaration.width, '');
 });
 
-test.serial('setting cssText with a value stores the value', t => {
-  const declaration = Object.create(CSSStyleDeclaration);
+test('setting cssText with a value stores the value', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
   appendKeys(['width']);
 
   t.is(declaration.cssText, '');
@@ -54,8 +63,8 @@ test.serial('setting cssText with a value stores the value', t => {
   t.is(declaration.width, '10px');
 });
 
-test.serial('setting cssText with multiple values stores the values', t => {
-  const declaration = Object.create(CSSStyleDeclaration);
+test('setting cssText with multiple values stores the values', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
   appendKeys(['width', 'height']);
 
   t.is(declaration.cssText, '');
@@ -64,8 +73,8 @@ test.serial('setting cssText with multiple values stores the values', t => {
   t.is(declaration.height, '12px');
 });
 
-test.serial('setting cssText with a single value requiring key conversion', t => {
-  const declaration = Object.create(CSSStyleDeclaration);
+test('setting cssText with a single value requiring key conversion', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
   appendKeys(['lineHeight']);
 
   t.is(declaration.cssText, '');
@@ -73,8 +82,8 @@ test.serial('setting cssText with a single value requiring key conversion', t =>
   t.is(declaration.lineHeight, '10px');
 });
 
-test.serial('setting cssText with a single value requiring key conversion with vendor prefix', t => {
-  const declaration = Object.create(CSSStyleDeclaration);
+test('setting cssText with a single value requiring key conversion with vendor prefix', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
   appendKeys(['webkitLineHeight']);
 
   t.is(declaration.cssText, '');
@@ -82,8 +91,8 @@ test.serial('setting cssText with a single value requiring key conversion with v
   t.is(declaration.webkitLineHeight, '10px');
 });
 
-test.serial('setting cssText with a single miscapitalized value requiring key conversion with vendor prefix', t => {
-  const declaration = Object.create(CSSStyleDeclaration);
+test('setting cssText with a single miscapitalized value requiring key conversion with vendor prefix', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
   appendKeys(['webkitLineHeight']);
 
   t.is(declaration.cssText, '');

@@ -16,31 +16,40 @@
 
 import test from 'ava';
 import { CSSStyleDeclaration, appendKeys } from '../../worker-thread/CSSStyleDeclaration';
+import { Element } from '../../worker-thread/Element';
+import { NodeType } from '../../worker-thread/Node';
 
-test.serial('cssText is empty by default', t => {
-  const declaration = Object.create(CSSStyleDeclaration);
+test.beforeEach(t => {
+  t.context = {
+    node: new Element(NodeType.ELEMENT_NODE, 'div'),
+    storeAttributeMethod: () => {},
+  };
+});
+
+test('cssText is empty by default', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
 
   t.is(declaration.cssText, '');
 });
 
-test.serial('cssText contains single mutated property', t => {
-  const declaration = Object.create(CSSStyleDeclaration);
+test('cssText contains single mutated property', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
 
   appendKeys(['width']);
   declaration.width = '100px';
   t.is(declaration.cssText, 'width: 100px;');
 });
 
-test.serial('cssText hyphenates only capitals after lowercase letters', t => {
-  const declaration = Object.create(CSSStyleDeclaration);
+test('cssText hyphenates only capitals after lowercase letters', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
 
   appendKeys(['linebreakFoo']);
   declaration.linebreakFoo = 'normal';
   t.is(declaration.cssText, 'linebreak-foo: normal;');
 });
 
-test.serial('cssText contains multiple mutated properties', t => {
-  const declaration = Object.create(CSSStyleDeclaration);
+test('cssText contains multiple mutated properties', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
 
   appendKeys(['height', 'position']);
   declaration.height = '100px';
@@ -48,40 +57,40 @@ test.serial('cssText contains multiple mutated properties', t => {
   t.is(declaration.cssText, 'height: 100px; position: absolute;');
 });
 
-test.serial('cssText contains webkit vendor prefixed property', t => {
-  const declaration = Object.create(CSSStyleDeclaration);
+test('cssText contains webkit vendor prefixed property', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
 
   appendKeys(['webkitLineBreak']);
   declaration.webkitLineBreak = 'normal';
   t.is(declaration.cssText, '-webkit-line-break: normal;');
 });
 
-test.serial('cssText contains ms vendor prefixed property', t => {
-  const declaration = Object.create(CSSStyleDeclaration);
+test('cssText contains ms vendor prefixed property', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
 
   appendKeys(['msLineBreak']);
   declaration.msLineBreak = 'normal';
   t.is(declaration.cssText, '-ms-line-break: normal;');
 });
 
-test.serial('cssText contains moz vendor prefixed propertiy', t => {
-  const declaration = Object.create(CSSStyleDeclaration);
+test('cssText contains moz vendor prefixed propertiy', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
 
   appendKeys(['mozLineBreak']);
   declaration.mozLineBreak = 'normal';
   t.is(declaration.cssText, '-moz-line-break: normal;');
 });
 
-test.serial('cssText contains khtml vendor prefixed propertiy', t => {
-  const declaration = Object.create(CSSStyleDeclaration);
+test('cssText contains khtml vendor prefixed propertiy', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
 
   appendKeys(['khtmlLineBreak']);
   declaration.khtmlLineBreak = 'normal';
   t.is(declaration.cssText, '-khtml-line-break: normal;');
 });
 
-test.serial('cssText does not prefix hyphenated keys containing vendor prefixes not in the first position', t => {
-  const declaration = Object.create(CSSStyleDeclaration);
+test('cssText does not prefix hyphenated keys containing vendor prefixes not in the first position', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
 
   appendKeys(['lineKhtmlBreak']);
   declaration.lineKhtmlBreak = 'normal';

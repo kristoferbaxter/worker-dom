@@ -16,18 +16,34 @@
 
 import test from 'ava';
 import { CSSStyleDeclaration, appendKeys } from '../../worker-thread/CSSStyleDeclaration';
+import { Element } from '../../worker-thread/Element';
+import { NodeType } from '../../worker-thread/Node';
+
+test.beforeEach(t => {
+  t.context = {
+    node: new Element(NodeType.ELEMENT_NODE, 'div'),
+    storeAttributeMethod: () => {},
+    declaration: new CSSStyleDeclaration(new Element(NodeType.ELEMENT_NODE, 'div'), () => {}),
+  };
+});
 
 test.serial('appending keys mutates a declaration instance', t => {
-  const declaration = Object.create(CSSStyleDeclaration);
+  const { declaration } = t.context;
 
   t.is(declaration.width, undefined);
   appendKeys(['width']);
   t.is(declaration.width, '');
 });
 
-test.serial('appending keys mutates all known declaration instances', t => {
-  const firstDeclaration = Object.create(CSSStyleDeclaration);
-  const secondDeclaration = Object.create(CSSStyleDeclaration);
+test.serial('previously appended keys should exist on newly declared instances', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+
+  t.is(declaration.width, '');
+});
+
+test('appending keys mutates all known declaration instances', t => {
+  const firstDeclaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const secondDeclaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
 
   t.is(firstDeclaration.height, undefined);
   t.is(secondDeclaration.height, undefined);
@@ -36,9 +52,10 @@ test.serial('appending keys mutates all known declaration instances', t => {
   t.is(secondDeclaration.height, '');
 });
 
-test.serial('previously appended keys should exist on newly declared instances', t => {
-  const declaration = Object.create(CSSStyleDeclaration);
+test('reappending a key does not cause an error', t => {
+  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  appendKeys(['width']);
+  appendKeys(['width']);
 
   t.is(declaration.width, '');
-  t.is(declaration.height, '');
 });
