@@ -45,7 +45,7 @@ const hyphenateKey = (key: string): string =>
     .toLowerCase();
 
 export const appendKeys = (keys: Array<string>): void => {
-  let keysToAppend = keys.filter(key => !CSSStyleDeclaration.prototype.hasOwnProperty(key));
+  const keysToAppend = keys.filter(key => !CSSStyleDeclaration.prototype.hasOwnProperty(key));
   const previousPrototypeLength = (CSSStyleDeclaration.prototype.length || 0) as number;
 
   if (keysToAppend.length > 0) {
