@@ -52,13 +52,13 @@ export class Document extends Element {
     this.createTextNode = createTextNode;
     this.defaultView = {
       document: this,
-      MutationObserver: MutationObserver,
-      Document: Document,
-      Node: Node,
-      Text: Text,
-      Element: Element,
-      SVGElement: SVGElement,
-      Event: Event,
+      MutationObserver,
+      Document,
+      Node,
+      Text,
+      Element,
+      SVGElement,
+      Event,
     };
   }
 }

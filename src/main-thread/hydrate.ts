@@ -67,15 +67,14 @@ export class Hydration {
    * Stores the passed node and ensures all valid childNodes are hydrated.
    * @param node Real Node in DOM.
    * @param skeleton Skeleton Node representation created by WorkerDOM and transmitted across threads.
-   * @param childNodes childNodes of the Element needed to be hydrated.
    */
-  private hydrateElement(node: RenderableElement, skeleton: TransferableNode, childNodes: Array<TransferableNode | TransferredNode>): void {
+  private hydrateElement(node: RenderableElement, skeleton: TransferableNode): void {
     if (skeleton.textContent) {
       node.textContent = skeleton.textContent;
     }
 
     this.nodesInstance.storeNode(node as RenderableElement, skeleton._index_);
-    childNodes.forEach((childNode: TransferableNode | TransferredNode, index: number): void =>
+    skeleton.childNodes.forEach((childNode: TransferableNode | TransferredNode, index: number): void =>
       this.hydrateNode(node.childNodes[index], childNode as TransferableNode),
     );
   }
@@ -112,10 +111,10 @@ export class Hydration {
         childNode => childNode.nodeType !== NodeType.TEXT_NODE || childNode.textContent !== '',
       );
       if (validSkeletonChildren.length === node.childNodes.length) {
-        this.hydrateElement(node as RenderableElement, skeleton, validSkeletonChildren);
+        this.hydrateElement(node as RenderableElement, skeleton);
       }
     } else {
-      this.hydrateElement(node as RenderableElement, skeleton, skeleton.childNodes);
+      this.hydrateElement(node as RenderableElement, skeleton);
     }
   }
 }

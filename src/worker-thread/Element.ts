@@ -22,6 +22,7 @@ import { MutationRecordType } from './MutationRecord';
 import { TransferableNode, TransferredNode } from '../transfer/TransferableNodes';
 import { NumericBoolean, toLower } from '../utils';
 import { Text } from './Text';
+import { CSSStyleDeclaration } from './CSSStyleDeclaration';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
@@ -40,6 +41,8 @@ function findMatchingChildren(element: Element, conditionPredicate: ConditionPre
 export class Element extends Node {
   public attributes: Attr[] = [];
   public classList: DOMTokenList = new DOMTokenList(this, 'class', null, this.storeAttributeNS.bind(this));
+  public style: CSSStyleDeclaration = new CSSStyleDeclaration(this, this.storeAttributeNS.bind(this));
+
   // No implementation necessary
   // Element.id
 
@@ -242,10 +245,14 @@ export class Element extends Node {
    * @param value attribute value
    */
   public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): void {
-    if (namespaceURI === null && name === 'class') {
-      // TODO(KB): Abstract this when there is more than one attribute driven by a DOMTokenList.
-      this.className = value;
-      return;
+    if (namespaceURI === null) {
+      if (name === 'class') {
+        this.className = value;
+        return;
+      } else if (name === 'style') {
+        this.style.cssText = value;
+        return;
+      }
     }
 
     const oldValue = this.storeAttributeNS(namespaceURI, name, value);
