@@ -112,8 +112,9 @@ export class CSSStyleDeclaration implements StyleDeclaration {
   }
 
   get cssText(): string {
+    let value: string;
     return Object.keys(this.properties)
-      .reduce((accumulator, key) => accumulator + (this.properties[key] !== '' ? `${key}: ${this.properties[key]}; ` : ''), '')
+      .reduce((accumulator, key) => accumulator + ((value = this.getPropertyValue(key)) !== '' ? `${key}: ${value}; ` : ''), '')
       .trim();
   }
 
