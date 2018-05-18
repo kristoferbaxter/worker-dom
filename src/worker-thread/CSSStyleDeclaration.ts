@@ -98,31 +98,26 @@ export class CSSStyleDeclaration implements StyleDeclaration {
     this.element = element;
   }
 
-  getPropertyValue(key: string): string {
+  public getPropertyValue(key: string): string {
     return this.$$properties[key] || '';
   }
-  removeProperty(key: string): void {
-    this.$$properties[key] = null;
-  }
-  setProperty(key: string, value: string): void {
-    this.$$properties[key] = value;
 
-    const newValue = this.cssText;
-    const oldValue = this.storeAttributeMethod(null, 'style', newValue);
-    mutate({
-      type: MutationRecordType.ATTRIBUTES,
-      target: this.element,
-      attributeName: 'style',
-      attributeNamespace: null,
-      value: newValue,
-      oldValue,
-    });
+  public removeProperty(key: string): void {
+    this.$$properties[key] = null;
+    this.mutationCompleteHandler(this.cssText);
   }
+
+  public setProperty(key: string, value: string): void {
+    this.$$properties[key] = value;
+    this.mutationCompleteHandler(this.cssText);
+  }
+
   get cssText(): string {
     return Object.keys(this.$$properties)
       .reduce((accumulator, key) => accumulator + (this.$$properties[key] !== '' ? `${key}: ${this.$$properties[key]}; ` : ''), '')
       .trim();
   }
+
   set cssText(value: string) {
     this.$$properties = {};
 
@@ -131,6 +126,14 @@ export class CSSStyleDeclaration implements StyleDeclaration {
     for (let index = 0; index + 1 < length; index += 2) {
       this.$$properties[values[index].trim().toLowerCase()] = values[index + 1].trim();
     }
+    this.mutationCompleteHandler(this.cssText);
+  }
+
+  /**
+   * Report CSSStyleDeclaration mutations to MutationObserver.
+   * @param value value after mutation
+   */
+  private mutationCompleteHandler(value: string): void {
     const oldValue = this.storeAttributeMethod(null, 'style', value);
     mutate({
       type: MutationRecordType.ATTRIBUTES,
