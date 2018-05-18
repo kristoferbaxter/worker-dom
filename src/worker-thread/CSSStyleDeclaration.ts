@@ -97,20 +97,45 @@ export class CSSStyleDeclaration implements StyleDeclaration {
     this.element = element;
   }
 
+  /**
+   * Retrieve the value for a given property key.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/getPropertyValue
+   * @param key the name of the property to retrieve the value for.
+   * @return value stored for the provided key.
+   */
   public getPropertyValue(key: string): string {
     return this.properties[key] || '';
   }
 
-  public removeProperty(key: string): void {
+  /**
+   * Remove a value for a given property key.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/removeProperty
+   * @param key the name of the property to retrieve the value for.
+   * @return previously stored value for the provided key.
+   */
+  public removeProperty(key: string): string {
+    const oldValue = this.getPropertyValue(key);
+
     this.properties[key] = null;
     this.mutationCompleteHandler(this.cssText);
+    return oldValue;
   }
 
+  /**
+   * Stores a given value for the provided key.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/setProperty
+   * @param key modify this key
+   * @param value store this value
+   */
   public setProperty(key: string, value: string): void {
     this.properties[key] = value;
     this.mutationCompleteHandler(this.cssText);
   }
 
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/cssText
+   * @return css text string representing known and valid style declarations.
+   */
   get cssText(): string {
     let value: string;
     return Object.keys(this.properties)
@@ -118,6 +143,11 @@ export class CSSStyleDeclaration implements StyleDeclaration {
       .trim();
   }
 
+  /**
+   * Replace all style declarations with new values parsed from a cssText string.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/cssText
+   * @param value css text string to parse and store
+   */
   set cssText(value: string) {
     this.properties = {};
 
