@@ -23,7 +23,6 @@ interface StyleProperties {
   [key: string]: string | null;
 }
 interface StyleDeclaration {
-  $$properties: StyleProperties;
   getPropertyValue: (key: string) => string;
   removeProperty: (key: string) => void;
   setProperty: (key: string, value: string) => void;
@@ -89,7 +88,7 @@ export class CSSStyleDeclaration implements StyleDeclaration {
     | ((key: string) => void)
     | ((key: string, value: string) => void)
     | ((namespaceURI: NamespaceURI, name: string, value: string) => void);
-  $$properties: StyleProperties = {};
+  private properties: StyleProperties = {};
   private storeAttributeMethod: (namespaceURI: NamespaceURI, name: string, value: string) => string;
   private element: Element;
 
@@ -99,32 +98,32 @@ export class CSSStyleDeclaration implements StyleDeclaration {
   }
 
   public getPropertyValue(key: string): string {
-    return this.$$properties[key] || '';
+    return this.properties[key] || '';
   }
 
   public removeProperty(key: string): void {
-    this.$$properties[key] = null;
+    this.properties[key] = null;
     this.mutationCompleteHandler(this.cssText);
   }
 
   public setProperty(key: string, value: string): void {
-    this.$$properties[key] = value;
+    this.properties[key] = value;
     this.mutationCompleteHandler(this.cssText);
   }
 
   get cssText(): string {
-    return Object.keys(this.$$properties)
-      .reduce((accumulator, key) => accumulator + (this.$$properties[key] !== '' ? `${key}: ${this.$$properties[key]}; ` : ''), '')
+    return Object.keys(this.properties)
+      .reduce((accumulator, key) => accumulator + (this.properties[key] !== '' ? `${key}: ${this.properties[key]}; ` : ''), '')
       .trim();
   }
 
   set cssText(value: string) {
-    this.$$properties = {};
+    this.properties = {};
 
     const values = value.split(/[:;]/);
     const length = values.length;
     for (let index = 0; index + 1 < length; index += 2) {
-      this.$$properties[values[index].trim().toLowerCase()] = values[index + 1].trim();
+      this.properties[values[index].trim().toLowerCase()] = values[index + 1].trim();
     }
     this.mutationCompleteHandler(this.cssText);
   }
