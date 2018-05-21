@@ -21,8 +21,8 @@ import { Text } from '../../worker-thread/Text';
 
 test.beforeEach(t => {
   t.context = {
-    element: new Element(NodeType.ELEMENT_NODE, 'div'),
-    child: new Element(NodeType.ELEMENT_NODE, 'p'),
+    element: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    child: new Element(NodeType.ELEMENT_NODE, 'p', null),
     text: new Text('default text'),
   };
 });

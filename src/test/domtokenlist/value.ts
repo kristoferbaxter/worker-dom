@@ -20,13 +20,13 @@ import { Element } from '../../worker-thread/Element';
 import { DOMTokenList } from '../../worker-thread/DOMTokenList';
 
 test('getter should be empty by default', t => {
-  const tokenList = new DOMTokenList(new Element(NodeType.ELEMENT_NODE, 'div'), 'class', null, () => {});
+  const tokenList = new DOMTokenList(new Element(NodeType.ELEMENT_NODE, 'div', null), 'class', null, () => {});
 
   t.is(tokenList.value, '');
 });
 
 test('should accept new total values via setter', t => {
-  const tokenList = new DOMTokenList(new Element(NodeType.ELEMENT_NODE, 'div'), 'class', null, () => {});
+  const tokenList = new DOMTokenList(new Element(NodeType.ELEMENT_NODE, 'div', null), 'class', null, () => {});
 
   tokenList.value = 'foo';
   t.is(tokenList.value, 'foo');
@@ -37,7 +37,7 @@ test('should accept new total values via setter', t => {
 });
 
 test.cb('provided callback is fired when value changes', t => {
-  const tokenList = new DOMTokenList(new Element(NodeType.ELEMENT_NODE, 'div'), 'class', null, (namespaceURI, name, value) => {
+  const tokenList = new DOMTokenList(new Element(NodeType.ELEMENT_NODE, 'div', null), 'class', null, (namespaceURI, name, value) => {
     t.is(namespaceURI, null);
     t.is(name, 'class');
     t.is(value, 'foo');

@@ -20,10 +20,10 @@ import { Element } from '../../worker-thread/Element';
 
 test.beforeEach(t => {
   t.context = {
-    node: new Element(NodeType.ELEMENT_NODE, 'div'),
-    child: new Element(NodeType.ELEMENT_NODE, 'div'),
-    childTwo: new Element(NodeType.ELEMENT_NODE, 'p'),
-    childThree: new Element(NodeType.ELEMENT_NODE, 'p'),
+    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    child: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    childTwo: new Element(NodeType.ELEMENT_NODE, 'p', null),
+    childThree: new Element(NodeType.ELEMENT_NODE, 'p', null),
   };
 });
 

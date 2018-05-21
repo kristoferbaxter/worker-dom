@@ -36,6 +36,7 @@ export const enum NodeType {
   NOTATION_NODE = 12,
 }
 export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
+export type NamespaceURI = string | null;
 
 /**
  * Propagates a property change for a Node to itself and all childNodes.
@@ -231,6 +232,7 @@ export class Node {
     child.parentNode = this;
     propagate(child, 'isConnected', this.isConnected);
     this.childNodes.push(child);
+
     mutate({
       addedNodes: [child],
       previousSibling: this.childNodes[this.childNodes.length - 2],

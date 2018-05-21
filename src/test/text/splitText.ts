@@ -22,8 +22,8 @@ import { NodeType } from '../../worker-thread/Node';
 test.beforeEach(t => {
   t.context = {
     text: new Text('default value'),
-    element: new Element(NodeType.ELEMENT_NODE, 'div'),
-    paragraph: new Element(NodeType.ELEMENT_NODE, 'p'),
+    element: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    paragraph: new Element(NodeType.ELEMENT_NODE, 'p', null),
   };
 });
 

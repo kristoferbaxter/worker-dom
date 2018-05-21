@@ -15,15 +15,15 @@
  */
 
 import { Element } from './Element';
+import { NamespaceURI } from './Node';
 import { mutate } from './MutationObserver';
 import { MutationRecordType } from './MutationRecord';
-import { NamespaceURI } from './Attr';
 
 export class DOMTokenList extends Array {
   element: Element;
   attributeName: string;
   attributeNamespace: string | null = null;
-  storeAttributeMethod: (namespaceURI: NamespaceURI, name: string, value: string) => void;
+  private storeAttributeMethod: (namespaceURI: NamespaceURI, name: string, value: string) => void;
 
   constructor(
     element: Element,
