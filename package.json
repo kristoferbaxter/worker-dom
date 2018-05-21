@@ -17,9 +17,6 @@
     "pretest": "rimraf src/output && tsc -p config/tsconfig.test.worker-thread.json & tsc -p config/tsconfig.test.json & tsc -p config/tsconfig.test.main-thread.json",
     "test": "ava src/output/test/",
 
-    "serial": "rimraf src/output && tsc -p config/tsconfig.test.worker-thread.json && tsc -p config/tsconfig.test.json && tsc -p config/tsconfig.test.main-thread.json",
-    "parallel": "rimraf src/output && tsc -p config/tsconfig.test.worker-thread.json & tsc -p config/tsconfig.test.json & tsc -p config/tsconfig.test.main-thread.json",
-
     "pre~rollup": "rimraf src/output build && tsc -p config/tsconfig.build.worker-thread.json & tsc -p config/tsconfig.build.main-thread.json",
     "~rollup": "rollup --config config/rollup.config.js",
 
