@@ -60,6 +60,9 @@ export class Hydration {
       }
     });
 
+    // Processing order matters.
+    // For instance, Element.addEventListener requires the Element to exist first.
+    // Commands pass only the identifier for an element, and identifiers are stored in the main thread after the elements are created.
     commands.forEach(hydration => process(this.nodesInstance, this.worker, hydration));
   }
 
@@ -108,7 +111,7 @@ export class Hydration {
       }
 
       const validSkeletonChildren: TransferableNode[] = (skeleton.childNodes as TransferableNode[]).filter(
-        childNode => childNode.nodeType !== NodeType.TEXT_NODE || childNode.textContent !== '',
+        childNode => !(childNode.nodeType === NodeType.TEXT_NODE && childNode.textContent === ''),
       );
       if (validSkeletonChildren.length === node.childNodes.length) {
         this.hydrateElement(node as RenderableElement, skeleton);
