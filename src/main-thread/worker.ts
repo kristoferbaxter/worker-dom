@@ -46,6 +46,7 @@ export function createWorker(authorScriptURL: string): Promise<Worker | null> {
           function removeEventListener(type, handler) {
             return document.removeEventListener(type, handler);
           }
+          this.appendKeys([${Object.keys(document.body.style).map(key => `'${key}'`)}]);
           ${authorScript}
         }).call(WorkerThread.monkey);`;
       return new Worker(URL.createObjectURL(new Blob([code])));
