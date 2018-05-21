@@ -21,7 +21,7 @@ import { DOMTokenList } from '../../worker-thread/DOMTokenList';
 
 test.beforeEach(t => {
   t.context = {
-    tokenList: new DOMTokenList(new Element(NodeType.ELEMENT_NODE, 'div'), 'class', null, () => {}),
+    tokenList: new DOMTokenList(new Element(NodeType.ELEMENT_NODE, 'div', null), 'class', null, () => {}),
   };
 });
 
@@ -42,7 +42,11 @@ test('remove a single value', t => {
 
   tokenList.value = 'foo bar bar foo';
   tokenList.remove('foo');
-  t.is(tokenList.value, 'bar', 'removing a single value that is stored more than once currently removes duplicates and leaves other unique values intact');
+  t.is(
+    tokenList.value,
+    'bar',
+    'removing a single value that is stored more than once currently removes duplicates and leaves other unique values intact',
+  );
 });
 
 test('removing multiple values', t => {
@@ -58,7 +62,11 @@ test('removing multiple values', t => {
 
   tokenList.value = 'foo bar foo bar';
   tokenList.remove('foo', 'foo');
-  t.is(tokenList.value, 'bar', 'removing multiple values of the same value that is stored more than once currently removes duplicates and leaves other unique values intact');
+  t.is(
+    tokenList.value,
+    'bar',
+    'removing multiple values of the same value that is stored more than once currently removes duplicates and leaves other unique values intact',
+  );
 
   tokenList.value = 'foo bar foo bar';
   tokenList.remove('foo', 'bar');

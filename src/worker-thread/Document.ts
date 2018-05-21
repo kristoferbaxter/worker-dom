@@ -16,7 +16,7 @@
 
 import { Element } from './Element';
 import { SVGElement } from './Element';
-import { Node, NodeType } from './Node';
+import { Node, NodeType, NamespaceURI } from './Node';
 import { Event } from './Event';
 import { Text } from './Text';
 import { MutationObserver } from './MutationObserver';
@@ -45,7 +45,7 @@ export class Document extends Element {
   public body: Element;
 
   constructor(createElement: createElementFunc, createElementNS: createElementNSFunc, createTextNode: createTextNodeFunc) {
-    super(NodeType.DOCUMENT_NODE, '#document');
+    super(NodeType.DOCUMENT_NODE, '#document', null);
     this.documentElement = this;
     this.createElement = createElement;
     this.createElementNS = createElementNS;
@@ -65,24 +65,20 @@ export class Document extends Element {
 
 export const document = (() => {
   function createElement(tagName: string): Element {
-    return new Element(NodeType.ELEMENT_NODE, String(tagName).toUpperCase());
+    return createElementNS(null, tagName);
   }
 
-  function createElementNS(namespaceURI: string, tagName: string): Element {
-    const element = createElement(tagName);
-    element.namespace = namespaceURI;
+  function createElementNS(namespaceURI: NamespaceURI, tagName: string): Element {
+    const element = new Element(NodeType.ELEMENT_NODE, String(tagName).toUpperCase(), namespaceURI);
+    element.ownerDocument = document;
     return element;
   }
 
-  function createDocument(): Document {
-    const document = new Document(createElement, createElementNS, (text: string): Text => new Text(text));
-    document.isConnected = true;
-    document.appendChild((document.body = createElement('body')));
-    observeMutations(document);
-    propagateEvents();
+  const document = new Document(createElement, createElementNS, (text: string): Text => new Text(text));
+  document.isConnected = true;
+  document.appendChild((document.body = createElement('body')));
+  observeMutations(document);
+  propagateEvents();
 
-    return document;
-  }
-
-  return createDocument();
+  return document;
 })();

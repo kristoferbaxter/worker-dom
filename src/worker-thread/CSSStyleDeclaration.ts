@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { NamespaceURI } from './Attr';
 import { mutate } from './MutationObserver';
 import { MutationRecordType } from './MutationRecord';
 import { Element } from './Element';
+import { NamespaceURI } from './Node';
 
 interface StyleProperties {
   [key: string]: string | null;

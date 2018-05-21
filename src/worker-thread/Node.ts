@@ -36,6 +36,7 @@ export const enum NodeType {
   NOTATION_NODE = 12,
 }
 export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
+export type NamespaceURI = string | null;
 
 /**
  * Propagates a property change for a Node to itself and all childNodes.

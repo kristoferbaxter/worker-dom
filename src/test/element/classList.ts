@@ -20,7 +20,7 @@ import { Element } from '../../worker-thread/Element';
 
 test.beforeEach(t => {
   t.context = {
-    node: new Element(NodeType.ELEMENT_NODE, 'div'),
+    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
   };
 });
 

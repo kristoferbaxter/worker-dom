@@ -15,9 +15,9 @@
  */
 
 import { Element } from './Element';
+import { NamespaceURI } from './Node';
 import { mutate } from './MutationObserver';
 import { MutationRecordType } from './MutationRecord';
-import { NamespaceURI } from './Attr';
 
 export class DOMTokenList extends Array {
   element: Element;

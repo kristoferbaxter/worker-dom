@@ -15,8 +15,8 @@
  */
 
 import { keyValueString } from '../utils';
+import { NamespaceURI } from './Node';
 
-export type NamespaceURI = string | null;
 export interface Attr {
   namespaceURI: NamespaceURI;
   name: string;
