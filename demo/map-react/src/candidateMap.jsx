@@ -29,7 +29,7 @@ class CandidateZone extends React.Component {
   }
 
   render() {
-    return <rect x={this.props.x} y={this.props.y} width="180" height="180" fill={this.state.fill} stroke="black" onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+    return <rect x={this.props.x} y={this.props.y} width="180" height="180" fill={this.state.fill} stroke="black" onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />;
   }
 }
 
@@ -70,10 +70,14 @@ export class CandidateMap extends React.Component {
           <CandidateZone x={0} y={180} index={2} focusRegion={this.focusRegion} />
           <CandidateZone x={180} y={180} index={3} focusRegion={this.focusRegion} />
         </svg>
-        <p className={objstr({
-          [styles.tooltip]: true,
-          [styles.showTooltip]: this.state.showTooltip,
-        })}>Region winner {!!winner && winner.name}</p>
+        <p
+          className={objstr({
+            [styles.tooltip]: true,
+            [styles.showTooltip]: this.state.showTooltip,
+          })}
+        >
+          Region winner {!!winner && winner.name}
+        </p>
       </div>
     );
   }

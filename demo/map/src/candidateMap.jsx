@@ -1,4 +1,4 @@
-import {h, Component} from 'preact';
+import { h, Component } from 'preact';
 import objstr from 'obj-str';
 
 import styles from './candidateMap.css';
@@ -29,7 +29,7 @@ class CandidateZone extends Component {
   }
 
   render(props, state) {
-    return <rect x={props.x} y={props.y} width="180" height="180" fill={state.fill} stroke="black" onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />
+    return <rect x={props.x} y={props.y} width="180" height="180" fill={state.fill} stroke="black" onMouseEnter={this.handleMouseEnter} onMouseLeave={this.handleMouseLeave} />;
   }
 }
 
@@ -70,10 +70,14 @@ export class CandidateMap extends Component {
           <CandidateZone x={0} y={180} index={2} focusRegion={this.focusRegion} />
           <CandidateZone x={180} y={180} index={3} focusRegion={this.focusRegion} />
         </svg>
-        <p class={objstr({
-          [styles.tooltip]: true,
-          [styles.showTooltip]: state.showTooltip,
-        })}>Region winner {!!winner && winner.name}</p>
+        <p
+          class={objstr({
+            [styles.tooltip]: true,
+            [styles.showTooltip]: state.showTooltip,
+          })}
+        >
+          Region winner {!!winner && winner.name}
+        </p>
       </div>
     );
   }
