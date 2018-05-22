@@ -30,7 +30,7 @@ document.body.appendChild(div);
 
 function toggle() {
   span.classList.toggle('clicked');
-  div.style.color = div.style.color === "blue" ? "black" : "blue";
+  div.style.color = div.style.color === "green" ? "red" : "green";
 }
 
 span.addEventListener('click', toggle, false);
