@@ -15,16 +15,19 @@
  */
 
 import { Document, document } from './Document';
+import { appendKeys } from './CSSStyleDeclaration';
 
 interface MonkeyWorkerGlobalScope {
   document: Document;
   localStorage: object;
   location: object;
   url: string;
+  appendKeys: (keys: Array<string>) => void;
 }
 export const monkey: MonkeyWorkerGlobalScope = {
   document,
   localStorage: {},
   location: {},
   url: '/',
+  appendKeys,
 };
