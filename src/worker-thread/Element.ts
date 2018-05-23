@@ -49,9 +49,6 @@ export class Element extends Node {
     this.namespaceURI = namespaceURI;
   }
 
-  // No implementation necessary
-  // Element.id
-
   // Unimplemented
   // Element.clientHeight – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientHeight
   // Element.clientLeft – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientLeft
@@ -97,6 +94,22 @@ export class Element extends Node {
 
   // Mixins not implemented
   // Slotable.assignedSlot – https://developer.mozilla.org/en-US/docs/Web/API/Slotable/assignedSlot
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/id
+   * @return string representation of the Element's id.
+   */
+  get id(): string {
+    return this.getAttribute('id') || '';
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/id
+   * @param value new string representaiton of the Element's id.
+   */
+  set id(value: string) {
+    this.setAttribute('id', value);
+  }
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/className
