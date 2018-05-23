@@ -45,38 +45,36 @@ const hyphenateKey = (key: string): string =>
 
 export const appendKeys = (keys: Array<string>): void => {
   const keysToAppend = keys.filter(key => !CSSStyleDeclaration.prototype.hasOwnProperty(key));
+  if (keysToAppend.length <= 0) {
+    return;
+  }
+
   const previousPrototypeLength = (CSSStyleDeclaration.prototype.length || 0) as number;
-
-  if (keysToAppend.length > 0) {
-    if (previousPrototypeLength !== 0) {
-      CSSStyleDeclaration.prototype.length = previousPrototypeLength + keysToAppend.length;
-    } else {
-      Object.defineProperty(CSSStyleDeclaration.prototype, 'length', {
-        configurable: true,
-        writable: true,
-        value: keysToAppend.length,
-      });
-    }
-
-    keysToAppend.forEach((key: string, index: number): void => {
-      const hyphenatedKey = hyphenateKey(key);
-      CSSStyleDeclaration.prototype[index + previousPrototypeLength] = hyphenatedKey;
-
-      Object.defineProperties(CSSStyleDeclaration.prototype, {
-        [index + previousPrototypeLength]: {
-          value: hyphenatedKey,
-        },
-        [key]: {
-          get() {
-            return this.getPropertyValue(hyphenatedKey);
-          },
-          set(value) {
-            this.setProperty(hyphenatedKey, value);
-          },
-        },
-      });
+  if (previousPrototypeLength !== 0) {
+    CSSStyleDeclaration.prototype.length = previousPrototypeLength + keysToAppend.length;
+  } else {
+    Object.defineProperty(CSSStyleDeclaration.prototype, 'length', {
+      configurable: true,
+      writable: true,
+      value: keysToAppend.length,
     });
   }
+
+  keysToAppend.forEach((key: string, index: number): void => {
+    const hyphenatedKey = hyphenateKey(key);
+    CSSStyleDeclaration.prototype[index + previousPrototypeLength] = hyphenatedKey;
+
+    Object.defineProperties(CSSStyleDeclaration.prototype, {
+      [key]: {
+        get(): string {
+          return this.getPropertyValue(hyphenatedKey);
+        },
+        set(value) {
+          this.setProperty(hyphenatedKey, value);
+        },
+      },
+    });
+  });
 };
 
 export class CSSStyleDeclaration implements StyleDeclaration {
