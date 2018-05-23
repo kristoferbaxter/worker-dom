@@ -16,10 +16,8 @@
   "scripts": {
     "pretest": "rimraf src/output && tsc -p config/tsconfig.test.worker-thread.json & tsc -p config/tsconfig.test.json & tsc -p config/tsconfig.test.main-thread.json",
     "test": "ava src/output/test/",
-
     "pre~rollup": "rimraf src/output build && tsc -p config/tsconfig.build.worker-thread.json & tsc -p config/tsconfig.build.main-thread.json",
     "~rollup": "rollup --config config/rollup.config.js",
-
     "lint": "tslint -c config/tslint.json src/*/**.ts",
     "debug": "DEBUG_BUNDLE=true yarn ~rollup && node -r esm demo/server.mjs",
     "bundle": "UGLIFY_BUNDLE=true COMPRESS_BUNDLE=true yarn ~rollup"
@@ -33,6 +31,7 @@
     "ava": "0.25.0",
     "babel-plugin-minify-replace": "0.4.3",
     "babel-plugin-transform-remove-console": "6.9.4",
+    "bundlesize": "0.17.0",
     "esm": "3.0.34",
     "husky": "1.0.0-rc.1",
     "lint-staged": "7.1.1",
@@ -57,7 +56,19 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "pre-push": "yarn test"
+      "pre-push": "yarn test; yarn bundlesize"
     }
-  }
+  },
+  "bundlesize": [
+    {
+      "path": "./build/esmodules/index.module.js",
+      "compression": "brotli",
+      "maxSize": "4 kB"
+    },
+    {
+      "path": "./build/esmodules/main-thread/index.module.js",
+      "compression": "brotli",
+      "maxSize": "2 kB"
+    }
+  ]
 }
