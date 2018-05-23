@@ -20,6 +20,7 @@
     "~rollup": "rollup --config config/rollup.config.js",
     "lint": "tslint -c config/tslint.json src/*/**.ts",
     "debug": "DEBUG_BUNDLE=true yarn ~rollup && node -r esm demo/server.mjs",
+    "bundle:git-push": "UGLIFY_BUNDLE=true yarn ~rollup",
     "bundle": "UGLIFY_BUNDLE=true COMPRESS_BUNDLE=true yarn ~rollup"
   },
   "devDependencies": {
@@ -56,7 +57,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "pre-push": "yarn test; yarn bundlesize"
+      "pre-push": "yarn test; yarn bundle:git-push; yarn bundlesize"
     }
   },
   "bundlesize": [
