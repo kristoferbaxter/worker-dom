@@ -49,7 +49,7 @@ export class Element extends Node {
     this.namespaceURI = namespaceURI;
   }
 
-  // Unimplemented
+  // Unimplemented properties
   // Element.clientHeight – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientHeight
   // Element.clientLeft – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientLeft
   // Element.clientTop – https://developer.mozilla.org/en-US/docs/Web/API/Element/clientTop
@@ -72,6 +72,8 @@ export class Element extends Node {
   // Element.tabStop – https://developer.mozilla.org/en-US/docs/Web/API/Element/tabStop
   // Element.undoManager – https://developer.mozilla.org/en-US/docs/Web/API/Element/undoManager
   // Element.undoScope – https://developer.mozilla.org/en-US/docs/Web/API/Element/undoScope
+
+  // Unimplemented Methods
   // Element.attachShadow() – !! CustomElements – https://developer.mozilla.org/en-US/docs/Web/API/Element/attachShadow
   // Element.animate() – https://developer.mozilla.org/en-US/docs/Web/API/Element/animate
   // Element.closest() – https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
@@ -94,22 +96,6 @@ export class Element extends Node {
 
   // Mixins not implemented
   // Slotable.assignedSlot – https://developer.mozilla.org/en-US/docs/Web/API/Slotable/assignedSlot
-
-  /**
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/id
-   * @return string representation of the Element's id.
-   */
-  get id(): string {
-    return this.getAttribute('id') || '';
-  }
-
-  /**
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/id
-   * @param value new string representaiton of the Element's id.
-   */
-  set id(value: string) {
-    this.setAttribute('id', value);
-  }
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/className
@@ -395,4 +381,44 @@ export class Element extends Node {
   }
 }
 
-export class SVGElement extends Element {}
+// export const reflectProperties = (properties: Array<string>, defineOn: typeof Element, enforceBooleanAttributes: boolean): void => {
+//   properties.forEach(token => {
+//     const lowerCaseKey = token.toLowerCase();
+//     Object.defineProperty(defineOn.prototype, token, {
+//       configurable: false,
+//       get(): string | boolean {
+//         const attribute: string = (this as Element).getAttribute(lowerCaseKey) || '';
+//         return enforceBooleanAttributes ? Boolean(attribute) : attribute;
+//       },
+//       set(value: string | boolean) {
+//         (this as Element).setAttribute(lowerCaseKey, String(value));
+//       }
+//     });
+//   });
+// };
+
+interface PropertyPair {
+  [key: string]: string | boolean;
+}
+export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typeof Element, enforceBooleanAttributes: boolean): void => {
+  properties.forEach(pair => {
+    Object.keys(pair).forEach(key => {
+      const lowerCaseKey = key.toLowerCase();
+      Object.defineProperty(defineOn.prototype, key, {
+        configurable: false,
+        get(): string | boolean {
+          const storedAttribute = (this as Element).getAttribute(lowerCaseKey);
+          if (enforceBooleanAttributes) {
+            return storedAttribute !== null ? storedAttribute === 'true' : pair[key];
+          }
+          return String(storedAttribute !== null ? storedAttribute : pair[key]);
+        },
+        set(value: string | boolean) {
+          (this as Element).setAttribute(lowerCaseKey, String(value));
+        },
+      });
+    });
+  });
+};
+
+reflectProperties([{ id: '' }], Element, false);
