@@ -16,6 +16,7 @@
 
 import { Element } from './Element';
 import './HTMLElement';
+import './HTMLButtonElement';
 import { SVGElement } from './SVGElement';
 import { Node, NodeType, NamespaceURI } from './Node';
 import { Event } from './Event';
