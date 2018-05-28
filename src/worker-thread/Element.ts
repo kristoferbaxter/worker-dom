@@ -381,22 +381,6 @@ export class Element extends Node {
   }
 }
 
-// export const reflectProperties = (properties: Array<string>, defineOn: typeof Element, enforceBooleanAttributes: boolean): void => {
-//   properties.forEach(token => {
-//     const lowerCaseKey = token.toLowerCase();
-//     Object.defineProperty(defineOn.prototype, token, {
-//       configurable: false,
-//       get(): string | boolean {
-//         const attribute: string = (this as Element).getAttribute(lowerCaseKey) || '';
-//         return enforceBooleanAttributes ? Boolean(attribute) : attribute;
-//       },
-//       set(value: string | boolean) {
-//         (this as Element).setAttribute(lowerCaseKey, String(value));
-//       }
-//     });
-//   });
-// };
-
 interface PropertyPair {
   [key: string]: string | boolean;
 }
