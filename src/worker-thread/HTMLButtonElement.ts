@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { Element, reflectProperties } from './Element';
+import { reflectProperties, registerSubclass } from './Element';
+import { HTMLElement } from './HTMLElement';
+
+export class HTMLButtonElement extends HTMLElement {}
+registerSubclass('button', HTMLButtonElement);
 
 // Reflected properties, strings.
 // HTMLButtonElement.formAction => string, reflected attribute
@@ -26,14 +30,14 @@ import { Element, reflectProperties } from './Element';
 // HTMLButtonElement.value => string, reflected attribute
 reflectProperties(
   [{ formAction: '' }, { formEnctype: '' }, { formMethod: '' }, { formTarget: '' }, { name: '' }, { type: 'submit' }, { value: '' }],
-  Element,
+  HTMLButtonElement,
   false,
 );
 
 // Reflected properties, boolean.
 // HTMLButtonElement.autofocus => boolean, reflected attribute
 // HTMLButtonElement.disabled => boolean, reflected attribute
-reflectProperties([{ autofocus: false }, { disabled: false }], Element, true);
+reflectProperties([{ autofocus: false }, { disabled: false }], HTMLButtonElement, true);
 
 // Not reflected
 // HTMLButtonElement.formNoValidate => boolean

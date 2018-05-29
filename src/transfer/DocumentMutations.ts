@@ -56,7 +56,7 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
     };
     hydrated = true;
 
-    postMessage(JSON.parse(JSON.stringify(mutationFromWorker)));
+    postMessage(mutationFromWorker);
   }
 }
 

@@ -17,11 +17,11 @@
 import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
 import brotli from 'rollup-plugin-brotli';
-import gzip from "rollup-plugin-gzip";
+import gzip from 'rollup-plugin-gzip';
 import { path, UGLIFY_BUNDLE_VALUE, DEBUG_BUNDLE_VALUE, COMPRESS_BUNDLE_VALUE } from './rollup.utils.js';
 
-const excludeFromConsoleRemoval = DEBUG_BUNDLE_VALUE ? ['error', 'warn', 'info', 'log'] : [];
-const targets = esmodules => esmodules ? { esmodules: true } : { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] };
+const excludeFromConsoleRemoval = DEBUG_BUNDLE_VALUE ? ['error', 'warn', 'info', 'log', 'time', 'timeEnd'] : [];
+const targets = esmodules => (esmodules ? { esmodules: true } : { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] });
 const babelConfiguration = esmodules => {
   return {
     exclude: 'node_modules/**',
@@ -55,7 +55,7 @@ const babelConfiguration = esmodules => {
       ],
     ],
   };
-}
+};
 const brotliConfiguration = {
   options: {
     mode: 0,
@@ -68,14 +68,14 @@ const brotliConfiguration = {
     npostfix: 0,
     ndirect: 0,
   },
-  minSize: 0
+  minSize: 0,
 };
 const gzipConfiguration = {
   algorithm: 'zopfli',
   options: {
     numiterations: 1000,
-  }
-}
+  },
+};
 
 /**
  * @param {boolean} esmodules

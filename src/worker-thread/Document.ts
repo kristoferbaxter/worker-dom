@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Element } from './Element';
-import './HTMLElement';
+import { Element, NodeNameMapping } from './Element';
+import { HTMLElement } from './HTMLElement';
 import './HTMLButtonElement';
 import { SVGElement } from './SVGElement';
 import { Node, NodeType, NamespaceURI } from './Node';
@@ -71,7 +71,8 @@ export const document = (() => {
   }
 
   function createElementNS(namespaceURI: NamespaceURI, tagName: string): Element {
-    const element = new Element(NodeType.ELEMENT_NODE, String(tagName).toUpperCase(), namespaceURI);
+    const ClassToInstantiate = NodeNameMapping[tagName] || HTMLElement;
+    const element = new ClassToInstantiate(NodeType.ELEMENT_NODE, String(tagName).toUpperCase(), namespaceURI);
     element.ownerDocument = document;
     return element;
   }

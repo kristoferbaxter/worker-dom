@@ -16,37 +16,36 @@
 
 import test from 'ava';
 import { NodeType } from '../../worker-thread/Node';
-import { Element } from '../../worker-thread/Element';
-import '../../worker-thread/HTMLButtonElement';
+import { HTMLButtonElement } from '../../worker-thread/HTMLButtonElement';
 
 test.beforeEach(t => {
   t.context = {
-    element: new Element(NodeType.ELEMENT_NODE, 'button', null),
+    element: new HTMLButtonElement(NodeType.ELEMENT_NODE, 'button', null),
   };
 });
 
 test('formTarget should be empty by default', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLButtonElement };
 
   t.is(element.formTarget, '');
 });
 
 test('formTarget should be settable to a single value', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLButtonElement };
 
   element.formTarget = '_blank';
   t.is(element.formTarget, '_blank');
 });
 
 test('formTarget should be reflected in attribute', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLButtonElement };
 
   element.formTarget = '_blank';
   t.is(element.getAttribute('formtarget'), '_blank');
 });
 
 test('formTarget should be reflected in property', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLButtonElement };
 
   element.setAttribute('formtarget', '_blank');
   t.is(element.formTarget, '_blank');

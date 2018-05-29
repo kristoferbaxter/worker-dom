@@ -16,37 +16,36 @@
 
 import test from 'ava';
 import { NodeType } from '../../worker-thread/Node';
-import { Element } from '../../worker-thread/Element';
-import '../../worker-thread/HTMLElement';
+import { HTMLElement } from '../../worker-thread/HTMLElement';
 
 test.beforeEach(t => {
   t.context = {
-    element: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    element: new HTMLElement(NodeType.ELEMENT_NODE, 'div', null),
   };
 });
 
 test('dir should be empty by default', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLElement };
 
   t.is(element.dir, '');
 });
 
 test('dir should be settable to a single value', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLElement };
 
   element.dir = 'rtl';
   t.is(element.dir, 'rtl');
 });
 
 test('dir should be reflected in attribute', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLElement };
 
   element.dir = 'rtl';
   t.is(element.getAttribute('dir'), 'rtl');
 });
 
 test('dir should be reflected in property', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLElement };
 
   element.setAttribute('dir', 'rtl');
   t.is(element.dir, 'rtl');

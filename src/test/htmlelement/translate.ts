@@ -16,37 +16,36 @@
 
 import test from 'ava';
 import { NodeType } from '../../worker-thread/Node';
-import { Element } from '../../worker-thread/Element';
-import '../../worker-thread/HTMLElement';
+import { HTMLElement } from '../../worker-thread/HTMLElement';
 
 test.beforeEach(t => {
   t.context = {
-    element: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    element: new HTMLElement(NodeType.ELEMENT_NODE, 'div', null),
   };
 });
 
 test('translate should be true by default', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLElement };
 
   t.is(element.translate, true);
 });
 
 test('translate should be settable to a single value', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLElement };
 
   element.translate = false;
   t.is(element.translate, false);
 });
 
 test('translate should be reflected in attribute', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLElement };
 
   element.translate = false;
   t.is(element.getAttribute('translate'), 'false');
 });
 
 test('translate should be reflected in property', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLElement };
 
   element.setAttribute('translate', 'false');
   t.is(element.translate, false);

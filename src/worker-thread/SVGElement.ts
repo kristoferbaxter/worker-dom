@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
-import { Element } from './Element';
+import { Element, registerSubclass } from './Element';
 
 export class SVGElement extends Element {}
+registerSubclass('svg', SVGElement);

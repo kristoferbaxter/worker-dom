@@ -16,37 +16,36 @@
 
 import test from 'ava';
 import { NodeType } from '../../worker-thread/Node';
-import { Element } from '../../worker-thread/Element';
-import '../../worker-thread/HTMLButtonElement';
+import { HTMLButtonElement } from '../../worker-thread/HTMLButtonElement';
 
 test.beforeEach(t => {
   t.context = {
-    element: new Element(NodeType.ELEMENT_NODE, 'button', null),
+    element: new HTMLButtonElement(NodeType.ELEMENT_NODE, 'button', null),
   };
 });
 
 test('formAction should be empty by default', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLButtonElement };
 
   t.is(element.formAction, '');
 });
 
 test('formAction should be settable to a single value', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLButtonElement };
 
   element.formAction = 'https://www.ampbyexample.com';
   t.is(element.formAction, 'https://www.ampbyexample.com');
 });
 
 test('formAction should be reflected in attribute', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLButtonElement };
 
   element.formAction = 'https://www.ampbyexample.com';
   t.is(element.getAttribute('formaction'), 'https://www.ampbyexample.com');
 });
 
 test('formAction should be reflected in property', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLButtonElement };
 
   element.setAttribute('formaction', 'https://www.ampbyexample.com');
   t.is(element.formAction, 'https://www.ampbyexample.com');

@@ -16,37 +16,36 @@
 
 import test from 'ava';
 import { NodeType } from '../../worker-thread/Node';
-import { Element } from '../../worker-thread/Element';
-import '../../worker-thread/HTMLElement';
+import { HTMLElement } from '../../worker-thread/HTMLElement';
 
 test.beforeEach(t => {
   t.context = {
-    element: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    element: new HTMLElement(NodeType.ELEMENT_NODE, 'div', null),
   };
 });
 
 test('hidden should be false by default', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLElement };
 
   t.is(element.hidden, false);
 });
 
 test('hidden should be settable to a single value', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLElement };
 
   element.hidden = true;
   t.is(element.hidden, true);
 });
 
 test('hidden should be reflected in attribute', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLElement };
 
   element.hidden = true;
   t.is(element.getAttribute('hidden'), 'true');
 });
 
 test('hidden should be reflected in property', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLElement };
 
   element.setAttribute('hidden', 'true');
   t.is(element.hidden, true);

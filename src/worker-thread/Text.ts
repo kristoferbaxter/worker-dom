@@ -72,17 +72,16 @@ export class Text extends CharacterData {
   }
 
   public _sanitize_(): TransferableNode | TransferredNode {
-    if (this._transferred_) {
-      return {
-        _index_: this._index_,
-        transferred: NumericBoolean.TRUE,
-        textContent: this.nodeValue,
-      };
+    if (this._transferred_ !== null) {
+      return this._transferred_;
     }
 
     Promise.resolve().then(_ => {
       // After transmission of the current unsanitized form across a message, we can start to send the more compressed format.
-      this._transferred_ = true;
+      this._transferred_ = {
+        _index_: this._index_,
+        transferred: NumericBoolean.TRUE,
+      };
     });
     return {
       _index_: this._index_,
@@ -91,7 +90,7 @@ export class Text extends CharacterData {
       nodeName: this.nodeName,
       attributes: null,
       properties: [],
-      childNodes: this.childNodes.map(childNode => childNode._sanitize_()),
+      childNodes: [], // Text cannot have childNodes.
       textContent: this.nodeValue,
     };
   }

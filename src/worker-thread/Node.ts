@@ -19,6 +19,7 @@ import { Event, EventHandler } from './Event';
 import { toLower } from '../utils';
 import { mutate } from './MutationObserver';
 import { MutationRecordType } from './MutationRecord';
+import { TransferredNode } from '../transfer/TransferableNodes';
 
 export const enum NodeType {
   ELEMENT_NODE = 1,
@@ -63,7 +64,7 @@ export class Node {
   public parentNode: Node | null = null;
   public isConnected: boolean = false;
   public _index_: number;
-  protected _transferred_: boolean = false;
+  protected _transferred_: TransferredNode | null = null;
   private _handlers_: {
     [index: string]: EventHandler[];
   } = {};

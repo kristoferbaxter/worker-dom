@@ -16,37 +16,36 @@
 
 import test from 'ava';
 import { NodeType } from '../../worker-thread/Node';
-import { Element } from '../../worker-thread/Element';
-import '../../worker-thread/HTMLButtonElement';
+import { HTMLButtonElement } from '../../worker-thread/HTMLButtonElement';
 
 test.beforeEach(t => {
   t.context = {
-    element: new Element(NodeType.ELEMENT_NODE, 'button', null),
+    element: new HTMLButtonElement(NodeType.ELEMENT_NODE, 'button', null),
   };
 });
 
 test('formEnctype should be empty by default', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLButtonElement };
 
   t.is(element.formEnctype, '');
 });
 
 test('formEnctype should be settable to a single value', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLButtonElement };
 
   element.formEnctype = 'text/plain';
   t.is(element.formEnctype, 'text/plain');
 });
 
 test('formEnctype should be reflected in attribute', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLButtonElement };
 
   element.formEnctype = 'text/plain';
   t.is(element.getAttribute('formenctype'), 'text/plain');
 });
 
 test('formEnctype should be reflected in property', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as { element: HTMLButtonElement };
 
   element.setAttribute('formenctype', 'text/plain');
   t.is(element.formEnctype, 'text/plain');
