@@ -43,6 +43,10 @@ export class Element extends Node {
   public classList: DOMTokenList = new DOMTokenList(this, 'class', null, this.storeAttributeNS.bind(this));
   public style: CSSStyleDeclaration = new CSSStyleDeclaration(this, this.storeAttributeNS.bind(this));
   public namespaceURI: NamespaceURI;
+  protected propertyBackedAttributes: { [key: string]: (value: string) => string } = {
+    class: (value: string): string => (this.className = value),
+    style: (value: string): string => (this.style.cssText = value),
+  };
 
   constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI) {
     super(nodeType, nodeName);
@@ -249,14 +253,9 @@ export class Element extends Node {
    * @param value attribute value
    */
   public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): void {
-    if (namespaceURI === null) {
-      if (name === 'class') {
-        this.className = value;
-        return;
-      } else if (name === 'style') {
-        this.style.cssText = value;
-        return;
-      }
+    if (namespaceURI === null && Object.keys(this.propertyBackedAttributes).includes(name)) {
+      this.propertyBackedAttributes[name](value);
+      return;
     }
 
     const oldValue = this.storeAttributeNS(namespaceURI, name, value);
@@ -270,7 +269,7 @@ export class Element extends Node {
     });
   }
 
-  private storeAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): string {
+  protected storeAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): string {
     const attr = this.attributes.find(matchAttrPredicate(namespaceURI, name));
     const oldValue = (attr && attr.value) || '';
 

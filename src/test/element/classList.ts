@@ -31,6 +31,14 @@ test('classList should be empty by default', t => {
   t.is(node.getAttribute('class'), null);
 });
 
+test('setAttribute should modify classList property', t => {
+  const { node } = t.context as { node: Element };
+
+  node.setAttribute('class', 'foo bar');
+  t.is(node.getAttribute('class'), 'foo bar');
+  t.is(node.className, 'foo bar');
+});
+
 test('classList.add of a single value should only add one class', t => {
   const { node } = t.context as { node: Element };
 
