@@ -18,6 +18,7 @@ import { Element, NodeNameMapping } from './Element';
 import { HTMLElement } from './HTMLElement';
 import './HTMLAnchorElement';
 import './HTMLButtonElement';
+import './HTMLDataElement';
 import './HTMLEmbedElement';
 import { SVGElement } from './SVGElement';
 import { Node, NodeType, NamespaceURI } from './Node';
