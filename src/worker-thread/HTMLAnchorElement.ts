@@ -20,7 +20,6 @@ import { HTMLElement } from './HTMLElement';
 import { DOMTokenList } from './DOMTokenList';
 
 export class HTMLAnchorElement extends HTMLElement {
-  // HTMLAnchorElement.relList => DOMTokenList, reflected 'rel' attribute
   public relList: DOMTokenList = new DOMTokenList(this, 'rel', null, this.storeAttributeNS.bind(this));
 
   constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI) {
@@ -31,22 +30,47 @@ export class HTMLAnchorElement extends HTMLElement {
     });
   }
 
+  /**
+   * Returns the href property/attribute value
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLHyperlinkElementUtils/toString
+   * @return string href attached to HTMLAnchorElement
+   */
   public toString(): string {
     return this.href;
   }
 
-  // HTMLAnchorElement.rel => string, reflected attribute
+  /**
+   * Getter returning value of rel property/reflected attribute
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLAnchorElement/rel
+   * @return value of the rel property/attribute.
+   */
   get rel(): string {
     return this.relList.value;
   }
+
+  /**
+   * Setter providing value of rel property/reflected attribute
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLAnchorElement/rel
+   * @param value new rel value
+   */
   set rel(value: string) {
     this.relList.value = value;
   }
 
-  // HTMLAnchorElement.text => Is a DOMString being a synonym for the Node.textContent property.
+  /**
+   * A Synonym for the Node.textContent property getter.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLAnchorElement
+   * @return value of text node direct child of this Element.
+   */
   get text(): string {
     return this.textContent;
   }
+
+  /**
+   * A Synonym for the Node.textContent property setter.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLAnchorElement
+   * @param text replacement for all current childNodes.
+   */
   set text(text: string) {
     this.textContent = text;
   }
