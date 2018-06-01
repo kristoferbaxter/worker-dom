@@ -18,21 +18,32 @@ import { Element, reflectProperties } from './Element';
 
 export class HTMLElement extends Element {}
 
-// Reflected properties, strings.
+// Reflected properties
 // HTMLElement.accessKey => string, reflected attribute
 // HTMLElement.contentEditable => string, reflected attribute
 // HTMLElement.dir => string, reflected attribute
 // HTMLElement.lang => string, reflected attribute
 // HTMLElement.title => string, reflected attribute
-reflectProperties([{ accessKey: '' }, { contentEditable: 'inherit' }, { dir: '' }, { lang: '' }, { title: '' }], HTMLElement, false);
-
-// Reflected properties, boolean.
 // HTMLElement.draggable => boolean, reflected attribute
 // HTMLElement.hidden => boolean, reflected attribute
 // HTMLElement.noModule => boolean, reflected attribute
 // HTMLElement.spellcheck => boolean, reflected attribute
 // HTMLElement.translate => boolean, reflected attribute
-reflectProperties([{ draggable: false }, { hidden: false }, { noModule: false }, { spellcheck: true }, { translate: true }], HTMLElement, true);
+reflectProperties(
+  [
+    { accessKey: '' },
+    { contentEditable: 'inherit' },
+    { dir: '' },
+    { lang: '' },
+    { title: '' },
+    { draggable: false },
+    { hidden: false },
+    { noModule: false },
+    { spellcheck: true },
+    { translate: true },
+  ],
+  HTMLElement,
+);
 
 // Properties
 // HTMLElement.accessKeyLabel => string, readonly value of "accessKey"

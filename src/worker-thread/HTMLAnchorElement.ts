@@ -83,7 +83,7 @@ registerSubclass('a', HTMLAnchorElement);
 // HTMLAnchorElement.media => string, reflected attribute
 // HTMLAnchorElement.target => string, reflected attribute
 // HTMLAnchorElement.type => string, reflected attribute
-reflectProperties([{ href: '' }, { hreflang: '' }, { media: '' }, { target: '' }, { type: '' }], HTMLAnchorElement, false);
+reflectProperties([{ href: '' }, { hreflang: '' }, { media: '' }, { target: '' }, { type: '' }], HTMLAnchorElement);
 
 // Unimplemented
 // HTMLAnchorElement.download => string, reflected attribute

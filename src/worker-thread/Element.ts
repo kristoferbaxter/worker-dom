@@ -27,7 +27,7 @@ import { CSSStyleDeclaration } from './CSSStyleDeclaration';
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
 type ConditionPredicate = (element: Element) => boolean;
-function findMatchingChildren(element: Element, conditionPredicate: ConditionPredicate): Element[] {
+export function findMatchingChildren(element: Element, conditionPredicate: ConditionPredicate): Element[] {
   const matchingElements: Element[] = [];
   element.children.forEach(child => {
     if (conditionPredicate(child)) {
@@ -383,9 +383,10 @@ export class Element extends Node {
 interface PropertyPair {
   [key: string]: string | boolean;
 }
-export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typeof Element, enforceBooleanAttributes: boolean): void => {
+export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typeof Element): void => {
   properties.forEach(pair => {
     Object.keys(pair).forEach(key => {
+      const enforceBooleanAttributes = typeof pair[key] === 'boolean';
       const lowerCaseKey = key.toLowerCase();
       Object.defineProperty(defineOn.prototype, key, {
         configurable: false,
@@ -404,7 +405,7 @@ export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typ
   });
 };
 
-reflectProperties([{ id: '' }], Element, false);
+reflectProperties([{ id: '' }], Element);
 
 export const NodeNameMapping: {
   [key: string]: typeof Element;

@@ -22,4 +22,4 @@ registerSubclass('data', HTMLDataElement);
 
 // Reflected properties, strings.
 // HTMLEmbedElement.value => string, reflected attribute
-reflectProperties([{ value: '' }], HTMLDataElement, false);
+reflectProperties([{ value: '' }], HTMLDataElement);

@@ -28,16 +28,22 @@ registerSubclass('button', HTMLButtonElement);
 // HTMLButtonElement.name => string, reflected attribute
 // HTMLButtonElement.type => string, reflected attribute (default submit)
 // HTMLButtonElement.value => string, reflected attribute
-reflectProperties(
-  [{ formAction: '' }, { formEnctype: '' }, { formMethod: '' }, { formTarget: '' }, { name: '' }, { type: 'submit' }, { value: '' }],
-  HTMLButtonElement,
-  false,
-);
-
-// Reflected properties, boolean.
 // HTMLButtonElement.autofocus => boolean, reflected attribute
 // HTMLButtonElement.disabled => boolean, reflected attribute
-reflectProperties([{ autofocus: false }, { disabled: false }], HTMLButtonElement, true);
+reflectProperties(
+  [
+    { formAction: '' },
+    { formEnctype: '' },
+    { formMethod: '' },
+    { formTarget: '' },
+    { name: '' },
+    { type: 'submit' },
+    { value: '' },
+    { autofocus: false },
+    { disabled: false },
+  ],
+  HTMLButtonElement,
+);
 
 // Not reflected
 // HTMLButtonElement.formNoValidate => boolean
