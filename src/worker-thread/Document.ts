@@ -16,8 +16,9 @@
 
 import { Element, NodeNameMapping } from './Element';
 import { HTMLElement } from './HTMLElement';
-import './HTMLButtonElement';
 import './HTMLAnchorElement';
+import './HTMLButtonElement';
+import './HTMLEmbedElement';
 import { SVGElement } from './SVGElement';
 import { Node, NodeType, NamespaceURI } from './Node';
 import { Event } from './Event';
@@ -72,8 +73,7 @@ export const document = (() => {
   }
 
   function createElementNS(namespaceURI: NamespaceURI, tagName: string): Element {
-    const ClassToInstantiate = NodeNameMapping[tagName] || HTMLElement;
-    const element = new ClassToInstantiate(NodeType.ELEMENT_NODE, String(tagName).toUpperCase(), namespaceURI);
+    const element = new (NodeNameMapping[tagName] || HTMLElement)(NodeType.ELEMENT_NODE, String(tagName).toUpperCase(), namespaceURI);
     element.ownerDocument = document;
     return element;
   }
