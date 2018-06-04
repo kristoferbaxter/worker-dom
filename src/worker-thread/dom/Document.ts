@@ -20,6 +20,7 @@ import './HTMLAnchorElement';
 import './HTMLButtonElement';
 import './HTMLDataElement';
 import './HTMLEmbedElement';
+import './HTMLFieldSetElement';
 import { SVGElement } from './SVGElement';
 import { Node, NodeType, NamespaceURI } from './Node';
 import { Event } from '../Event';

@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-import { Element } from './Element';
+import test from 'ava';
+import { NodeType } from '../../worker-thread/dom/Node';
+import { HTMLFieldSetElement } from '../../worker-thread/dom/HTMLFieldSetElement';
 
-type ConditionPredicate = (element: Element) => boolean;
-export function matchChildrenElements(element: Element, conditionPredicate: ConditionPredicate): Element[] {
-  const matchingElements: Element[] = [];
-  element.children.forEach(child => {
-    if (conditionPredicate(child)) {
-      matchingElements.push(child);
-    }
-    matchingElements.push(...matchChildrenElements(child, conditionPredicate));
-  });
-  return matchingElements;
-}
+test('type should be fieldset by default', t => {
+  const element = new HTMLFieldSetElement(NodeType.ELEMENT_NODE, 'fieldset', null);
+
+  t.is(element.type, 'fieldset');
+});

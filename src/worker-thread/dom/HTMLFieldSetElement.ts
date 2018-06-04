@@ -15,10 +15,10 @@
  */
 
 import { reflectProperties, registerSubclass, Element } from './Element';
-import { matchChildrenElements } from './matchChildrenElements';
+import { matchChildrenElements, matchNearestParent } from './matchElements';
 import { HTMLElement } from './HTMLElement';
 
-const matchingChildElementTagNames = 'button,fieldset,input,object,output,select,textarea'.split(',');
+const MATCHING_CHILD_ELEMENT_TAG_NAMES = 'button fieldset input object output select textarea'.split(' ');
 
 export class HTMLFieldSetElement extends HTMLElement {
   /**
@@ -34,7 +34,15 @@ export class HTMLFieldSetElement extends HTMLElement {
    * @return Element array matching children of specific tagnames.
    */
   get elements(): Array<Element> {
-    return matchChildrenElements(this, element => matchingChildElementTagNames.includes(element.tagName));
+    return matchChildrenElements(this, element => MATCHING_CHILD_ELEMENT_TAG_NAMES.includes(element.tagName));
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLFieldSetElement
+   * @return nearest parent form element.
+   */
+  get form(): Element | null {
+    return matchNearestParent(this, element => element.tagName === 'form');
   }
 }
 registerSubclass('data', HTMLFieldSetElement);
@@ -48,10 +56,3 @@ reflectProperties([{ name: '' }, { disabled: false }], HTMLFieldSetElement);
 // HTMLFieldSetElement.validity
 // HTMLFieldSetElement.willValidate
 // HTMLFieldSetElement.validationMessage
-// HTMLFieldSetElement.form – Walks up the dom tree to find the nearest form.
-
-/*
-HTMLFieldSetElement.form - read only
-An HTMLFormControlsCollection or HTMLCollection referencing the containing form element, if this element is in a form.
-If the field set is not a descendant of a form element, then the attribute can be the ID of any form element in the same document it is related to, or the null value if none matches.
-*/

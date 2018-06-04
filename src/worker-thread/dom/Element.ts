@@ -23,7 +23,7 @@ import { TransferableNode, TransferredNode } from '../../transfer/TransferableNo
 import { NumericBoolean, toLower } from '../../utils';
 import { Text } from './Text';
 import { CSSStyleDeclaration } from './CSSStyleDeclaration';
-import { matchChildrenElements } from './matchChildrenElements';
+import { matchChildrenElements } from './matchElements';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
