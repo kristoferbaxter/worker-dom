@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { reflectProperties, registerSubclass, findMatchingChildren, Element } from './Element';
+import { reflectProperties, registerSubclass, Element } from './Element';
+import { matchChildrenElements } from './matchChildrenElements';
 import { HTMLElement } from './HTMLElement';
 
 const matchingChildElementTagNames = 'button,fieldset,input,object,output,select,textarea'.split(',');
@@ -33,7 +34,7 @@ export class HTMLFieldSetElement extends HTMLElement {
    * @return Element array matching children of specific tagnames.
    */
   get elements(): Array<Element> {
-    return findMatchingChildren(this, element => matchingChildElementTagNames.includes(element.tagName));
+    return matchChildrenElements(this, element => matchingChildElementTagNames.includes(element.tagName));
   }
 }
 registerSubclass('data', HTMLFieldSetElement);

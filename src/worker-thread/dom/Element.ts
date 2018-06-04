@@ -23,20 +23,9 @@ import { TransferableNode, TransferredNode } from '../../transfer/TransferableNo
 import { NumericBoolean, toLower } from '../../utils';
 import { Text } from './Text';
 import { CSSStyleDeclaration } from './CSSStyleDeclaration';
+import { matchChildrenElements } from './matchChildrenElements';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
-
-type ConditionPredicate = (element: Element) => boolean;
-export function findMatchingChildren(element: Element, conditionPredicate: ConditionPredicate): Element[] {
-  const matchingElements: Element[] = [];
-  element.children.forEach(child => {
-    if (conditionPredicate(child)) {
-      matchingElements.push(child);
-    }
-    matchingElements.push(...findMatchingChildren(child, conditionPredicate));
-  });
-  return matchingElements;
-}
 
 export class Element extends Node {
   public attributes: Attr[] = [];
@@ -344,7 +333,7 @@ export class Element extends Node {
     // TODO(KB) – Compare performance of [].some(value => DOMTokenList.contains(value)) and regex.
     // const classRegex = new RegExp(classNames.split(' ').map(name => `(?=.*${name})`).join(''));
 
-    return findMatchingChildren(this, element => inputClassList.some(inputClassName => element.classList.contains(inputClassName)));
+    return matchChildrenElements(this, element => inputClassList.some(inputClassName => element.classList.contains(inputClassName)));
   }
 
   /**
@@ -353,7 +342,7 @@ export class Element extends Node {
    * @return Element array with matching tagnames
    */
   public getElementsByTagName(tagName: string): Element[] {
-    return findMatchingChildren(this, tagName === '*' ? element => true : element => element.tagName === tagName);
+    return matchChildrenElements(this, tagName === '*' ? element => true : element => element.tagName === tagName);
   }
 
   public _sanitize_(): TransferableNode | TransferredNode {
