@@ -17,10 +17,10 @@
 import { Node, NodeType, NodeName, NamespaceURI } from './Node';
 import { DOMTokenList } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate } from './Attr';
-import { mutate } from './MutationObserver';
-import { MutationRecordType } from './MutationRecord';
-import { TransferableNode, TransferredNode } from '../transfer/TransferableNodes';
-import { NumericBoolean, toLower } from '../utils';
+import { mutate } from '../MutationObserver';
+import { MutationRecordType } from '../MutationRecord';
+import { TransferableNode, TransferredNode } from '../../transfer/TransferableNodes';
+import { NumericBoolean, toLower } from '../../utils';
 import { Text } from './Text';
 import { CSSStyleDeclaration } from './CSSStyleDeclaration';
 

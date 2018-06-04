@@ -15,10 +15,10 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../worker-thread/Node';
-import { HTMLElement } from '../../worker-thread/HTMLElement';
-import { HTMLAnchorElement } from '../../worker-thread/HTMLAnchorElement';
-import { Text } from '../../worker-thread/Text';
+import { NodeType } from '../../worker-thread/dom/Node';
+import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
+import { HTMLAnchorElement } from '../../worker-thread/dom/HTMLAnchorElement';
+import { Text } from '../../worker-thread/dom/Text';
 
 test.beforeEach(t => {
   t.context = {

@@ -24,9 +24,9 @@ import { SVGElement } from './SVGElement';
 import { Node, NodeType, NamespaceURI } from './Node';
 import { Event } from './Event';
 import { Text } from './Text';
-import { MutationObserver } from './MutationObserver';
-import { observe as observeMutations } from '../transfer/DocumentMutations';
-import { propagate as propagateEvents } from '../transfer/TransferableEvent';
+import { MutationObserver } from '../MutationObserver';
+import { observe as observeMutations } from '../../transfer/DocumentMutations';
+import { propagate as propagateEvents } from '../../transfer/TransferableEvent';
 
 type createElementFunc = (type: string) => Element;
 type createElementNSFunc = (type: string, namespace: string) => Element;

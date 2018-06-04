@@ -15,9 +15,9 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../worker-thread/Node';
-import { Element } from '../../worker-thread/Element';
-import { DOMTokenList } from '../../worker-thread/DOMTokenList';
+import { NodeType } from '../../worker-thread/dom/Node';
+import { Element } from '../../worker-thread/dom/Element';
+import { DOMTokenList } from '../../worker-thread/dom/DOMTokenList';
 
 test('getter should be empty by default', t => {
   const tokenList = new DOMTokenList(new Element(NodeType.ELEMENT_NODE, 'div', null), 'class', null, () => {});

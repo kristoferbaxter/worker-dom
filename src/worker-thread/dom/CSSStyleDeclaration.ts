@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { mutate } from './MutationObserver';
-import { MutationRecordType } from './MutationRecord';
+import { mutate } from '../MutationObserver';
+import { MutationRecordType } from '../MutationRecord';
 import { Element } from './Element';
 import { NamespaceURI } from './Node';
 

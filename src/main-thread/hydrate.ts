@@ -16,7 +16,7 @@
 
 import { Nodes } from './nodes';
 import { TransferableNode, TransferredNode } from '../transfer/TransferableNodes';
-import { NodeType } from '../worker-thread/Node';
+import { NodeType } from '../worker-thread/dom/Node';
 import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { RenderableElement } from './RenderableElement';
 import { NumericBoolean } from '../utils';

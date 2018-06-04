@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { store as mappingStoreNode } from './NodeMapping';
+import { store as mappingStoreNode } from '../NodeMapping';
 import { Event, EventHandler } from './Event';
-import { toLower } from '../utils';
-import { mutate } from './MutationObserver';
-import { MutationRecordType } from './MutationRecord';
-import { TransferredNode } from '../transfer/TransferableNodes';
+import { toLower } from '../../utils';
+import { mutate } from '../MutationObserver';
+import { MutationRecordType } from '../MutationRecord';
+import { TransferredNode } from '../../transfer/TransferableNodes';
 
 export const enum NodeType {
   ELEMENT_NODE = 1,

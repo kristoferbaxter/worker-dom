@@ -17,7 +17,7 @@
 import { reflectProperties, registerSubclass, findMatchingChildren, Element } from './Element';
 import { HTMLElement } from './HTMLElement';
 
-const matchingChildElementTagNames = ['button', 'fieldset', 'input', 'object', 'output', 'select', 'textarea'];
+const matchingChildElementTagNames = 'button,fieldset,input,object,output,select,textarea'.split(',');
 
 export class HTMLFieldSetElement extends HTMLElement {
   /**

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Node } from './Node';
+import { Node } from './dom/Node';
 import { MutationRecord, MutationRecordType } from './MutationRecord';
 
 const observers: MutationObserver[] = [];

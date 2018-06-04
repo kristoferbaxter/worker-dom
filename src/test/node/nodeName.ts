@@ -15,7 +15,7 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../worker-thread/Node';
+import { Node, NodeType } from '../../worker-thread/dom/Node';
 
 test('returns the name of the Node', t => {
   const node = new Node(NodeType.TEXT_NODE, '#text');

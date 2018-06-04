@@ -16,8 +16,8 @@
 
 import { NodeType } from './Node';
 import { CharacterData } from './CharacterData';
-import { TransferableNode, TransferredNode } from '../transfer/TransferableNodes';
-import { NumericBoolean } from '../utils';
+import { TransferableNode, TransferredNode } from '../../transfer/TransferableNodes';
+import { NumericBoolean } from '../../utils';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Text
 export class Text extends CharacterData {
