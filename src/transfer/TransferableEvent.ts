@@ -18,7 +18,7 @@ import { TransferredNode } from './TransferableNodes';
 import { MessageToWorker, MessageType } from './Messages';
 import { get } from '../worker-thread/NodeMapping';
 import { Node } from '../worker-thread/dom/Node';
-import { Event } from '../worker-thread/dom/Event';
+import { Event } from '../worker-thread/Event';
 
 type TransferableTarget = TransferredNode;
 

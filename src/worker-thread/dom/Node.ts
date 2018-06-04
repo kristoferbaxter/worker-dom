@@ -15,7 +15,7 @@
  */
 
 import { store as mappingStoreNode } from '../NodeMapping';
-import { Event, EventHandler } from './Event';
+import { Event, EventHandler } from '../Event';
 import { toLower } from '../../utils';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';

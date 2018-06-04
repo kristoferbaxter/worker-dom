@@ -22,7 +22,7 @@ import './HTMLDataElement';
 import './HTMLEmbedElement';
 import { SVGElement } from './SVGElement';
 import { Node, NodeType, NamespaceURI } from './Node';
-import { Event } from './Event';
+import { Event } from '../Event';
 import { Text } from './Text';
 import { MutationObserver } from '../MutationObserver';
 import { observe as observeMutations } from '../../transfer/DocumentMutations';
