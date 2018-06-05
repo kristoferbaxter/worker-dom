@@ -15,7 +15,7 @@
  */
 
 import { Document, document } from './dom/Document';
-import { appendKeys } from './dom/CSSStyleDeclaration';
+import { appendKeys } from './css/CSSStyleDeclaration';
 
 interface MonkeyWorkerGlobalScope {
   document: Document;

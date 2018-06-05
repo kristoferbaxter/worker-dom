@@ -15,7 +15,7 @@
  */
 
 import test from 'ava';
-import { CSSStyleDeclaration, appendKeys } from '../../worker-thread/dom/CSSStyleDeclaration';
+import { CSSStyleDeclaration, appendKeys } from '../../worker-thread/css/CSSStyleDeclaration';
 import { Element } from '../../worker-thread/dom/Element';
 import { NodeType } from '../../worker-thread/dom/Node';
 

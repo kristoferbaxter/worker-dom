@@ -20,12 +20,12 @@ import { HTMLElement } from './HTMLElement';
 import { DOMTokenList } from './DOMTokenList';
 
 export class HTMLAnchorElement extends HTMLElement {
-  public relList: DOMTokenList = new DOMTokenList(this, 'rel', null, this.storeAttributeNS.bind(this));
+  public relList: DOMTokenList = new DOMTokenList(this, 'rel', null, this.storeAttributeNS_.bind(this));
 
   constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI) {
     super(nodeType, nodeName, namespaceURI);
 
-    Object.assign(this.propertyBackedAttributes, {
+    Object.assign(this.propertyBackedAttributes_, {
       rel: (value: string): string => (this.rel = value),
     });
   }
@@ -97,7 +97,7 @@ reflectProperties([{ href: '' }, { hreflang: '' }, { media: '' }, { target: '' }
 
     constructor(...) {
       // Element.getAttribute('href') => Element.href.
-      Object.assign(this.propertyBackedAttributes, {
+      Object.assign(this.propertyBackedAttributes_, {
         href: this.href,
       }); 
     }

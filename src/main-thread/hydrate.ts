@@ -27,14 +27,14 @@ const allTextNodes = (nodes: NodeList | Array<TransferableNode | TransferredNode
   nodes.length > 0 && [].every.call(nodes, (node: Node | TransferableNode): boolean => node.nodeType === NodeType.TEXT_NODE);
 
 export class Hydration {
-  private nodesInstance: Nodes;
-  private baseElement: HTMLElement;
-  private worker: Worker;
+  private nodesInstance_: Nodes;
+  private baseElement_: HTMLElement;
+  private worker_: Worker;
 
-  constructor(baseElement: Element, nodesInstance: Nodes, worker: Worker) {
-    this.nodesInstance = nodesInstance;
-    this.baseElement = baseElement as HTMLElement;
-    this.worker = worker;
+  constructor(baseElement_: Element, nodesInstance_: Nodes, worker: Worker) {
+    this.nodesInstance_ = nodesInstance_;
+    this.baseElement_ = baseElement_ as HTMLElement;
+    this.worker_ = worker;
   }
 
   /**
@@ -49,9 +49,9 @@ export class Hydration {
     mutations.forEach(hydration => {
       if (hydration.type === MutationRecordType.CHILD_LIST && hydration.addedNodes !== null) {
         hydration.addedNodes.forEach(nodeToAdd => {
-          const baseNode = this.nodesInstance.getNode(nodeToAdd._index_) || this.baseElement;
+          const baseNode = this.nodesInstance_.getNode(nodeToAdd._index_) || this.baseElement_;
           if (nodeToAdd.transferred === NumericBoolean.FALSE) {
-            this.hydrateNode(baseNode, nodeToAdd as TransferableNode);
+            this.hydrateNode_(baseNode, nodeToAdd as TransferableNode);
           }
         });
         // TODO(KB): Hydration can include changes to props and attrs. Let's allow mutation of attrs/props during hydration.
@@ -63,7 +63,7 @@ export class Hydration {
     // Processing order matters.
     // For instance, Element.addEventListener requires the Element to exist first.
     // Commands pass only the identifier for an element, and identifiers are stored in the main thread after the elements are created.
-    commands.forEach(hydration => process(this.nodesInstance, this.worker, hydration));
+    commands.forEach(hydration => process(this.nodesInstance_, this.worker_, hydration));
   }
 
   /**
@@ -71,14 +71,14 @@ export class Hydration {
    * @param node Real Node in DOM.
    * @param skeleton Skeleton Node representation created by WorkerDOM and transmitted across threads.
    */
-  private hydrateElement(node: RenderableElement, skeleton: TransferableNode): void {
+  private hydrateElement_(node: RenderableElement, skeleton: TransferableNode): void {
     if (skeleton.textContent) {
       node.textContent = skeleton.textContent;
     }
 
-    this.nodesInstance.storeNode(node as RenderableElement, skeleton._index_);
+    this.nodesInstance_.storeNode(node as RenderableElement, skeleton._index_);
     skeleton.childNodes.forEach((childNode: TransferableNode | TransferredNode, index: number): void =>
-      this.hydrateNode(node.childNodes[index], childNode as TransferableNode),
+      this.hydrateNode_(node.childNodes[index], childNode as TransferableNode),
     );
   }
 
@@ -88,14 +88,14 @@ export class Hydration {
    * @param node Real Node in DOM
    * @param skeleton Skeleton Node representation created by WorkerDOM and transmitted across threads.
    */
-  private hydrateNode(node: Node, skeleton: TransferableNode): void {
+  private hydrateNode_(node: Node, skeleton: TransferableNode): void {
     if (node.childNodes.length !== skeleton.childNodes.length) {
       // A limited number of cases when the number of childNodes doesn't match is allowable.
       if (allTextNodes(node.childNodes)) {
         if (skeleton.textContent) {
           // Node with textContent but represented in SSR as Node.childNodes = [Text]
           node.textContent = skeleton.textContent;
-          this.nodesInstance.storeNode(node as RenderableElement, skeleton._index_);
+          this.nodesInstance_.storeNode(node as RenderableElement, skeleton._index_);
         } else if (allTextNodes(skeleton.childNodes)) {
           // Node with single textContent represented by multiple Text siblings.
           // Some frameworks will create multiple Text nodes for a string, since it means they can update specific segments by direct reference.
@@ -104,7 +104,7 @@ export class Hydration {
           skeleton.childNodes.forEach(skeletonChild => {
             const skeletonText = document.createTextNode((skeletonChild as TransferableNode).textContent);
             node.appendChild(skeletonText);
-            this.nodesInstance.storeNode(skeletonText as RenderableElement, skeleton._index_);
+            this.nodesInstance_.storeNode(skeletonText as RenderableElement, skeleton._index_);
           });
         }
         return;
@@ -114,10 +114,10 @@ export class Hydration {
         childNode => !(childNode.nodeType === NodeType.TEXT_NODE && childNode.textContent === ''),
       );
       if (validSkeletonChildren.length === node.childNodes.length) {
-        this.hydrateElement(node as RenderableElement, skeleton);
+        this.hydrateElement_(node as RenderableElement, skeleton);
       }
     } else {
-      this.hydrateElement(node as RenderableElement, skeleton);
+      this.hydrateElement_(node as RenderableElement, skeleton);
     }
   }
 }

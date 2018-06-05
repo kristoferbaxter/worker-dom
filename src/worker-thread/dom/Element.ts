@@ -22,17 +22,17 @@ import { MutationRecordType } from '../MutationRecord';
 import { TransferableNode, TransferredNode } from '../../transfer/TransferableNodes';
 import { NumericBoolean, toLower } from '../../utils';
 import { Text } from './Text';
-import { CSSStyleDeclaration } from './CSSStyleDeclaration';
+import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
 import { matchChildrenElements } from './matchElements';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
 export class Element extends Node {
   public attributes: Attr[] = [];
-  public classList: DOMTokenList = new DOMTokenList(this, 'class', null, this.storeAttributeNS.bind(this));
-  public style: CSSStyleDeclaration = new CSSStyleDeclaration(this, this.storeAttributeNS.bind(this));
+  public classList: DOMTokenList = new DOMTokenList(this, 'class', null, this.storeAttributeNS_.bind(this));
+  public style: CSSStyleDeclaration = new CSSStyleDeclaration(this, this.storeAttributeNS_.bind(this));
   public namespaceURI: NamespaceURI;
-  protected propertyBackedAttributes: { [key: string]: (value: string) => string } = {
+  protected propertyBackedAttributes_: { [key: string]: (value: string) => string } = {
     class: (value: string): string => (this.className = value),
     style: (value: string): string => (this.style.cssText = value),
   };
@@ -242,12 +242,12 @@ export class Element extends Node {
    * @param value attribute value
    */
   public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): void {
-    if (namespaceURI === null && Object.keys(this.propertyBackedAttributes).includes(name)) {
-      this.propertyBackedAttributes[name](value);
+    if (namespaceURI === null && Object.keys(this.propertyBackedAttributes_).includes(name)) {
+      this.propertyBackedAttributes_[name](value);
       return;
     }
 
-    const oldValue = this.storeAttributeNS(namespaceURI, name, value);
+    const oldValue = this.storeAttributeNS_(namespaceURI, name, value);
     mutate({
       type: MutationRecordType.ATTRIBUTES,
       target: this,
@@ -258,7 +258,7 @@ export class Element extends Node {
     });
   }
 
-  protected storeAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): string {
+  protected storeAttributeNS_(namespaceURI: NamespaceURI, name: string, value: string): string {
     const attr = this.attributes.find(matchAttrPredicate(namespaceURI, name));
     const oldValue = (attr && attr.value) || '';
 

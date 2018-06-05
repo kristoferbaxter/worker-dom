@@ -67,25 +67,22 @@ const mutators: {
 };
 
 export class Mutation {
-  private MUTATION_QUEUE: TransferableMutationRecord[] = [];
-  private pendingMutations: boolean = false;
+  private MUTATION_QUEUE_: TransferableMutationRecord[] = [];
+  private pendingMutations_: boolean = false;
   // private lastGestureTime: number;
-  private nodesInstance: Nodes;
-  private worker: Worker;
+  private nodesInstance_: Nodes;
+  private worker_: Worker;
 
   constructor(nodesInstance: Nodes, worker: Worker) {
-    this.nodesInstance = nodesInstance;
-    this.worker = worker;
-
-    this.process = this.process.bind(this);
-    this.syncFlush = this.syncFlush.bind(this);
+    this.nodesInstance_ = nodesInstance;
+    this.worker_ = worker;
   }
 
   /**
    * Process MutationRecord from worker thread applying changes to the existing DOM.
    * @param hydrationFromWorker contains mutations to apply
    */
-  public process(mutations: TransferableMutationRecord[]): void {
+  public process = (mutations: TransferableMutationRecord[]): void => {
     //mutations: TransferableMutationRecord[]): void {
     // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferableMutationRecord[])
     // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {
@@ -93,12 +90,12 @@ export class Mutation {
     // }
 
     // this.lastGestureTime = lastGestureTime;
-    this.MUTATION_QUEUE = this.MUTATION_QUEUE.concat(mutations);
-    if (!this.pendingMutations) {
-      this.pendingMutations = true;
-      requestAnimationFrame(this.syncFlush);
+    this.MUTATION_QUEUE_ = this.MUTATION_QUEUE_.concat(mutations);
+    if (!this.pendingMutations_) {
+      this.pendingMutations_ = true;
+      requestAnimationFrame(this.syncFlush_);
     }
-  }
+  };
 
   /**
    * Apply all stored mutations syncronously. This method works well, but can cause jank if there are too many
@@ -106,24 +103,24 @@ export class Mutation {
    *
    * Investigations in using asyncFlush to resolve are worth considering.
    */
-  private syncFlush(): void {
-    const length = this.MUTATION_QUEUE.length;
-    this.MUTATION_QUEUE.forEach(mutation => mutators[mutation.type](this.nodesInstance, this.worker, mutation));
+  private syncFlush_ = (): void => {
+    const length = this.MUTATION_QUEUE_.length;
+    this.MUTATION_QUEUE_.forEach(mutation => mutators[mutation.type](this.nodesInstance_, this.worker_, mutation));
 
-    this.MUTATION_QUEUE.splice(0, length);
-    this.pendingMutations = false;
-  }
+    this.MUTATION_QUEUE_.splice(0, length);
+    this.pendingMutations_ = false;
+  };
 
   /**
    * Alternative flushing method using rIC.
    */
-  // private asyncFlush(): void {
+  // private asyncFlush_(): void {
   //   const start = performance.now();
-  //   const mutationLenth = this.MUTATION_QUEUE.length;
+  //   const mutationLenth = this.MUTATION_QUEUE_.length;
   //   let removed = 0;
 
-  //   for (let mutation of this.MUTATION_QUEUE) {
-  //     mutators[mutation.type](this.nodesInstance, mutation);
+  //   for (let mutation of this.MUTATION_QUEUE_) {
+  //     mutators[mutation.type](this.nodesInstance_, mutation);
   //     removed++;
 
   //     if (performance.now() - start > 1) {
@@ -134,11 +131,11 @@ export class Mutation {
   //     }
   //   }
 
-  //   this.MUTATION_QUEUE.splice(0, removed);
+  //   this.MUTATION_QUEUE_.splice(0, removed);
   //   if (removed < mutationLenth) {
   //     requestAnimationFrame(this.asyncFlush);
   //   } else {
-  //     this.pendingMutations = false;
+  //     this.pendingMutations_ = false;
   //   }
   // }
 }
