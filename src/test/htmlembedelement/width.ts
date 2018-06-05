@@ -37,14 +37,14 @@ test('width should be settable to a single value', t => {
   t.is(element.width, '640');
 });
 
-test('width should be reflected in attribute', t => {
+test('width property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLEmbedElement };
 
   element.width = '640';
   t.is(element.getAttribute('width'), '640');
 });
 
-test('width should be reflected in property', t => {
+test('width attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLEmbedElement };
 
   element.setAttribute('width', '640');

@@ -37,14 +37,14 @@ test('height should be settable to a single value', t => {
   t.is(element.height, '480');
 });
 
-test('height should be reflected in attribute', t => {
+test('height property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLEmbedElement };
 
   element.height = '480';
   t.is(element.getAttribute('height'), '480');
 });
 
-test('height should be reflected in property', t => {
+test('height attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLEmbedElement };
 
   element.setAttribute('height', '480');

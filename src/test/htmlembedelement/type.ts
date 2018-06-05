@@ -37,14 +37,14 @@ test('type should be settable to a single value', t => {
   t.is(element.type, 'video/quicktime');
 });
 
-test('type should be reflected in attribute', t => {
+test('type property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLEmbedElement };
 
   element.type = 'video/quicktime';
   t.is(element.getAttribute('type'), 'video/quicktime');
 });
 
-test('type should be reflected in property', t => {
+test('type attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLEmbedElement };
 
   element.setAttribute('type', 'video/quicktime');

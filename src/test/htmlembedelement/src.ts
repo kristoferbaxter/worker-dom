@@ -37,14 +37,14 @@ test('src should be settable to a single value', t => {
   t.is(element.src, 'video.mov');
 });
 
-test('src should be reflected in attribute', t => {
+test('src property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLEmbedElement };
 
   element.src = 'video.mov';
   t.is(element.getAttribute('src'), 'video.mov');
 });
 
-test('src should be reflected in property', t => {
+test('src attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLEmbedElement };
 
   element.setAttribute('src', 'video.mov');

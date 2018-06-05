@@ -40,6 +40,7 @@ test('options should contain all childNodes when all have the correct node name'
   const { node, option, optionTwo } = t.context as { node: HTMLDataListElement; option: Element; optionTwo: Element };
 
   node.appendChild(option);
+  t.is(node.options.length, 1);
   node.appendChild(optionTwo);
   t.is(node.options.length, 2);
   t.deepEqual(node.options, [option, optionTwo]);
@@ -54,18 +55,21 @@ test('options should contain only childNodes of the correct node name', t => {
     invalidElement: Element;
   };
 
+  t.is(node.options.length, 0);
   node.appendChild(option);
+  t.is(node.options.length, 1);
   node.appendChild(optionTwo);
+  t.is(node.options.length, 2);
   node.appendChild(text);
   node.appendChild(invalidElement);
   t.is(node.options.length, 2);
   t.deepEqual(node.options, [option, optionTwo]);
 });
 
-// test('children should be an empty array when there are no childNodes of NodeType.ELEMENT_NODE', t => {
-//   const { node, childTwo } = t.context as { node: Element; childTwo: Node };
+test('options should be an empty array when there are no childNodes of correct node names', t => {
+  const { node, invalidElement } = t.context as { node: Element; invalidElement: Node };
 
-//   node.appendChild(childTwo);
-//   t.is(node.children.length, 0);
-//   t.deepEqual(node.children, []);
-// });
+  node.appendChild(invalidElement);
+  t.is(node.options.length, 0);
+  t.deepEqual(node.options, []);
+});
