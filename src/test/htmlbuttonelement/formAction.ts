@@ -37,14 +37,14 @@ test('formAction should be settable to a single value', t => {
   t.is(element.formAction, 'https://www.ampbyexample.com');
 });
 
-test('formAction should be reflected in attribute', t => {
+test('formAction property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLButtonElement };
 
   element.formAction = 'https://www.ampbyexample.com';
   t.is(element.getAttribute('formaction'), 'https://www.ampbyexample.com');
 });
 
-test('formAction should be reflected in property', t => {
+test('formAction attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLButtonElement };
 
   element.setAttribute('formaction', 'https://www.ampbyexample.com');

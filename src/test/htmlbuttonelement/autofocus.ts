@@ -37,14 +37,14 @@ test('autofocus should be settable to a single value', t => {
   t.is(element.autofocus, true);
 });
 
-test('autofocus should be reflected in attribute', t => {
+test('autofocus property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLButtonElement };
 
   element.autofocus = true;
   t.is(element.getAttribute('autofocus'), 'true');
 });
 
-test('autofocus should be reflected in property', t => {
+test('autofocus attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLButtonElement };
 
   element.setAttribute('autofocus', 'true');

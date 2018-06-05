@@ -37,14 +37,14 @@ test('formMethod should be settable to a single value', t => {
   t.is(element.formMethod, 'get');
 });
 
-test('formMethod should be reflected in attribute', t => {
+test('formMethod property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLButtonElement };
 
   element.formMethod = 'get';
   t.is(element.getAttribute('formmethod'), 'get');
 });
 
-test('formMethod should be reflected in property', t => {
+test('formMethod attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLButtonElement };
 
   element.setAttribute('formmethod', 'get');

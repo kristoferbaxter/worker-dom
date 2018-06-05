@@ -37,14 +37,14 @@ test('formTarget should be settable to a single value', t => {
   t.is(element.formTarget, '_blank');
 });
 
-test('formTarget should be reflected in attribute', t => {
+test('formTarget property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLButtonElement };
 
   element.formTarget = '_blank';
   t.is(element.getAttribute('formtarget'), '_blank');
 });
 
-test('formTarget should be reflected in property', t => {
+test('formTarget attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLButtonElement };
 
   element.setAttribute('formtarget', '_blank');

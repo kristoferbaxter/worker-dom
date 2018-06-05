@@ -37,14 +37,14 @@ test('disabled should be settable to a single value', t => {
   t.is(element.disabled, true);
 });
 
-test('disabled should be reflected in attribute', t => {
+test('disabled property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLButtonElement };
 
   element.disabled = true;
   t.is(element.getAttribute('disabled'), 'true');
 });
 
-test('disabled should be reflected in property', t => {
+test('disabled attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLButtonElement };
 
   element.setAttribute('disabled', 'true');

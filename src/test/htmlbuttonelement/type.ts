@@ -37,14 +37,14 @@ test('type should be settable to a single value', t => {
   t.is(element.type, 'reset');
 });
 
-test('type should be reflected in attribute', t => {
+test('type property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLButtonElement };
 
   element.type = 'reset';
   t.is(element.getAttribute('type'), 'reset');
 });
 
-test('type should be reflected in property', t => {
+test('type attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLButtonElement };
 
   element.setAttribute('type', 'reset');

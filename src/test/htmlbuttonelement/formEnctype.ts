@@ -37,14 +37,14 @@ test('formEnctype should be settable to a single value', t => {
   t.is(element.formEnctype, 'text/plain');
 });
 
-test('formEnctype should be reflected in attribute', t => {
+test('formEnctype property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLButtonElement };
 
   element.formEnctype = 'text/plain';
   t.is(element.getAttribute('formenctype'), 'text/plain');
 });
 
-test('formEnctype should be reflected in property', t => {
+test('formEnctype attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLButtonElement };
 
   element.setAttribute('formenctype', 'text/plain');

@@ -37,14 +37,14 @@ test('value should be settable to a single value', t => {
   t.is(element.value, 'foobar');
 });
 
-test('value should be reflected in attribute', t => {
+test('value property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLButtonElement };
 
   element.value = 'foobar';
   t.is(element.getAttribute('value'), 'foobar');
 });
 
-test('value should be reflected in property', t => {
+test('value attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLButtonElement };
 
   element.setAttribute('value', 'foobar');
