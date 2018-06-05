@@ -15,10 +15,9 @@
  */
 
 import { reflectProperties, registerSubclass, Element } from './Element';
-import { matchChildrenElements, matchNearestParent } from './matchElements';
+import { matchNearestParent } from './matchElements';
+import { HTMLFormControlsCollectionMixin } from './HTMLFormControlsMixin';
 import { HTMLElement } from './HTMLElement';
-
-const MATCHING_CHILD_ELEMENT_TAG_NAMES = 'button fieldset input object output select textarea'.split(' ');
 
 export class HTMLFieldSetElement extends HTMLElement {
   /**
@@ -31,14 +30,6 @@ export class HTMLFieldSetElement extends HTMLElement {
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLFieldSetElement
-   * @return Element array matching children of specific tagnames.
-   */
-  get elements(): Array<Element> {
-    return matchChildrenElements(this, element => MATCHING_CHILD_ELEMENT_TAG_NAMES.includes(element.tagName));
-  }
-
-  /**
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLFieldSetElement
    * @return nearest parent form element.
    */
   get form(): Element | null {
@@ -46,6 +37,7 @@ export class HTMLFieldSetElement extends HTMLElement {
   }
 }
 registerSubclass('fieldset', HTMLFieldSetElement);
+HTMLFormControlsCollectionMixin(HTMLFieldSetElement);
 
 // Reflected properties
 // HTMLFieldSetElement.name => string, reflected attribute

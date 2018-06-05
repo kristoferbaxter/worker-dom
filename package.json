@@ -65,7 +65,7 @@
     {
       "path": "./build/esmodules/index.module.js",
       "compression": "brotli",
-      "maxSize": "4 kB"
+      "maxSize": "5 kB"
     },
     {
       "path": "./build/esmodules/main-thread/index.module.js",
