@@ -37,14 +37,14 @@ test('rel should be settable to a single value', t => {
   t.is(element.rel, 'next');
 });
 
-test('rel should be reflected in attribute', t => {
+test('rel property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLAnchorElement };
 
   element.rel = 'next';
   t.is(element.getAttribute('rel'), 'next');
 });
 
-test('rel should be reflected in property', t => {
+test('rel attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLAnchorElement };
 
   element.setAttribute('rel', 'next');

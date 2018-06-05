@@ -37,14 +37,14 @@ test('hreflang should be settable to a single value', t => {
   t.is(element.hreflang, 'afh');
 });
 
-test('hreflang should be reflected in attribute', t => {
+test('hreflang property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLAnchorElement };
 
   element.hreflang = 'afh';
   t.is(element.getAttribute('hreflang'), 'afh');
 });
 
-test('hreflang should be reflected in property', t => {
+test('hreflang attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLAnchorElement };
 
   element.setAttribute('hreflang', 'afh');

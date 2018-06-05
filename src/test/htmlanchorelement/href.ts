@@ -37,14 +37,14 @@ test('href should be settable to a single value', t => {
   t.is(element.href, 'https://www.ampbyexample.com');
 });
 
-test('href should be reflected in attribute', t => {
+test('href property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLAnchorElement };
 
   element.href = 'https://www.ampbyexample.com';
   t.is(element.getAttribute('href'), 'https://www.ampbyexample.com');
 });
 
-test('href should be reflected in property', t => {
+test('href attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLAnchorElement };
 
   element.setAttribute('href', 'https://www.ampbyexample.com');

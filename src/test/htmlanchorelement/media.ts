@@ -37,14 +37,14 @@ test('media should be settable to a single value', t => {
   t.is(element.media, 'foo');
 });
 
-test('media should be reflected in attribute', t => {
+test('media property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLAnchorElement };
 
   element.media = 'foo';
   t.is(element.getAttribute('media'), 'foo');
 });
 
-test('media should be reflected in property', t => {
+test('media attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLAnchorElement };
 
   element.setAttribute('media', 'foo');

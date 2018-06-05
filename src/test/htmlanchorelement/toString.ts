@@ -30,7 +30,7 @@ test('toString should be empty by default', t => {
   t.is(element.toString(), '');
 });
 
-test('toString should return href after manipulation', t => {
+test('toString should return href after property change', t => {
   const { element } = t.context as { element: HTMLAnchorElement };
 
   element.href = 'https://www.ampbyexample.com';
