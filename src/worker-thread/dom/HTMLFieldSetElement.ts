@@ -22,11 +22,11 @@ const MATCHING_CHILD_ELEMENT_TAG_NAMES = 'button fieldset input object output se
 
 export class HTMLFieldSetElement extends HTMLElement {
   /**
-   * HTMLFieldSetElement.type - read only
-   * The DOMString "fieldset".
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLFieldSetElement
+   * @return hardcoded string 'fieldset'
    */
   get type(): string {
-    return 'fieldset';
+    return this.tagName;
   }
 
   /**
@@ -45,7 +45,7 @@ export class HTMLFieldSetElement extends HTMLElement {
     return matchNearestParent(this, element => element.tagName === 'form');
   }
 }
-registerSubclass('data', HTMLFieldSetElement);
+registerSubclass('fieldset', HTMLFieldSetElement);
 
 // Reflected properties
 // HTMLFieldSetElement.name => string, reflected attribute
