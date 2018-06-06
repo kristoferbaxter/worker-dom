@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { reflectProperties, registerSubclass } from './Element';
+import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
+import { reflectProperties } from './reflectElementProperties';
 
 export class HTMLButtonElement extends HTMLElement {}
 registerSubclass('button', HTMLButtonElement);
@@ -32,15 +33,15 @@ registerSubclass('button', HTMLButtonElement);
 // HTMLButtonElement.disabled => boolean, reflected attribute
 reflectProperties(
   [
-    { formAction: '' },
-    { formEnctype: '' },
-    { formMethod: '' },
-    { formTarget: '' },
-    { name: '' },
-    { type: 'submit' },
-    { value: '' },
-    { autofocus: false },
-    { disabled: false },
+    { formAction: [''] },
+    { formEnctype: [''] },
+    { formMethod: [''] },
+    { formTarget: [''] },
+    { name: [''] },
+    { type: ['submit'] },
+    { value: [''] },
+    { autofocus: [false] },
+    { disabled: [false] },
   ],
   HTMLButtonElement,
 );

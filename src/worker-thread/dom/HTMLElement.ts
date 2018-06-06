@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { Element, reflectProperties } from './Element';
+import { Element } from './Element';
+import { reflectProperties } from './reflectElementProperties';
 
 export class HTMLElement extends Element {}
 
@@ -31,16 +32,16 @@ export class HTMLElement extends Element {}
 // HTMLElement.translate => boolean, reflected attribute
 reflectProperties(
   [
-    { accessKey: '' },
-    { contentEditable: 'inherit' },
-    { dir: '' },
-    { lang: '' },
-    { title: '' },
-    { draggable: false },
-    { hidden: false },
-    { noModule: false },
-    { spellcheck: true },
-    { translate: true },
+    { accessKey: [''] },
+    { contentEditable: ['inherit'] },
+    { dir: [''] },
+    { lang: [''] },
+    { title: [''] },
+    { draggable: [false] },
+    { hidden: [false] },
+    { noModule: [false] },
+    { spellcheck: [true] },
+    { translate: [true] },
   ],
   HTMLElement,
 );

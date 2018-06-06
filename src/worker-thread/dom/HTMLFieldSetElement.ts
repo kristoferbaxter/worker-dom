@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { reflectProperties, registerSubclass, Element } from './Element';
+import { registerSubclass, Element } from './Element';
 import { matchNearestParent } from './matchElements';
+import { reflectProperties } from './reflectElementProperties';
 import { HTMLFormControlsCollectionMixin } from './HTMLFormControlsMixin';
 import { HTMLElement } from './HTMLElement';
 
@@ -42,7 +43,7 @@ HTMLFormControlsCollectionMixin(HTMLFieldSetElement);
 // Reflected properties
 // HTMLFieldSetElement.name => string, reflected attribute
 // HTMLFieldSetElement.disabled => boolean, reflected attribute
-reflectProperties([{ name: '' }, { disabled: false }], HTMLFieldSetElement);
+reflectProperties([{ name: [''] }, { disabled: [false] }], HTMLFieldSetElement);
 
 // Unimplemented properties
 // HTMLFieldSetElement.validity

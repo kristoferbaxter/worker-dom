@@ -18,6 +18,7 @@
     "alwaysStrict": true
   },
   "include": [
-    "./*.ts"
+    "./*.ts",
+    "./**/*.ts"
   ]
 }

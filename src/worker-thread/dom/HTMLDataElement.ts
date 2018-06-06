@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import { reflectProperties, registerSubclass } from './Element';
+import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
+import { reflectProperties } from './reflectElementProperties';
 
 export class HTMLDataElement extends HTMLElement {}
 registerSubclass('data', HTMLDataElement);
 
 // Reflected properties, strings.
 // HTMLEmbedElement.value => string, reflected attribute
-reflectProperties([{ value: '' }], HTMLDataElement);
+reflectProperties([{ value: [''] }], HTMLDataElement);

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { reflectProperties, registerSubclass } from './Element';
+import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
+import { reflectProperties } from './reflectElementProperties';
 
 export class HTMLEmbedElement extends HTMLElement {}
 registerSubclass('embed', HTMLEmbedElement);
@@ -25,7 +26,7 @@ registerSubclass('embed', HTMLEmbedElement);
 // HTMLEmbedElement.src => string, reflected attribute
 // HTMLEmbedElement.type => string, reflected attribute
 // HTMLEmbedElement.width => string, reflected attribute
-reflectProperties([{ height: '' }, { src: '' }, { type: '' }, { width: '' }], HTMLEmbedElement);
+reflectProperties([{ height: [''] }, { src: [''] }, { type: [''] }, { width: [''] }], HTMLEmbedElement);
 
 // Unimplemented
 // HTMLEmbedElement.align => string, not reflected

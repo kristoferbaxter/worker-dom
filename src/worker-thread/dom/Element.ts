@@ -24,6 +24,7 @@ import { NumericBoolean, toLower } from '../../utils';
 import { Text } from './Text';
 import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
 import { matchChildrenElements } from './matchElements';
+import { reflectProperties } from './reflectElementProperties';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
@@ -368,33 +369,7 @@ export class Element extends Node {
     };
   }
 }
-
-interface PropertyPair {
-  [key: string]: string | boolean;
-}
-export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typeof Element): void => {
-  properties.forEach(pair => {
-    Object.keys(pair).forEach(key => {
-      const enforceBooleanAttributes = typeof pair[key] === 'boolean';
-      const lowerCaseKey = key.toLowerCase();
-      Object.defineProperty(defineOn.prototype, key, {
-        configurable: false,
-        get(): string | boolean {
-          const storedAttribute = (this as Element).getAttribute(lowerCaseKey);
-          if (enforceBooleanAttributes) {
-            return storedAttribute !== null ? storedAttribute === 'true' : pair[key];
-          }
-          return String(storedAttribute !== null ? storedAttribute : pair[key]);
-        },
-        set(value: string | boolean) {
-          (this as Element).setAttribute(lowerCaseKey, String(value));
-        },
-      });
-    });
-  });
-};
-
-reflectProperties([{ id: '' }], Element);
+reflectProperties([{ id: [''] }], Element);
 
 export const NodeNameMapping: {
   [key: string]: typeof Element;

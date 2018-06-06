@@ -15,9 +15,10 @@
  */
 
 import { NodeType, NodeName, NamespaceURI } from './Node';
-import { reflectProperties, registerSubclass } from './Element';
+import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { DOMTokenList } from './DOMTokenList';
+import { reflectProperties } from './reflectElementProperties';
 
 export class HTMLAnchorElement extends HTMLElement {
   public relList: DOMTokenList = new DOMTokenList(this, 'rel', null, this.storeAttributeNS_.bind(this));
@@ -83,7 +84,7 @@ registerSubclass('a', HTMLAnchorElement);
 // HTMLAnchorElement.media => string, reflected attribute
 // HTMLAnchorElement.target => string, reflected attribute
 // HTMLAnchorElement.type => string, reflected attribute
-reflectProperties([{ href: '' }, { hreflang: '' }, { media: '' }, { target: '' }, { type: '' }], HTMLAnchorElement);
+reflectProperties([{ href: [''] }, { hreflang: [''] }, { media: [''] }, { target: [''] }, { type: [''] }], HTMLAnchorElement);
 
 // Unimplemented
 // HTMLAnchorElement.download => string, reflected attribute
