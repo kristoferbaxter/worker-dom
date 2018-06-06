@@ -56,7 +56,7 @@ test('elements should contain two button elements', t => {
   t.deepEqual(element.elements, [button, buttonTwo]);
 });
 
-test('elements should contain button element deeply nested, and filter invalid childNodes', t => {
+test('elements should contain button element deeply nested, filtering invalid childNodes', t => {
   const { element, button, div } = t.context as { element: HTMLFieldSetElement; button: Element; div: Element };
 
   div.appendChild(button);
