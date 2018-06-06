@@ -37,14 +37,14 @@ test('name should be settable to a string value', t => {
   t.is(element.name, 'foobar');
 });
 
-test('name should be reflected in attribute', t => {
+test('name property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLFieldSetElement };
 
   element.name = 'foobar';
   t.is(element.getAttribute('name'), 'foobar');
 });
 
-test('name should be reflected in property', t => {
+test('name attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLFieldSetElement };
 
   element.setAttribute('name', 'foobar');

@@ -37,14 +37,14 @@ test('noModule should be settable to a single value', t => {
   t.is(element.noModule, true);
 });
 
-test('noModule should be reflected in attribute', t => {
+test('noModule property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.noModule = true;
   t.is(element.getAttribute('nomodule'), 'true');
 });
 
-test('noModule should be reflected in property', t => {
+test('noModule attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.setAttribute('nomodule', 'true');

@@ -37,14 +37,14 @@ test('translate should be settable to a single value', t => {
   t.is(element.translate, false);
 });
 
-test('translate should be reflected in attribute', t => {
+test('translate property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.translate = false;
   t.is(element.getAttribute('translate'), 'false');
 });
 
-test('translate should be reflected in property', t => {
+test('translate attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.setAttribute('translate', 'false');

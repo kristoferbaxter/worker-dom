@@ -37,14 +37,14 @@ test('draggable should be settable to a single value', t => {
   t.is(element.draggable, true);
 });
 
-test('draggable should be reflected in attribute', t => {
+test('draggable property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.draggable = true;
   t.is(element.getAttribute('draggable'), 'true');
 });
 
-test('draggable should be reflected in property', t => {
+test('draggable attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.setAttribute('draggable', 'true');

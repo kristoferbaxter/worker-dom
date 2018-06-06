@@ -37,14 +37,14 @@ test('title should be settable to a single value', t => {
   t.is(element.title, 'interesting div htmlelement-ish');
 });
 
-test('title should be reflected in attribute', t => {
+test('title property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.title = 'interesting div htmlelement-ish';
   t.is(element.getAttribute('title'), 'interesting div htmlelement-ish');
 });
 
-test('title should be reflected in property', t => {
+test('title attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.setAttribute('title', 'interesting div htmlelement-ish');

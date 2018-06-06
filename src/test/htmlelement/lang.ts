@@ -37,14 +37,14 @@ test('lang should be settable to a single value', t => {
   t.is(element.lang, 'en_US');
 });
 
-test('lang should be reflected in attribute', t => {
+test('lang property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.lang = 'en_US';
   t.is(element.getAttribute('lang'), 'en_US');
 });
 
-test('lang should be reflected in property', t => {
+test('lang attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.setAttribute('lang', 'en_US');

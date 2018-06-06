@@ -37,14 +37,14 @@ test('accessKey should be settable to a single value', t => {
   t.is(element.accessKey, 'f');
 });
 
-test('accessKey should be reflected in attribute', t => {
+test('accessKey property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.accessKey = 'f';
   t.is(element.getAttribute('accesskey'), 'f');
 });
 
-test('accessKey should be reflected in property', t => {
+test('accessKey attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.setAttribute('accesskey', 'b');

@@ -37,14 +37,14 @@ test('contentEditable should be settable to a single value', t => {
   t.is(element.contentEditable, 'true');
 });
 
-test('contentEditable should be reflected in attribute', t => {
+test('contentEditable property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.contentEditable = 'true';
   t.is(element.getAttribute('contenteditable'), 'true');
 });
 
-test('contentEditable should be reflected in property', t => {
+test('contentEditable attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.setAttribute('contenteditable', 'true');

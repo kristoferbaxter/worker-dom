@@ -37,14 +37,14 @@ test('hidden should be settable to a single value', t => {
   t.is(element.hidden, true);
 });
 
-test('hidden should be reflected in attribute', t => {
+test('hidden property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.hidden = true;
   t.is(element.getAttribute('hidden'), 'true');
 });
 
-test('hidden should be reflected in property', t => {
+test('hidden attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.setAttribute('hidden', 'true');

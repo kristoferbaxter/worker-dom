@@ -37,14 +37,14 @@ test('spellcheck should be settable to a single value', t => {
   t.is(element.spellcheck, false);
 });
 
-test('spellcheck should be reflected in attribute', t => {
+test('spellcheck property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.spellcheck = false;
   t.is(element.getAttribute('spellcheck'), 'false');
 });
 
-test('spellcheck should be reflected in property', t => {
+test('spellcheck attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.setAttribute('spellcheck', 'false');

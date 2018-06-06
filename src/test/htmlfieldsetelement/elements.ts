@@ -56,15 +56,17 @@ test('elements should contain two button elements', t => {
   t.deepEqual(element.elements, [button, buttonTwo]);
 });
 
-test('elements should contain two button element deeply nested', t => {
+test('elements should contain button element deeply nested, and filter invalid childNodes', t => {
   const { element, button, div } = t.context as { element: HTMLFieldSetElement; button: Element; div: Element };
 
   div.appendChild(button);
   element.appendChild(div);
+  // Quick note: .elements getter returns only a small subset of elements with specific tagNames.
+  // See HTMLFormControlsMixin for the implementation.
   t.deepEqual(element.elements, [button]);
 });
 
-test('elements should contain all valid elements, but not invalid ones', t => {
+test('elements should contain all valid elements, filtering invalid childNodes', t => {
   const { element, button, fieldset, input, output, select, textarea, div } = t.context as {
     element: HTMLFieldSetElement;
     button: Element;
@@ -85,4 +87,5 @@ test('elements should contain all valid elements, but not invalid ones', t => {
   element.appendChild(div);
 
   t.deepEqual(element.elements, [button, fieldset, input, output, select, textarea]);
+  t.is(element.elements.length, 6);
 });

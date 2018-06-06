@@ -37,14 +37,14 @@ test('dir should be settable to a single value', t => {
   t.is(element.dir, 'rtl');
 });
 
-test('dir should be reflected in attribute', t => {
+test('dir property change should be reflected in attribute', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.dir = 'rtl';
   t.is(element.getAttribute('dir'), 'rtl');
 });
 
-test('dir should be reflected in property', t => {
+test('dir attribute change should be reflected in property', t => {
   const { element } = t.context as { element: HTMLElement };
 
   element.setAttribute('dir', 'rtl');
