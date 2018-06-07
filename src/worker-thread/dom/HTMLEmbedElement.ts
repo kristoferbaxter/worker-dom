@@ -16,7 +16,7 @@
 
 import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
-import { reflectProperties } from './reflectElementProperties';
+import { reflectProperties } from './enhanceElement';
 
 export class HTMLEmbedElement extends HTMLElement {}
 registerSubclass('embed', HTMLEmbedElement);

@@ -16,7 +16,7 @@
 
 import { registerSubclass, Element } from './Element';
 import { matchNearestParent } from './matchElements';
-import { reflectProperties } from './reflectElementProperties';
+import { reflectProperties } from './enhanceElement';
 import { HTMLFormControlsCollectionMixin } from './HTMLFormControlsMixin';
 import { HTMLElement } from './HTMLElement';
 

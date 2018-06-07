@@ -17,7 +17,7 @@
 import { registerSubclass, Element } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { HTMLFormControlsCollectionMixin } from './HTMLFormControlsMixin';
-import { reflectProperties } from './reflectElementProperties';
+import { reflectProperties } from './enhanceElement';
 
 export class HTMLFormElement extends HTMLElement {
   /**

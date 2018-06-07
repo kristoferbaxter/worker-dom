@@ -15,7 +15,7 @@
  */
 
 import { Element } from './Element';
-import { reflectProperties } from './reflectElementProperties';
+import { reflectProperties } from './enhanceElement';
 
 export class HTMLElement extends Element {}
 

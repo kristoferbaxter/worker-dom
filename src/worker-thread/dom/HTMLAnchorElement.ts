@@ -18,7 +18,7 @@ import { NodeType, NodeName, NamespaceURI } from './Node';
 import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { DOMTokenList } from './DOMTokenList';
-import { reflectProperties } from './reflectElementProperties';
+import { reflectProperties } from './enhanceElement';
 
 export class HTMLAnchorElement extends HTMLElement {
   public relList: DOMTokenList = new DOMTokenList(this, 'rel', null, this.storeAttributeNS_.bind(this));

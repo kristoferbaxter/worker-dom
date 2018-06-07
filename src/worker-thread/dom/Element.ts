@@ -24,7 +24,7 @@ import { NumericBoolean, toLower } from '../../utils';
 import { Text } from './Text';
 import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
 import { matchChildrenElements } from './matchElements';
-import { reflectProperties } from './reflectElementProperties';
+import { reflectProperties } from './enhanceElement';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
@@ -33,7 +33,7 @@ export class Element extends Node {
   public classList: DOMTokenList = new DOMTokenList(this, 'class', null, this.storeAttributeNS_.bind(this));
   public style: CSSStyleDeclaration = new CSSStyleDeclaration(this, this.storeAttributeNS_.bind(this));
   public namespaceURI: NamespaceURI;
-  protected propertyBackedAttributes_: { [key: string]: (value: string) => string } = {
+  public propertyBackedAttributes_: { [key: string]: (value: string) => string } = {
     class: (value: string): string => (this.className = value),
     style: (value: string): string => (this.style.cssText = value),
   };
