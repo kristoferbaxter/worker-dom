@@ -18,23 +18,26 @@ import { Element } from './Element';
 import { toLower } from '../../utils';
 
 interface PropertyPair {
-  [key: string]: [string | boolean, string] | [string | boolean];
+  [key: string]: [string | boolean | number, string] | [string | boolean | number];
 }
 export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typeof Element): void => {
   properties.forEach(pair => {
     Object.keys(pair).forEach(key => {
-      const enforceBooleanAttributes = typeof pair[key][0] === 'boolean';
+      const defaultValue = pair[key][0];
+      const propertyIsNumber = typeof defaultValue === 'number';
+      const propertyIsBoolean = typeof defaultValue === 'boolean';
       const attributeKey = (pair[key][1] as string) || toLower(key);
       Object.defineProperty(defineOn.prototype, key, {
         configurable: false,
-        get(): string | boolean {
+        get(): string | boolean | number {
           const storedAttribute = (this as Element).getAttribute(attributeKey);
-          if (enforceBooleanAttributes) {
-            return storedAttribute !== null ? storedAttribute === 'true' : pair[key][0];
+          if (propertyIsBoolean) {
+            return storedAttribute !== null ? storedAttribute === 'true' : defaultValue;
           }
-          return String(storedAttribute !== null ? storedAttribute : pair[key][0]);
+          const castableValue = storedAttribute !== null ? storedAttribute : defaultValue;
+          return propertyIsNumber ? Number(castableValue) : String(castableValue);
         },
-        set(value: string | boolean) {
+        set(value: string | boolean | number) {
           (this as Element).setAttribute(attributeKey, String(value));
         },
       });
