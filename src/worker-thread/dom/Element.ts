@@ -334,7 +334,7 @@ export class Element extends Node {
     // TODO(KB) – Compare performance of [].some(value => DOMTokenList.contains(value)) and regex.
     // const classRegex = new RegExp(classNames.split(' ').map(name => `(?=.*${name})`).join(''));
 
-    return matchChildrenElements(this, element => inputClassList.some(inputClassName => element.classList.contains(inputClassName)));
+    return matchChildrenElements(this, ({ element }) => inputClassList.some(inputClassName => element.classList.contains(inputClassName)));
   }
 
   /**
@@ -343,7 +343,7 @@ export class Element extends Node {
    * @return Element array with matching tagnames
    */
   public getElementsByTagName(tagName: string): Element[] {
-    return matchChildrenElements(this, tagName === '*' ? element => true : element => element.tagName === tagName);
+    return matchChildrenElements(this, tagName === '*' ? element => true : ({ element }) => element.tagName === tagName);
   }
 
   public _sanitize_(): TransferableNode | TransferredNode {

@@ -16,12 +16,12 @@
 
 import { Element } from './Element';
 
-type ConditionPredicate = (element: Element) => boolean;
+type ConditionPredicate = (element: { readonly element: Element }) => boolean;
 
 export const matchChildrenElements = (element: Element, conditionPredicate: ConditionPredicate): Element[] => {
   const matchingElements: Element[] = [];
   element.children.forEach(child => {
-    if (conditionPredicate(child)) {
+    if (conditionPredicate({ element: child })) {
       matchingElements.push(child);
     }
     matchingElements.push(...matchChildrenElements(child, conditionPredicate));
@@ -29,11 +29,11 @@ export const matchChildrenElements = (element: Element, conditionPredicate: Cond
   return matchingElements;
 };
 
-export const matchNearestParent = (element: Element, conditionPredicate: ConditionPredicate): Element => {
+export const matchNearestParent = (element: Element, conditionPredicate: ConditionPredicate): Element | null => {
   while ((element = element.parentNode as Element)) {
-    if (conditionPredicate(element)) {
+    if (conditionPredicate({ element })) {
       return element;
     }
   }
-  return element;
+  return null;
 };

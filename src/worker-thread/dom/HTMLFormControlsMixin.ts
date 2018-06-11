@@ -30,7 +30,7 @@ export const HTMLFormControlsCollectionMixin = (defineOn: typeof Element): void 
      * @return Element array matching children of specific tagnames.
      */
     get(): Array<Element> {
-      return matchChildrenElements(this as Element, element => MATCHING_CHILD_ELEMENT_TAG_NAMES.includes(element.tagName));
+      return matchChildrenElements(this as Element, ({ element }) => MATCHING_CHILD_ELEMENT_TAG_NAMES.includes(element.tagName));
     },
   });
 };

@@ -24,7 +24,7 @@ test.beforeEach(t => {
   };
 });
 
-test('enctype should be get by default', t => {
+test('enctype should be application/x-www-form-urlencoded by default', t => {
   const { element } = t.context as { element: HTMLFormElement };
 
   t.is(element.enctype, 'application/x-www-form-urlencoded');

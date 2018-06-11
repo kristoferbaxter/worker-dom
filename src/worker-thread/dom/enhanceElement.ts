@@ -28,7 +28,7 @@ export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typ
       const propertyIsBoolean = typeof defaultValue === 'boolean';
       const attributeKey = (pair[key][1] as string) || toLower(key);
       Object.defineProperty(defineOn.prototype, key, {
-        configurable: false,
+        enumerable: true,
         get(): string | boolean | number {
           const storedAttribute = (this as Element).getAttribute(attributeKey);
           if (propertyIsBoolean) {
