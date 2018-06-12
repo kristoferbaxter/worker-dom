@@ -25,7 +25,7 @@ export class HTMLInputElement extends HTMLElement {
    * @return nearest parent form element.
    */
   get form(): Element | null {
-    return matchNearestParent(this, ({ element }) => element.tagName === 'form');
+    return matchNearestParent(this, element => element.tagName === 'form');
   }
 
   /**
@@ -33,7 +33,7 @@ export class HTMLInputElement extends HTMLElement {
    * @return child label elements
    */
   get labels(): Array<Element> {
-    return matchChildrenElements(this as Element, ({ element }) => element.tagName === 'label');
+    return matchChildrenElements(this as Element, element => element.tagName === 'label');
   }
 }
 registerSubclass('img', HTMLInputElement);

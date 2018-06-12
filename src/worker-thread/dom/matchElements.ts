@@ -16,12 +16,13 @@
 
 import { Element } from './Element';
 
-type ConditionPredicate = (element: { readonly element: Element }) => boolean;
+type ConditionPredicate = (element: Element) => boolean;
+// To future authors: It would be great if we could enforce that elements are not modified by a ConditionPredicate.
 
 export const matchChildrenElements = (element: Element, conditionPredicate: ConditionPredicate): Element[] => {
   const matchingElements: Element[] = [];
   element.children.forEach(child => {
-    if (conditionPredicate({ element: child })) {
+    if (conditionPredicate(child)) {
       matchingElements.push(child);
     }
     matchingElements.push(...matchChildrenElements(child, conditionPredicate));
@@ -31,7 +32,7 @@ export const matchChildrenElements = (element: Element, conditionPredicate: Cond
 
 export const matchNearestParent = (element: Element, conditionPredicate: ConditionPredicate): Element | null => {
   while ((element = element.parentNode as Element)) {
-    if (conditionPredicate({ element })) {
+    if (conditionPredicate(element)) {
       return element;
     }
   }

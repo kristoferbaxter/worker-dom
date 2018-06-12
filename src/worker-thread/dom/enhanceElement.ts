@@ -34,7 +34,7 @@ export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typ
           if (propertyIsBoolean) {
             return storedAttribute !== null ? storedAttribute === 'true' : defaultValue;
           }
-          const castableValue = storedAttribute !== null ? storedAttribute : defaultValue;
+          const castableValue = storedAttribute || defaultValue;
           return propertyIsNumber ? Number(castableValue) : String(castableValue);
         },
         set(value: string | boolean | number) {

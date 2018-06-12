@@ -34,7 +34,7 @@ export class HTMLFieldSetElement extends HTMLElement {
    * @return nearest parent form element.
    */
   get form(): Element | null {
-    return matchNearestParent(this, ({ element }) => element.tagName === 'form');
+    return matchNearestParent(this, element => element.tagName === 'form');
   }
 }
 registerSubclass('fieldset', HTMLFieldSetElement);
