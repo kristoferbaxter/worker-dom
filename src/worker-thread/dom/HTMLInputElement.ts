@@ -42,7 +42,6 @@ registerSubclass('img', HTMLInputElement);
 // HTMLInputElement.formAction => string, reflected attribute
 // HTMLInputElement.formEncType	=> string, reflected attribute
 // HTMLInputElement.formMethod => string, reflected attribute
-// HTMLInputElement.formNoValidate => string, reflected attribute
 // HTMLInputElement.formTarget => string, reflected attribute
 // HTMLInputElement.name => string, reflected attribute
 // HTMLInputElement.type => string, reflected attribute
@@ -73,10 +72,9 @@ reflectProperties(
     { formAction: [''] },
     { formEncType: [''] },
     { formMethod: [''] },
-    { formNoValidate: [''] },
     { formTarget: [''] },
     { name: [''] },
-    { type: [''] },
+    { type: ['text'] },
     { disabled: [false] },
     { autofocus: [false] },
     { required: [false] },
@@ -94,8 +92,8 @@ reflectProperties(
     { readOnly: [false] },
     { min: [''] },
     { max: [''] },
-    { defaultValue: [''] },
-    { dirname: [''] },
+    { defaultValue: ['', 'value'] },
+    { dirName: [''] },
     { multiple: [false] },
     { step: [''] },
     { autocapitalize: [''] },
@@ -109,6 +107,7 @@ reflectProperties(
 // HTMLInputElement.indeterminate => boolean
 
 // Unimplemented Properties
+// HTMLInputElement.formNoValidate => string, reflected attribute
 // HTMLInputElement.validity => ValidityState, readonly
 // HTMLInputElement.validationMessage => string, readonly
 // HTMLInputElement.willValidate => boolean, readonly
