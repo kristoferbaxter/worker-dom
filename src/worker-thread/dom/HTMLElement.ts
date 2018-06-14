@@ -16,8 +16,19 @@
 
 import { Element } from './Element';
 import { reflectProperties } from './enhanceElement';
+import { matchNearestParent } from './matchElements';
 
-export class HTMLElement extends Element {}
+export class HTMLElement extends Element {
+  /**
+   * Find the nearest parent form element.
+   * Implemented in HTMLElement since so many extensions of HTMLElement repeat this functionality. This is not to spec.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLFieldSetElement
+   * @return nearest parent form element.
+   */
+  get form(): Element | null {
+    return matchNearestParent(this, element => element.tagName === 'form');
+  }
+}
 
 // Reflected properties
 // HTMLElement.accessKey => string, reflected attribute

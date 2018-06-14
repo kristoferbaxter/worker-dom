@@ -16,32 +16,32 @@
 
 import test from 'ava';
 import { NodeType } from '../../worker-thread/dom/Node';
-import { HTMLFieldSetElement } from '../../worker-thread/dom/HTMLFieldSetElement';
+import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
 import { Element } from '../../worker-thread/dom/Element';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLFieldSetElement(NodeType.ELEMENT_NODE, 'fieldset', null),
+    element: new HTMLElement(NodeType.ELEMENT_NODE, 'label', null),
     form: new Element(NodeType.ELEMENT_NODE, 'form', null),
     intermediary: new Element(NodeType.ELEMENT_NODE, 'div', null),
   };
 });
 
 test('form should be null by default', t => {
-  const { element } = t.context as { element: HTMLFieldSetElement };
+  const { element } = t.context as { element: HTMLElement };
 
   t.is(element.form, null);
 });
 
 test('form should return direct parent when a child of a form', t => {
-  const { element, form } = t.context as { element: HTMLFieldSetElement; form: Element };
+  const { element, form } = t.context as { element: HTMLElement; form: Element };
 
   form.appendChild(element);
   t.is(element.form, form);
 });
 
 test('form should return only form parent when deeply nested', t => {
-  const { element, form, intermediary } = t.context as { element: HTMLFieldSetElement; form: Element; intermediary: Element };
+  const { element, form, intermediary } = t.context as { element: HTMLElement; form: Element; intermediary: Element };
 
   form.appendChild(intermediary);
   intermediary.appendChild(element);
@@ -49,7 +49,7 @@ test('form should return only form parent when deeply nested', t => {
 });
 
 test('form should return closest form to the fieldset element', t => {
-  const { element, form, intermediary } = t.context as { element: HTMLFieldSetElement; form: Element; intermediary: Element };
+  const { element, form, intermediary } = t.context as { element: HTMLElement; form: Element; intermediary: Element };
   const secondForm = new Element(NodeType.ELEMENT_NODE, 'form', null);
 
   secondForm.appendChild(form);
@@ -59,7 +59,7 @@ test('form should return closest form to the fieldset element', t => {
 });
 
 test('form should return null when there is no parent form element', t => {
-  const { element, intermediary } = t.context as { element: HTMLFieldSetElement; intermediary: Element };
+  const { element, intermediary } = t.context as { element: HTMLElement; intermediary: Element };
 
   intermediary.appendChild(element);
   t.is(element.form, null);

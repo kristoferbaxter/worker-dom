@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { registerSubclass, Element } from './Element';
-import { matchNearestParent } from './matchElements';
+import { registerSubclass } from './Element';
 import { reflectProperties } from './enhanceElement';
 import { HTMLFormControlsCollectionMixin } from './HTMLFormControlsMixin';
 import { HTMLElement } from './HTMLElement';
@@ -27,14 +26,6 @@ export class HTMLFieldSetElement extends HTMLElement {
    */
   get type(): string {
     return this.tagName;
-  }
-
-  /**
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLFieldSetElement
-   * @return nearest parent form element.
-   */
-  get form(): Element | null {
-    return matchNearestParent(this, element => element.tagName === 'form');
   }
 }
 registerSubclass('fieldset', HTMLFieldSetElement);

@@ -17,17 +17,9 @@
 import { Element, registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
-import { matchNearestParent, matchChildrenElements } from './matchElements';
+import { matchChildrenElements } from './matchElements';
 
 export class HTMLInputElement extends HTMLElement {
-  /**
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement
-   * @return nearest parent form element.
-   */
-  get form(): Element | null {
-    return matchNearestParent(this, element => element.tagName === 'form');
-  }
-
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement
    * @return child label elements
