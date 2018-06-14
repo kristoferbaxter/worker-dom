@@ -30,6 +30,7 @@ import './HTMLLabelElement';
 import './HTMLLinkElement';
 import './HTMLMapElement';
 import './HTMLMeterElement';
+import './HTMLModElement';
 import { SVGElement } from './SVGElement';
 import { Node, NodeType, NamespaceURI } from './Node';
 import { Event } from '../Event';
