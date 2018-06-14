@@ -19,10 +19,25 @@ import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 import { matchChildrenElements } from './matchElements';
 
-export class HTMLMeterElement extends HTMLElement {
+export class HTMLProgressElement extends HTMLElement {
+  private _indeterminate: boolean = true;
+  private _value: number = 0;
+
+  get position(): number {
+    return this._indeterminate ? -1 : this._value / this.max;
+  }
+
+  get value(): number {
+    return this._value;
+  }
+  set value(value: number) {
+    this._indeterminate = false;
+    this._value = value;
+  }
+
   /**
    * Getter returning label elements associated to this meter.
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMeterElement/labels
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLProgressElement/labels
    * @return label elements associated to this meter.
    */
   get labels(): Array<Element> {
@@ -32,13 +47,8 @@ export class HTMLMeterElement extends HTMLElement {
     );
   }
 }
-registerSubclass('meter', HTMLMeterElement);
+registerSubclass('progress', HTMLProgressElement);
 
 // Reflected Properties
-// HTMLMeterElement.high => number, reflected attribute
-// HTMLMeterElement.low => number, reflected attribute
-// HTMLMeterElement.max => number, reflected attribute
-// HTMLMeterElement.min => number, reflected attribute
-// HTMLMeterElement.optimum => number, reflected attribute
-// HTMLMeterElement.value => number, reflected attribute
-reflectProperties([{ high: [0] }, { low: [0] }, { max: [1] }, { min: [0] }, { optimum: [0] }, { value: [0] }], HTMLMeterElement);
+// HTMLModElement.max => number, reflected attribute
+reflectProperties([{ max: [1] }], HTMLProgressElement);
