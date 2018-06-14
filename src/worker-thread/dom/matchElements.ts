@@ -30,6 +30,24 @@ export const matchChildrenElements = (element: Element, conditionPredicate: Cond
   return matchingElements;
 };
 
+export const matchChildElement = (element: Element, conditionPredicate: ConditionPredicate): Element | null => {
+  let returnValue: Element | null = null;
+  element.children.some(child => {
+    if (conditionPredicate(child)) {
+      returnValue = child;
+      return true;
+    }
+    const grandChildMatch = matchChildElement(child, conditionPredicate);
+    if (grandChildMatch !== null) {
+      returnValue = grandChildMatch;
+      return true;
+    }
+    return false;
+  });
+
+  return returnValue;
+};
+
 export const matchNearestParent = (element: Element, conditionPredicate: ConditionPredicate): Element | null => {
   while ((element = element.parentNode as Element)) {
     if (conditionPredicate(element)) {

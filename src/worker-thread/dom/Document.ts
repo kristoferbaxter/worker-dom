@@ -16,6 +16,7 @@
 
 import { Element, NodeNameMapping } from './Element';
 import { HTMLElement } from './HTMLElement';
+import { matchChildElement } from './matchElements';
 import './HTMLAnchorElement';
 import './HTMLButtonElement';
 import './HTMLDataElement';
@@ -70,6 +71,14 @@ export class Document extends Element {
       SVGElement,
       Event,
     };
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById
+   * @return Element with matching id attribute.
+   */
+  public getElementById(id: string): Element | null {
+    return matchChildElement(this.body, element => element.id === id);
   }
 }
 

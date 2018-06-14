@@ -58,6 +58,7 @@ const propagate = (node: Node, property: string, value: any): void => {
 
 export class Node {
   [index: string]: any;
+  public ownerDocument: Node | null = null;
   public nodeType: NodeType;
   public nodeName: NodeName;
   public childNodes: Node[] = [];
@@ -78,7 +79,6 @@ export class Node {
 
   // Unimplemented Properties
   // Node.baseURI – https://developer.mozilla.org/en-US/docs/Web/API/Node/baseURI
-  // Node.ownerDocument – https://developer.mozilla.org/en-US/docs/Web/API/Node/ownerDocument
 
   // Unimplemented Methods
   // Node.compareDocumentPosition() – https://developer.mozilla.org/en-US/docs/Web/API/Node/compareDocumentPosition
