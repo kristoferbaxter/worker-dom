@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-import { Element, registerSubclass } from './Element';
+import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
-import { matchChildrenElements } from './matchElements';
+import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin';
 
-export class HTMLInputElement extends HTMLElement {
-  /**
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement
-   * @return child label elements
-   */
-  get labels(): Array<Element> {
-    return matchChildrenElements(this as Element, element => element.tagName === 'label');
-  }
-}
+export class HTMLInputElement extends HTMLElement {}
 registerSubclass('img', HTMLInputElement);
+HTMLInputLabelsMixin(HTMLInputElement);
 
 // Reflected Properties
 // HTMLInputElement.formAction => string, reflected attribute

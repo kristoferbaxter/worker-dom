@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-import { registerSubclass, Element } from './Element';
+import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
-import { matchChildrenElements } from './matchElements';
+import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin';
 
-export class HTMLMeterElement extends HTMLElement {
-  /**
-   * Getter returning label elements associated to this meter.
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMeterElement/labels
-   * @return label elements associated to this meter.
-   */
-  get labels(): Array<Element> {
-    return matchChildrenElements(
-      (this.ownerDocument as Element) || this,
-      element => element.tagName === 'label' && element.for && element.for === this.id,
-    );
-  }
-}
+export class HTMLMeterElement extends HTMLElement {}
 registerSubclass('meter', HTMLMeterElement);
+HTMLInputLabelsMixin(HTMLMeterElement);
 
 // Reflected Properties
 // HTMLMeterElement.high => number, reflected attribute

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { registerSubclass, Element } from './Element';
+import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
-import { matchChildrenElements } from './matchElements';
+import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin';
 
 export class HTMLProgressElement extends HTMLElement {
   private _indeterminate: boolean = true;
@@ -34,20 +34,9 @@ export class HTMLProgressElement extends HTMLElement {
     this._indeterminate = false;
     this._value = value;
   }
-
-  /**
-   * Getter returning label elements associated to this meter.
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLProgressElement/labels
-   * @return label elements associated to this meter.
-   */
-  get labels(): Array<Element> {
-    return matchChildrenElements(
-      (this.ownerDocument as Element) || this,
-      element => element.tagName === 'label' && element.for && element.for === this.id,
-    );
-  }
 }
 registerSubclass('progress', HTMLProgressElement);
+HTMLInputLabelsMixin(HTMLProgressElement);
 
 // Reflected Properties
 // HTMLModElement.max => number, reflected attribute
