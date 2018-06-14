@@ -26,6 +26,7 @@ import './HTMLFormElement';
 import './HTMLIFrameElement';
 import './HTMLImageElement';
 import './HTMLInputElement';
+import './HTMLLabelElement';
 import { SVGElement } from './SVGElement';
 import { Node, NodeType, NamespaceURI } from './Node';
 import { Event } from '../Event';
@@ -88,7 +89,7 @@ export const document = (() => {
   }
 
   function createElementNS(namespaceURI: NamespaceURI, tagName: string): Element {
-    const element = new (NodeNameMapping[tagName] || HTMLElement)(NodeType.ELEMENT_NODE, String(tagName).toUpperCase(), namespaceURI);
+    const element = new (NodeNameMapping[tagName] || HTMLElement)(NodeType.ELEMENT_NODE, tagName, namespaceURI);
     element.ownerDocument = document;
     return element;
   }

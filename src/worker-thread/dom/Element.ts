@@ -20,7 +20,7 @@ import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate }
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
 import { TransferableNode, TransferredNode } from '../../transfer/TransferableNodes';
-import { NumericBoolean, toLower } from '../../utils';
+import { NumericBoolean } from '../../utils';
 import { Text } from './Text';
 import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
 import { matchChildrenElements } from './matchElements';
@@ -112,8 +112,7 @@ export class Element extends Node {
    * @return string representation of serialized HTML describing the Element and its descendants.
    */
   get outerHTML(): string {
-    const outputTagName = toLower(this.nodeName);
-    return `<${[outputTagName, attrsToString(this.attributes)].join(' ').trim()}>${this.innerHTML}</${outputTagName}>`;
+    return `<${[this.nodeName, attrsToString(this.attributes)].join(' ').trim()}>${this.innerHTML}</${this.nodeName}>`;
   }
 
   /**
@@ -343,7 +342,7 @@ export class Element extends Node {
    * @return Element array with matching tagnames
    */
   public getElementsByTagName(tagName: string): Element[] {
-    return matchChildrenElements(this, tagName === '*' ? element => true : element => element.tagName === tagName);
+    return matchChildrenElements(this, tagName === '*' ? _ => true : element => element.tagName === tagName);
   }
 
   public _sanitize_(): TransferableNode | TransferredNode {

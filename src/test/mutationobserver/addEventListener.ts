@@ -25,6 +25,9 @@ test.beforeEach(t => {
     callback: () => undefined,
   };
 });
+test.afterEach(t => {
+  document.body.childNodes.forEach(childNode => childNode.remove());
+});
 
 test.cb.serial('Element.addEventListener mutation observed when node is connected.', t => {
   const { el, callback } = t.context as { el: Element; callback: () => undefined };

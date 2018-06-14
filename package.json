@@ -14,7 +14,7 @@
   "author": "Kristofer Baxter",
   "license": "Apache-2.0",
   "scripts": {
-    "pretest": "rimraf src/output && tsc -p config/tsconfig.test.worker-thread.json & tsc -p config/tsconfig.test.json & tsc -p config/tsconfig.test.main-thread.json",
+    "pretest": "rimraf src/output && tsc -p config/tsconfig.test.worker-thread.json & tsc -p config/tsconfig.test.json & tsc -p config/tsconfig.test.main-thread.json & wait",
     "test": "ava src/output/test/",
     "pre~rollup": "rimraf src/output build && tsc -p config/tsconfig.build.worker-thread.json & tsc -p config/tsconfig.build.main-thread.json",
     "~rollup": "rollup --config config/rollup.config.js",
