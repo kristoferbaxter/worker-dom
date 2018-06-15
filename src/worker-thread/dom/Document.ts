@@ -31,6 +31,7 @@ import './HTMLLinkElement';
 import './HTMLMapElement';
 import './HTMLMeterElement';
 import './HTMLModElement';
+import './HTMLOListElement';
 import './HTMLProgressElement';
 import './HTMLQuoteElement';
 import './HTMLTimeElement';
