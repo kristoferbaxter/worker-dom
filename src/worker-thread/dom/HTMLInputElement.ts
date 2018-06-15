@@ -20,7 +20,7 @@ import { reflectProperties } from './enhanceElement';
 import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin';
 
 export class HTMLInputElement extends HTMLElement {}
-registerSubclass('img', HTMLInputElement);
+registerSubclass('input', HTMLInputElement);
 HTMLInputLabelsMixin(HTMLInputElement);
 
 // Reflected Properties
@@ -86,7 +86,7 @@ reflectProperties(
   HTMLInputElement,
 );
 
-// Not Reflected Properties
+// TODO(KB) Not Reflected Properties
 // HTMLInputElement.value => string
 // HTMLInputElement.checked	=> boolean
 // HTMLInputElement.indeterminate => boolean

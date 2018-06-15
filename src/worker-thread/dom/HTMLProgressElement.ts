@@ -33,6 +33,7 @@ export class HTMLProgressElement extends HTMLElement {
   set value(value: number) {
     this._indeterminate = false;
     this._value = value;
+    // TODO(KB) This is a property mutation needing tracked.
   }
 }
 registerSubclass('progress', HTMLProgressElement);

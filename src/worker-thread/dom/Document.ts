@@ -32,6 +32,7 @@ import './HTMLMapElement';
 import './HTMLMeterElement';
 import './HTMLModElement';
 import './HTMLOListElement';
+import './HTMLOptionElement';
 import './HTMLProgressElement';
 import './HTMLQuoteElement';
 import './HTMLTimeElement';
