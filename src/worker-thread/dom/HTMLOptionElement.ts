@@ -25,9 +25,7 @@ export class HTMLOptionElement extends HTMLElement {
   constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI) {
     super(nodeType, nodeName, namespaceURI);
 
-    Object.assign(this.propertyBackedAttributes_, {
-      selected: [(): string => String(this.isSelected), (value: string): boolean => (this.selected = value === 'true')],
-    });
+    this.propertyBackedAttributes_.selected = [(): string => String(this.isSelected), (value: string): boolean => (this.selected = value === 'true')];
   }
 
   /**
