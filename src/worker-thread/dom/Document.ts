@@ -35,6 +35,7 @@ import './HTMLOListElement';
 import './HTMLOptionElement';
 import './HTMLProgressElement';
 import './HTMLQuoteElement';
+import './HTMLScriptElement';
 import './HTMLTimeElement';
 import { SVGElement } from './SVGElement';
 import { Node, NodeType, NamespaceURI } from './Node';
