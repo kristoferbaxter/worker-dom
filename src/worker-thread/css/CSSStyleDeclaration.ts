@@ -18,6 +18,7 @@ import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
 import { Element } from '../dom/Element';
 import { NamespaceURI } from '../dom/Node';
+import { toLower } from '../../utils';
 
 interface StyleProperties {
   [key: string]: string | null;
@@ -37,11 +38,7 @@ interface StyleDeclaration {
     | ((namespaceURI: NamespaceURI, name: string, value: string) => void);
 }
 
-const hyphenateKey = (key: string): string =>
-  key
-    .replace(/(webkit|ms|moz|khtml)/g, '-$1')
-    .replace(/([a-zA-Z])(?=[A-Z])/g, '$1-')
-    .toLowerCase();
+const hyphenateKey = (key: string): string => toLower(key.replace(/(webkit|ms|moz|khtml)/g, '-$1').replace(/([a-zA-Z])(?=[A-Z])/g, '$1-'));
 
 export const appendKeys = (keys: Array<string>): void => {
   const keysToAppend = keys.filter(key => !CSSStyleDeclaration.prototype.hasOwnProperty(key));
@@ -97,9 +94,7 @@ export class CSSStyleDeclaration implements StyleDeclaration {
     this.element_ = element;
 
     if (element && element.propertyBackedAttributes_) {
-      Object.assign(element.propertyBackedAttributes_, {
-        style: [(): string | null => this.cssText, (value: string) => (this.cssText = value)],
-      });
+      element.propertyBackedAttributes_.style = [(): string | null => this.cssText, (value: string) => (this.cssText = value)];
     }
   }
 
@@ -160,7 +155,7 @@ export class CSSStyleDeclaration implements StyleDeclaration {
     const values = value.split(/[:;]/);
     const length = values.length;
     for (let index = 0; index + 1 < length; index += 2) {
-      this.properties_[values[index].trim().toLowerCase()] = values[index + 1].trim();
+      this.properties_[toLower(values[index].trim())] = values[index + 1].trim();
     }
     this.mutationCompleteHandler_(this.cssText);
   }

@@ -25,10 +25,10 @@ const createProperties = (defineOn: typeof Element, accessorKey: string | null, 
       enumerable: true,
       configurable: true,
       get(): string {
-        return this[accessorKey].value;
+        return (this as Element)[accessorKey].value;
       },
       set(value: string) {
-        this[accessorKey].value = value;
+        (this as Element)[accessorKey].value = value;
       },
     });
   }
