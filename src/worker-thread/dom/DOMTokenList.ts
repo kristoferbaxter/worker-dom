@@ -19,21 +19,6 @@ import { NamespaceURI } from './Node';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
 
-const createProperties = (defineOn: typeof Element, accessorKey: string | null, propertyName: string | null) => {
-  if (accessorKey !== null && propertyName !== null) {
-    Object.defineProperty(defineOn.prototype, propertyName, {
-      enumerable: true,
-      configurable: true,
-      get(): string {
-        return (this as Element)[accessorKey].value;
-      },
-      set(value: string) {
-        (this as Element)[accessorKey].value = value;
-      },
-    });
-  }
-};
-
 export class DOMTokenList extends Array {
   private element_: Element;
   private attributeName_: string;
@@ -56,7 +41,19 @@ export class DOMTokenList extends Array {
     if (element && element.propertyBackedAttributes_) {
       this.storeAttributeMethod_ = element.storeAttributeNS_.bind(element);
       element.propertyBackedAttributes_[attributeName] = [(): string | null => this.value, (value: string) => (this.value = value)];
-      createProperties(defineOn, accessorKey, propertyName);
+
+      if (accessorKey && propertyName) {
+        Object.defineProperty(defineOn.prototype, propertyName, {
+          enumerable: true,
+          configurable: true,
+          get(): string {
+            return (this as Element)[accessorKey].value;
+          },
+          set(value: string) {
+            (this as Element)[accessorKey].value = value;
+          },
+        });
+      }
     }
   }
 
