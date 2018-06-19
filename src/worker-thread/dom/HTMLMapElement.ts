@@ -17,12 +17,9 @@
 import { registerSubclass, Element } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
-import { DOMTokenList } from './DOMTokenList';
 import { matchChildrenElements } from './matchElements';
 
 export class HTMLMapElement extends HTMLElement {
-  public relList: DOMTokenList = new DOMTokenList(HTMLMapElement, this, 'rel', null, null);
-
   /**
    * Getter returning area elements associated to this map.
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLMapElement
