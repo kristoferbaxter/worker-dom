@@ -31,7 +31,7 @@ const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.E
 export class Element extends Node {
   public attributes: Attr[] = [];
   public propertyBackedAttributes_: { [key: string]: [() => string | null, (value: string) => string | boolean] } = {};
-  public classList: DOMTokenList = new DOMTokenList(Element, this, 'class', null, 'classList', 'className');
+  public classList: DOMTokenList = new DOMTokenList(Element, this, 'class', 'classList', 'className');
   public style: CSSStyleDeclaration = new CSSStyleDeclaration(this);
   public namespaceURI: NamespaceURI;
 

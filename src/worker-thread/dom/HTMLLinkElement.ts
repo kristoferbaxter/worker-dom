@@ -20,7 +20,7 @@ import { reflectProperties } from './enhanceElement';
 import { DOMTokenList } from './DOMTokenList';
 
 export class HTMLLinkElement extends HTMLElement {
-  public relList: DOMTokenList = new DOMTokenList(HTMLLinkElement, this, 'rel', null, 'relList', 'rel');
+  public relList: DOMTokenList = new DOMTokenList(HTMLLinkElement, this, 'rel', 'relList', 'rel');
 }
 registerSubclass('link', HTMLLinkElement);
 

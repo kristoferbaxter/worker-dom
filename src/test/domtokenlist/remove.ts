@@ -21,7 +21,7 @@ import { DOMTokenList } from '../../worker-thread/dom/DOMTokenList';
 
 test.beforeEach(t => {
   t.context = {
-    tokenList: new DOMTokenList(Element, new Element(NodeType.ELEMENT_NODE, 'div', null), 'class', null, null, null),
+    tokenList: new DOMTokenList(Element, new Element(NodeType.ELEMENT_NODE, 'div', null), 'class', null, null),
   };
 });
 

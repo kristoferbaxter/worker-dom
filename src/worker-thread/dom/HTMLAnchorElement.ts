@@ -20,7 +20,7 @@ import { DOMTokenList } from './DOMTokenList';
 import { reflectProperties } from './enhanceElement';
 
 export class HTMLAnchorElement extends HTMLElement {
-  public relList: DOMTokenList = new DOMTokenList(HTMLAnchorElement, this, 'rel', null, 'relList', 'rel');
+  public relList: DOMTokenList = new DOMTokenList(HTMLAnchorElement, this, 'rel', 'relList', 'rel');
 
   /**
    * Returns the href property/attribute value

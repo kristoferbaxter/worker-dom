@@ -22,7 +22,6 @@ import { MutationRecordType } from '../MutationRecord';
 export class DOMTokenList extends Array {
   private element_: Element;
   private attributeName_: string;
-  private attributeNamespace_: string | null = null;
   private storeAttributeMethod_: (namespaceURI: NamespaceURI, name: string, value: string) => void;
 
   /**
@@ -32,24 +31,17 @@ export class DOMTokenList extends Array {
    * @param defineOn Element or class extension to define getter/setter pair for token list access.
    * @param element Specific Element instance to modify when value is changed.
    * @param attributeName Name of the attribute used by Element to access DOMTokenList.
-   * @param attributeNamespace Namespace of the attribute used by Element to access DOMTokenList.
    * @param accessorKey Key used to access DOMTokenList directly from specific element.
    * @param propertyName Key used to access DOMTokenList as string getter/setter.
    */
-  constructor(
-    defineOn: typeof Element,
-    element: Element,
-    attributeName: string,
-    attributeNamespace: string | null,
-    accessorKey: string | null,
-    propertyName: string | null,
-  ) {
+  constructor(defineOn: typeof Element, element: Element, attributeName: string, accessorKey: string | null, propertyName: string | null) {
     super();
     this.element_ = element;
     this.attributeName_ = attributeName;
-    this.attributeNamespace_ = attributeNamespace;
 
     if (element && element.propertyBackedAttributes_) {
+      // When an array is spliced, the method modifies the exisiting array and creates a new array of the same class to return.
+      // This constructor can be called without the additional context of an element to modify, since it's just the array of values to return.
       this.storeAttributeMethod_ = element.storeAttributeNS_.bind(element);
       element.propertyBackedAttributes_[attributeName] = [(): string | null => this.value, (value: string) => (this.value = value)];
 
@@ -185,12 +177,12 @@ export class DOMTokenList extends Array {
    * @param value value after mutation
    */
   private mutationCompleteHandler_(oldValue: string, value: string): void {
-    this.storeAttributeMethod_(this.attributeNamespace_, this.attributeName_, value);
+    this.storeAttributeMethod_(null, this.attributeName_, value);
     mutate({
       type: MutationRecordType.ATTRIBUTES,
       target: this.element_,
       attributeName: this.attributeName_,
-      attributeNamespace: this.attributeNamespace_,
+      attributeNamespace: null,
       value,
       oldValue,
     });

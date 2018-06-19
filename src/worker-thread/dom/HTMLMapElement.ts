@@ -21,7 +21,7 @@ import { DOMTokenList } from './DOMTokenList';
 import { matchChildrenElements } from './matchElements';
 
 export class HTMLMapElement extends HTMLElement {
-  public relList: DOMTokenList = new DOMTokenList(HTMLMapElement, this, 'rel', null, null, null);
+  public relList: DOMTokenList = new DOMTokenList(HTMLMapElement, this, 'rel', null, null);
 
   /**
    * Getter returning area elements associated to this map.

@@ -20,13 +20,13 @@ import { Element } from '../../worker-thread/dom/Element';
 import { DOMTokenList } from '../../worker-thread/dom/DOMTokenList';
 
 test('getter should be empty by default', t => {
-  const tokenList = new DOMTokenList(Element, new Element(NodeType.ELEMENT_NODE, 'div', null), 'class', null, null, null);
+  const tokenList = new DOMTokenList(Element, new Element(NodeType.ELEMENT_NODE, 'div', null), 'class', null, null);
 
   t.is(tokenList.value, '');
 });
 
 test('should accept new total values via setter', t => {
-  const tokenList = new DOMTokenList(Element, new Element(NodeType.ELEMENT_NODE, 'div', null), 'class', null, null, null);
+  const tokenList = new DOMTokenList(Element, new Element(NodeType.ELEMENT_NODE, 'div', null), 'class', null, null);
 
   tokenList.value = 'foo';
   t.is(tokenList.value, 'foo');
