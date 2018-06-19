@@ -26,9 +26,10 @@ export class HTMLOptionElement extends HTMLElement {
     super(nodeType, nodeName, namespaceURI);
 
     Object.assign(this.propertyBackedAttributes_, {
-      selected: (value: string): boolean => (this.selected = value === 'true'),
+      selected: [(): string => String(this.isSelected), (value: string): boolean => (this.selected = value === 'true')],
     });
   }
+
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLOptionElement
    * @return position of the option within the list of options it's within, or zero if there is no valid parent.
@@ -106,11 +107,10 @@ export class HTMLOptionElement extends HTMLElement {
 registerSubclass('option', HTMLOptionElement);
 
 // Reflected Properties
-// HTMLOptionElement.defaultSelected => string, reflected attribute
+// HTMLOptionElement.defaultSelected => boolean, reflected attribute
 // HTMLOptionElement.disabled => boolean, reflected attribute
 // HTMLOptionElement.type => string, reflected attribute
-// HTMLOptionElement.label => string, reflected attribute
-reflectProperties([{ defaultSelected: ['', 'selected'] }, { disabled: [false] }, { type: [''] }, { label: [''] }], HTMLOptionElement);
+reflectProperties([{ defaultSelected: [false, 'selected'] }, { disabled: [false] }, { type: [''] }], HTMLOptionElement);
 
 // Implemented at HTMLElement
 // HTMLOptionElement.form, Read only	=> HTMLFormElement

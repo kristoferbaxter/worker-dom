@@ -30,13 +30,10 @@ const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.E
 
 export class Element extends Node {
   public attributes: Attr[] = [];
-  public classList: DOMTokenList = new DOMTokenList(this, 'class', null, this.storeAttributeNS_.bind(this));
-  public style: CSSStyleDeclaration = new CSSStyleDeclaration(this, this.storeAttributeNS_.bind(this));
+  public propertyBackedAttributes_: { [key: string]: [() => string | null, (value: string) => string] } = {};
+  public classList: DOMTokenList = new DOMTokenList(Element, this, 'class', null, 'classList', 'className');
+  public style: CSSStyleDeclaration = new CSSStyleDeclaration(this);
   public namespaceURI: NamespaceURI;
-  public propertyBackedAttributes_: { [key: string]: (value: string) => string } = {
-    class: (value: string): string => (this.className = value),
-    style: (value: string): string => (this.style.cssText = value),
-  };
 
   constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI) {
     super(nodeType, nodeName);
@@ -92,22 +89,6 @@ export class Element extends Node {
   // Slotable.assignedSlot – https://developer.mozilla.org/en-US/docs/Web/API/Slotable/assignedSlot
 
   /**
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/className
-   * @return string representation of the Element's class.
-   */
-  get className(): string {
-    return this.classList.value;
-  }
-
-  /**
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/className
-   * @param value new string representaiton of the Element's class.
-   */
-  set className(value: string) {
-    this.classList.value = value;
-  }
-
-  /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/outerHTML
    * @return string representation of serialized HTML describing the Element and its descendants.
    */
@@ -136,6 +117,15 @@ export class Element extends Node {
     // TODO(KB): Investigate removing all children in a single .splice to childNodes.
     this.childNodes.forEach(childNode => childNode.remove());
     this.appendChild(new Text(text));
+  }
+
+  /**
+   * Getter returning the text representation of Element.childNodes.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent
+   * @return text from all childNodes.
+   */
+  get textContent(): string {
+    return super.textContent;
   }
 
   /**
@@ -242,8 +232,15 @@ export class Element extends Node {
    * @param value attribute value
    */
   public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): void {
-    if (namespaceURI === null && Object.keys(this.propertyBackedAttributes_).includes(name)) {
-      this.propertyBackedAttributes_[name](value);
+    if (Object.keys(this.propertyBackedAttributes_).includes(name)) {
+      if (!this.attributes.find(matchAttrPredicate(namespaceURI, name))) {
+        this.attributes.push({
+          namespaceURI,
+          name,
+          value,
+        });
+      }
+      this.propertyBackedAttributes_[name][1](value);
       return;
     }
 
@@ -258,7 +255,7 @@ export class Element extends Node {
     });
   }
 
-  protected storeAttributeNS_(namespaceURI: NamespaceURI, name: string, value: string): string {
+  public storeAttributeNS_(namespaceURI: NamespaceURI, name: string, value: string): string {
     const attr = this.attributes.find(matchAttrPredicate(namespaceURI, name));
     const oldValue = (attr && attr.value) || '';
 
@@ -284,8 +281,10 @@ export class Element extends Node {
    */
   public getAttributeNS(namespaceURI: NamespaceURI, name: string): string | null {
     const attr = this.attributes.find(matchAttrPredicate(namespaceURI, name));
-
-    return attr ? attr.value : null;
+    if (attr) {
+      return Object.keys(this.propertyBackedAttributes_).includes(name) ? this.propertyBackedAttributes_[name][0]() : attr.value;
+    }
+    return null;
   }
 
   /**

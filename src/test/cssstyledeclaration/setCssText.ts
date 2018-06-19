@@ -22,12 +22,11 @@ import { NodeType } from '../../worker-thread/dom/Node';
 test.beforeEach(t => {
   t.context = {
     node: new Element(NodeType.ELEMENT_NODE, 'div', null),
-    storeAttributeMethod: () => '',
   };
 });
 
 test('setting cssText to empty from empty', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const declaration = new CSSStyleDeclaration(t.context.node);
 
   t.is(declaration.cssText, '');
   declaration.cssText = '';
@@ -35,7 +34,7 @@ test('setting cssText to empty from empty', t => {
 });
 
 test('setting cssText to empty makes cssText empty', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const declaration = new CSSStyleDeclaration(t.context.node);
   appendKeys(['width']);
   declaration.width = '10px';
 
@@ -45,7 +44,7 @@ test('setting cssText to empty makes cssText empty', t => {
 });
 
 test('setting cssText to empty removes stored values', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const declaration = new CSSStyleDeclaration(t.context.node);
   appendKeys(['width']);
   declaration.width = '10px';
 
@@ -55,7 +54,7 @@ test('setting cssText to empty removes stored values', t => {
 });
 
 test('setting cssText with a value stores the value', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const declaration = new CSSStyleDeclaration(t.context.node);
   appendKeys(['width']);
 
   t.is(declaration.cssText, '');
@@ -64,7 +63,7 @@ test('setting cssText with a value stores the value', t => {
 });
 
 test('setting cssText with multiple values stores the values', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const declaration = new CSSStyleDeclaration(t.context.node);
   appendKeys(['width', 'height']);
 
   t.is(declaration.cssText, '');
@@ -74,7 +73,7 @@ test('setting cssText with multiple values stores the values', t => {
 });
 
 test('setting cssText with a single value requiring key conversion', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const declaration = new CSSStyleDeclaration(t.context.node);
   appendKeys(['lineHeight']);
 
   t.is(declaration.cssText, '');
@@ -83,7 +82,7 @@ test('setting cssText with a single value requiring key conversion', t => {
 });
 
 test('setting cssText with a single value requiring key conversion with vendor prefix', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const declaration = new CSSStyleDeclaration(t.context.node);
   appendKeys(['webkitLineHeight']);
 
   t.is(declaration.cssText, '');
@@ -92,7 +91,7 @@ test('setting cssText with a single value requiring key conversion with vendor p
 });
 
 test('setting cssText with a single miscapitalized value requiring key conversion with vendor prefix', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const declaration = new CSSStyleDeclaration(t.context.node);
   appendKeys(['webkitLineHeight']);
 
   t.is(declaration.cssText, '');

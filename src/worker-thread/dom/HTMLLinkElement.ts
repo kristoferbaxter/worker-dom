@@ -20,16 +20,7 @@ import { reflectProperties } from './enhanceElement';
 import { DOMTokenList } from './DOMTokenList';
 
 export class HTMLLinkElement extends HTMLElement {
-  public relList: DOMTokenList = new DOMTokenList(this, 'rel', null, this.storeAttributeNS_.bind(this));
-
-  /**
-   * Getter returning value of rel property/reflected attribute
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLLinkElement/rel
-   * @return value of the rel property/attribute.
-   */
-  get rel(): string {
-    return this.relList.value;
-  }
+  public relList: DOMTokenList = new DOMTokenList(HTMLLinkElement, this, 'rel', null, 'relList', 'rel');
 }
 registerSubclass('link', HTMLLinkElement);
 

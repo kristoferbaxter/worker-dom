@@ -15,21 +15,27 @@
  */
 
 import test from 'ava';
-import { CSSStyleDeclaration, appendKeys } from '../../worker-thread/css/CSSStyleDeclaration';
-import { Element } from '../../worker-thread/dom/Element';
-import { NodeType } from '../../worker-thread/dom/Node';
+import { HTMLOptionElement } from '../../worker-thread/dom/HTMLOptionElement';
+import { document } from '../../worker-thread/dom/Document';
 
 test.beforeEach(t => {
   t.context = {
-    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    option: document.createElement('option'),
   };
 });
+test.afterEach(t => {
+  document.body.childNodes.forEach(childNode => childNode.remove());
+});
 
-test('setting a value stores the value for a getter', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node);
+test('selected should be false by default', t => {
+  const { option } = t.context as { option: HTMLOptionElement };
 
-  t.is(declaration.width, undefined);
-  appendKeys(['width']);
-  declaration.width = '10px';
-  t.is(declaration.width, '10px');
+  t.is(option.selected, false);
+});
+
+test('selected should be settable to a boolean value', t => {
+  const { option } = t.context as { option: HTMLOptionElement };
+
+  option.selected = true;
+  t.is(option.selected, true);
 });

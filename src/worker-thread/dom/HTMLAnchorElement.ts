@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-import { NodeType, NodeName, NamespaceURI } from './Node';
 import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { DOMTokenList } from './DOMTokenList';
 import { reflectProperties } from './enhanceElement';
 
 export class HTMLAnchorElement extends HTMLElement {
-  public relList: DOMTokenList = new DOMTokenList(this, 'rel', null, this.storeAttributeNS_.bind(this));
-
-  constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI) {
-    super(nodeType, nodeName, namespaceURI);
-
-    Object.assign(this.propertyBackedAttributes_, {
-      rel: (value: string): string => (this.rel = value),
-    });
-  }
+  public relList: DOMTokenList = new DOMTokenList(HTMLAnchorElement, this, 'rel', null, 'relList', 'rel');
 
   /**
    * Returns the href property/attribute value
@@ -38,24 +29,6 @@ export class HTMLAnchorElement extends HTMLElement {
    */
   public toString(): string {
     return this.href;
-  }
-
-  /**
-   * Getter returning value of rel property/reflected attribute
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLAnchorElement/rel
-   * @return value of the rel property/attribute.
-   */
-  get rel(): string {
-    return this.relList.value;
-  }
-
-  /**
-   * Setter providing value of rel property/reflected attribute
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLAnchorElement/rel
-   * @param value new rel value
-   */
-  set rel(value: string) {
-    this.relList.value = value;
   }
 
   /**

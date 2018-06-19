@@ -60,21 +60,23 @@ export const appendKeys = (keys: Array<string>): void => {
     });
   }
 
-  keysToAppend.forEach((key: string, index: number): void => {
-    const hyphenatedKey = hyphenateKey(key);
-    CSSStyleDeclaration.prototype[index + previousPrototypeLength] = hyphenatedKey;
+  keysToAppend.forEach(
+    (key: string, index: number): void => {
+      const hyphenatedKey = hyphenateKey(key);
+      CSSStyleDeclaration.prototype[index + previousPrototypeLength] = hyphenatedKey;
 
-    Object.defineProperties(CSSStyleDeclaration.prototype, {
-      [key]: {
-        get(): string {
-          return this.getPropertyValue(hyphenatedKey);
+      Object.defineProperties(CSSStyleDeclaration.prototype, {
+        [key]: {
+          get(): string {
+            return this.getPropertyValue(hyphenatedKey);
+          },
+          set(value) {
+            this.setProperty(hyphenatedKey, value);
+          },
         },
-        set(value) {
-          this.setProperty(hyphenatedKey, value);
-        },
-      },
-    });
-  });
+      });
+    },
+  );
 };
 
 export class CSSStyleDeclaration implements StyleDeclaration {
@@ -90,9 +92,15 @@ export class CSSStyleDeclaration implements StyleDeclaration {
   private storeAttributeMethod_: (namespaceURI: NamespaceURI, name: string, value: string) => string;
   private element_: Element;
 
-  constructor(element: Element, storeAttributeMethod: (namespaceURI: NamespaceURI, name: string, value: string) => string) {
-    this.storeAttributeMethod_ = storeAttributeMethod;
+  constructor(element: Element) {
+    this.storeAttributeMethod_ = element.storeAttributeNS_.bind(element);
     this.element_ = element;
+
+    if (element && element.propertyBackedAttributes_) {
+      Object.assign(element.propertyBackedAttributes_, {
+        style: [(): string | null => this.cssText, (value: string) => (this.cssText = value)],
+      });
+    }
   }
 
   /**

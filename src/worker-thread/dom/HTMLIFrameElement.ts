@@ -18,19 +18,10 @@ import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 import { DOMTokenList } from './DOMTokenList';
-import { NodeType, NodeName, NamespaceURI } from './Node';
 
 export class HTMLIFrameElement extends HTMLElement {
   // HTMLIFrameElement.sandbox, DOMTokenList, reflected attribute
-  public sandbox: DOMTokenList = new DOMTokenList(this, 'sandbox', null, this.storeAttributeNS_.bind(this));
-
-  constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI) {
-    super(nodeType, nodeName, namespaceURI);
-
-    Object.assign(this.propertyBackedAttributes_, {
-      sandbox: (value: string): string => (this.sandbox.value = value),
-    });
-  }
+  public sandbox: DOMTokenList = new DOMTokenList(HTMLIFrameElement, this, 'sandbox', null, null, null);
 }
 registerSubclass('iframe', HTMLIFrameElement);
 
