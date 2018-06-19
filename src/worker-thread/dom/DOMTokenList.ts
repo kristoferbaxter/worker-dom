@@ -25,6 +25,17 @@ export class DOMTokenList extends Array {
   private attributeNamespace_: string | null = null;
   private storeAttributeMethod_: (namespaceURI: NamespaceURI, name: string, value: string) => void;
 
+  /**
+   * The DOMTokenList interface represents a set of space-separated tokens.
+   * It is indexed beginning with 0 as with JavaScript Array objects and is case-sensitive.
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList
+   * @param defineOn Element or class extension to define getter/setter pair for token list access.
+   * @param element Specific Element instance to modify when value is changed.
+   * @param attributeName Name of the attribute used by Element to access DOMTokenList.
+   * @param attributeNamespace Namespace of the attribute used by Element to access DOMTokenList.
+   * @param accessorKey Key used to access DOMTokenList directly from specific element.
+   * @param propertyName Key used to access DOMTokenList as string getter/setter.
+   */
   constructor(
     defineOn: typeof Element,
     element: Element,
