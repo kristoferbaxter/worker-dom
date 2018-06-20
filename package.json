@@ -18,7 +18,7 @@
     "test": "ava src/output/test/",
     "pre~rollup": "rimraf src/output build && tsc -p config/tsconfig.build.worker-thread.json & tsc -p config/tsconfig.build.main-thread.json",
     "~rollup": "rollup --config config/rollup.config.js",
-    "lint": "tslint -c config/tslint.json src/*/**.ts",
+    "lint": "tslint -c config/tslint.json -p src/worker-thread/ & tslint -c config/tslint.json -p src/main-thread/",
     "debug": "DEBUG_BUNDLE=true yarn ~rollup && node -r esm demo/server.mjs",
     "bundle:git-push": "UGLIFY_BUNDLE=true yarn ~rollup",
     "bundle": "UGLIFY_BUNDLE=true COMPRESS_BUNDLE=true yarn ~rollup"

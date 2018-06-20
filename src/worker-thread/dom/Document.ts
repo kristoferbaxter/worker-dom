@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Element, NodeNameMapping } from './Element';
+import { Element, NODE_NAME_MAPPING } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { matchChildElement } from './matchElements';
 import './HTMLAnchorElement';
@@ -36,6 +36,8 @@ import './HTMLOptionElement';
 import './HTMLProgressElement';
 import './HTMLQuoteElement';
 import './HTMLScriptElement';
+import './HTMLSelectElement';
+import './HTMLSourceElement';
 import './HTMLTimeElement';
 import { SVGElement } from './SVGElement';
 import { Node, NodeType, NamespaceURI } from './Node';
@@ -99,7 +101,7 @@ export const document = (() => {
   }
 
   function createElementNS(namespaceURI: NamespaceURI, tagName: string): Element {
-    const element = new (NodeNameMapping[tagName] || HTMLElement)(NodeType.ELEMENT_NODE, tagName, namespaceURI);
+    const element = new (NODE_NAME_MAPPING[tagName] || HTMLElement)(NodeType.ELEMENT_NODE, tagName, namespaceURI);
     element.ownerDocument = document;
     return element;
   }

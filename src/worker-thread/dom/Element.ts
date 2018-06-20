@@ -369,9 +369,9 @@ export class Element extends Node {
 }
 reflectProperties([{ id: [''] }], Element);
 
-export const NodeNameMapping: {
+export const NODE_NAME_MAPPING: {
   [key: string]: typeof Element;
 } = {};
 export const registerSubclass = (nodeName: NodeName, subclass: typeof Element): void => {
-  NodeNameMapping[nodeName] = subclass;
+  NODE_NAME_MAPPING[nodeName] = subclass;
 };

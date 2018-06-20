@@ -24,7 +24,7 @@ export class HTMLDataListElement extends HTMLElement {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLDataListElement
    * @return Element "options" objects that are direct children.
    */
-  get options(): Element[] {
+  get options(): Array<Element> {
     return this.childNodes.filter((node: Node): boolean => node.nodeName === 'option') as Element[];
   }
 }
