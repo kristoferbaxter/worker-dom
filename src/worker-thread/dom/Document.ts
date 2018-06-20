@@ -38,6 +38,8 @@ import './HTMLQuoteElement';
 import './HTMLScriptElement';
 import './HTMLSelectElement';
 import './HTMLSourceElement';
+import './HTMLStyleElement';
+import './HTMLTableColElement';
 import './HTMLTimeElement';
 import { SVGElement } from './SVGElement';
 import { Node, NodeType, NamespaceURI } from './Node';
