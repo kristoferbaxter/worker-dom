@@ -19,6 +19,8 @@ import { Element } from './Element';
 type ConditionPredicate = (element: Element) => boolean;
 // To future authors: It would be great if we could enforce that elements are not modified by a ConditionPredicate.
 
+export const tagNameConditionPredicate = (tagName: string): ConditionPredicate => (element: Element): boolean => element.tagName === tagName;
+
 export const matchChildrenElements = (element: Element, conditionPredicate: ConditionPredicate): Element[] => {
   const matchingElements: Element[] = [];
   element.children.forEach(child => {

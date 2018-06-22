@@ -18,11 +18,11 @@ import { registerSubclass, Element } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin';
-import { matchChildrenElements, matchChildElement } from './matchElements';
+import { matchChildrenElements, matchChildElement, tagNameConditionPredicate } from './matchElements';
 import { HTMLOptionElement } from './HTMLOptionElement';
 
-const isOptionPredicate = (element: Element): boolean => element.tagName === 'option';
-const isSelectedOptionPredicate = (element: Element) => element.tagName === 'option' && (element as HTMLOptionElement).selected;
+const isOptionPredicate = tagNameConditionPredicate('option');
+const isSelectedOptionPredicate = (element: Element): boolean => element.tagName === 'option' && (element as HTMLOptionElement).selected;
 
 const enum SizeDefaults {
   SINGLE = 1,
