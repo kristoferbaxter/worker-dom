@@ -18,10 +18,10 @@
 // Babel 7 .babelrc.js files must use CJS, and Rollup configuration can be either.
 // This means we must use CJS for common functionality.
 
-const { DEBUG_BUNDLE = false, UGLIFY_BUNDLE = false, COMPRESS_BUNDLE = false } = process.env;
+const { DEBUG_BUNDLE = false, MINIFY_BUNDLE = false, COMPRESS_BUNDLE = false } = process.env;
 
 export let DEBUG_BUNDLE_VALUE = DEBUG_BUNDLE === 'true';
-export let UGLIFY_BUNDLE_VALUE = UGLIFY_BUNDLE === 'true';
+export let MINIFY_BUNDLE_VALUE = MINIFY_BUNDLE === 'true';
 export let COMPRESS_BUNDLE_VALUE = COMPRESS_BUNDLE === 'true';
 
 /**
@@ -32,18 +32,10 @@ export let COMPRESS_BUNDLE_VALUE = COMPRESS_BUNDLE === 'true';
  */
 export function path(esmodules, forMainThread, filename) {
   return [
-    DEBUG_BUNDLE_VALUE ? 'demo' : undefined,
+    DEBUG_BUNDLE_VALUE ? 'demo' : null,
     'build',
-    esmodules === true ? 'esmodules' : undefined,
-    forMainThread === true ? 'main-thread' : undefined,
+    esmodules === true ? 'esmodules' : null,
+    forMainThread === true ? 'main-thread' : null,
     filename,
-  ].reduce((accumulator, currentValue) => {
-    if (accumulator === undefined) {
-      return currentValue || '';
-    } else if (currentValue !== undefined) {
-      return `${accumulator}/${currentValue}`;
-    }
-
-    return accumulator;
-  });
+  ].filter(Boolean).join('/');
 }

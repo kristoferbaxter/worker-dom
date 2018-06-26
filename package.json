@@ -20,8 +20,8 @@
     "~rollup": "rollup --config config/rollup.config.js",
     "lint": "tslint -c config/tslint.json -p src/worker-thread/ & tslint -c config/tslint.json -p src/main-thread/",
     "debug": "DEBUG_BUNDLE=true yarn ~rollup && node -r esm demo/server.mjs",
-    "bundle:git-push": "UGLIFY_BUNDLE=true yarn ~rollup",
-    "bundle": "UGLIFY_BUNDLE=true COMPRESS_BUNDLE=true yarn ~rollup"
+    "bundle:git-push": "MINIFY_BUNDLE=true yarn ~rollup",
+    "bundle": "MINIFY_BUNDLE=true COMPRESS_BUNDLE=true yarn ~rollup"
   },
   "devDependencies": {
     "@babel/cli": "v7.0.0-beta.51",
@@ -29,6 +29,7 @@
     "@babel/plugin-proposal-class-properties": "v7.0.0-beta.51",
     "@babel/plugin-proposal-object-rest-spread": "v7.0.0-beta.51",
     "@babel/preset-env": "v7.0.0-beta.51",
+    "@kristoferbaxter/rollup-plugin-closure-compiler": "0.2.0",
     "ava": "0.25.0",
     "babel-plugin-minify-replace": "0.4.3",
     "babel-plugin-transform-remove-console": "6.9.4",
