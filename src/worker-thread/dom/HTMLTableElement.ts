@@ -124,3 +124,13 @@ reflectProperties([], HTMLTableElement);
 
 // Unimplemented Properties
 // HTMLTableElement.sortable => boolean
+
+// Unimplemented Methods
+// HTMLTableElement.createTHead()
+// HTMLTableElement.deleteTHead()
+// HTMLTableElement.createTFoot()
+// HTMLTableElement.deleteTFoot()
+// HTMLTableElement.createCaption()
+// HTMLTableElement.deleteCaption()
+// HTMLTableElement.insertRow()
+// HTMLTableElement.deleteRow()
