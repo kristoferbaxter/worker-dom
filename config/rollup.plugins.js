@@ -20,8 +20,6 @@ import brotli from 'rollup-plugin-brotli';
 import gzip from 'rollup-plugin-gzip';
 import { path, DEBUG_BUNDLE_VALUE } from './rollup.utils.js';
 
-const targets = esmodules => esmodules ? { esmodules: true } : { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] };
-const excludeFromConsoleRemoval = DEBUG_BUNDLE_VALUE ? ['error', 'warn', 'info', 'log', 'time', 'timeEnd'] : [];
 const BROTLI_CONFIG = {
   options: {
     mode: 0,
@@ -43,8 +41,11 @@ const GZIP_CONFIG = {
   },
 };
 
-export const babelPlugin = esmodules =>
-  babel({
+export const babelPlugin = esmodules => {
+  const targets = esmodules ? { esmodules: true } : { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] };
+  const excludeFromConsoleRemoval = DEBUG_BUNDLE_VALUE ? ['error', 'warn', 'info', 'log', 'time', 'timeEnd'] : [];
+
+  return babel({
     exclude: 'node_modules/**',
     presets: [
       [
@@ -76,6 +77,7 @@ export const babelPlugin = esmodules =>
       ],
     ],
   });
+};
 export const minifyPlugin = _ => minify();
 export const brotliPlugin = _ => brotli(BROTLI_CONFIG);
 export const gzipPlugin = _ => gzip(GZIP_CONFIG);
