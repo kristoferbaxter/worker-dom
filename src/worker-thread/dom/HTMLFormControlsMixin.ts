@@ -15,9 +15,9 @@
  */
 
 import { Element } from './Element';
-import { matchChildrenElements } from './matchElements';
+import { matchChildrenElements, tagNameConditionPredicate } from './matchElements';
 
-const MATCHING_CHILD_ELEMENT_TAG_NAMES = 'button fieldset input object output select textarea'.split(' ');
+const MATCHING_CHILD_ELEMENT_TAGNAMES = 'button fieldset input object output select textarea'.split(' ');
 
 /**
  * The HTMLFormControlsCollection interface represents a collection of HTML form control elements.
@@ -30,7 +30,7 @@ export const HTMLFormControlsCollectionMixin = (defineOn: typeof Element): void 
      * @return Element array matching children of specific tagnames.
      */
     get(): Array<Element> {
-      return matchChildrenElements(this as Element, element => MATCHING_CHILD_ELEMENT_TAG_NAMES.includes(element.tagName));
+      return matchChildrenElements(this as Element, tagNameConditionPredicate(MATCHING_CHILD_ELEMENT_TAGNAMES));
     },
   });
 };

@@ -175,6 +175,7 @@ export class DOMTokenList extends Array {
    * Report tokenList mutations to MutationObserver.
    * @param oldValue value before mutation
    * @param value value after mutation
+   * @private
    */
   private mutationCompleteHandler_(oldValue: string, value: string): void {
     this.storeAttributeMethod_(null, this.attributeName_, value);

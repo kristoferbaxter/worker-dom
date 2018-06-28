@@ -17,10 +17,12 @@
 import test from 'ava';
 import { NodeType } from '../../worker-thread/dom/Node';
 import { HTMLIFrameElement } from '../../worker-thread/dom/HTMLIFrameElement';
+import { Element } from '../../worker-thread/dom/Element';
 
 test.beforeEach(t => {
+  const document = new Element(NodeType.DOCUMENT_NODE, '#document', null, null);
   t.context = {
-    element: new HTMLIFrameElement(NodeType.ELEMENT_NODE, 'iframe', null),
+    element: new HTMLIFrameElement(NodeType.ELEMENT_NODE, 'iframe', null, document),
   };
 });
 

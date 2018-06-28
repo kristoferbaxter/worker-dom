@@ -21,10 +21,11 @@ import { HTMLAnchorElement } from '../../worker-thread/dom/HTMLAnchorElement';
 import { Text } from '../../worker-thread/dom/Text';
 
 test.beforeEach(t => {
+  const document = new HTMLElement(NodeType.DOCUMENT_NODE, '#document', null, null);
   t.context = {
-    element: new HTMLAnchorElement(NodeType.ELEMENT_NODE, 'a', null),
-    child: new HTMLElement(NodeType.ELEMENT_NODE, 'p', null),
-    text: new Text('default text'),
+    element: new HTMLAnchorElement(NodeType.ELEMENT_NODE, 'a', null, document),
+    child: new HTMLElement(NodeType.ELEMENT_NODE, 'p', null, document),
+    text: new Text('default text', document),
   };
 });
 

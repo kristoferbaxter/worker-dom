@@ -18,8 +18,9 @@ import test from 'ava';
 import { Node, NodeType } from '../../worker-thread/dom/Node';
 
 test('returns the name of the Node', t => {
-  const node = new Node(NodeType.TEXT_NODE, '#text');
-  const nodeTwo = new Node(NodeType.ELEMENT_NODE, 'div');
+  const document = new Node(NodeType.DOCUMENT_NODE, '#document', null);
+  const node = new Node(NodeType.TEXT_NODE, '#text', document);
+  const nodeTwo = new Node(NodeType.ELEMENT_NODE, 'div', document);
 
   t.is(node.nodeName, '#text', 'text node returns a valid text node name');
   t.is(nodeTwo.nodeName, 'div', 'standard element node returns a valid node name');

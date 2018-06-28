@@ -163,6 +163,7 @@ export class CSSStyleDeclaration implements StyleDeclaration {
   /**
    * Report CSSStyleDeclaration mutations to MutationObserver.
    * @param value value after mutation
+   * @private
    */
   private mutationCompleteHandler_(value: string): void {
     const oldValue = this.storeAttributeMethod_(null, 'style', value);

@@ -17,10 +17,12 @@
 import test from 'ava';
 import { NodeType } from '../../worker-thread/dom/Node';
 import { HTMLFormElement } from '../../worker-thread/dom/HTMLFormElement';
+import { Element } from '../../worker-thread/dom/Element';
 
 test.beforeEach(t => {
+  const document = new Element(NodeType.DOCUMENT_NODE, '#document', null, null);
   t.context = {
-    element: new HTMLFormElement(NodeType.ELEMENT_NODE, 'form', null),
+    element: new HTMLFormElement(NodeType.ELEMENT_NODE, 'form', null, document),
   };
 });
 

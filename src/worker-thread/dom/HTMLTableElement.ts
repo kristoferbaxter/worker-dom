@@ -16,11 +16,11 @@
 
 import { registerSubclass, Element } from './Element';
 import { HTMLElement } from './HTMLElement';
-import { reflectProperties } from './enhanceElement';
 import { matchChildElement, matchChildrenElements, tagNameConditionPredicate } from './matchElements';
+import { NodeName } from './Node';
 
 const removeElement = (element: Element | null): any => element && element.remove();
-const insertBeforeElementsWithTagName = (parent: Element, element: Element, tagNames: Array<string>): void => {
+const insertBeforeElementsWithTagName = (parent: Element, element: Element, tagNames: Array<NodeName>): void => {
   const insertBeforeElement = matchChildElement(parent, (element: Element): boolean => !tagNames.includes(element.tagName));
   if (insertBeforeElement) {
     parent.insertBefore(element, insertBeforeElement);
@@ -35,7 +35,7 @@ export class HTMLTableElement extends HTMLElement {
    * @return first matching caption Element or null if none exists.
    */
   get caption(): Element | null {
-    return matchChildElement(this, tagNameConditionPredicate('caption'));
+    return matchChildElement(this, tagNameConditionPredicate(['caption']));
   }
 
   /**
@@ -58,7 +58,7 @@ export class HTMLTableElement extends HTMLElement {
    * @return first matching thead Element or null if none exists.
    */
   get tHead(): Element | null {
-    return matchChildElement(this, tagNameConditionPredicate('thead'));
+    return matchChildElement(this, tagNameConditionPredicate(['thead']));
   }
 
   /**
@@ -82,7 +82,7 @@ export class HTMLTableElement extends HTMLElement {
    * @return first matching thead Element or null if none exists.
    */
   get tFoot(): Element | null {
-    return matchChildElement(this, tagNameConditionPredicate('tfoot'));
+    return matchChildElement(this, tagNameConditionPredicate(['tfoot']));
   }
 
   /**
@@ -106,7 +106,7 @@ export class HTMLTableElement extends HTMLElement {
    * @return array of 'tr' tagname elements
    */
   get rows(): Array<Element> {
-    return matchChildrenElements(this, tagNameConditionPredicate('tr'));
+    return matchChildrenElements(this, tagNameConditionPredicate(['tr']));
   }
 
   /**
@@ -114,13 +114,10 @@ export class HTMLTableElement extends HTMLElement {
    * @return array of 'tbody' tagname elements
    */
   get tBodies(): Array<Element> {
-    return matchChildrenElements(this, tagNameConditionPredicate('tbody'));
+    return matchChildrenElements(this, tagNameConditionPredicate(['tbody']));
   }
 }
 registerSubclass('table', HTMLTableElement);
-
-// Reflected Properties
-reflectProperties([], HTMLTableElement);
 
 // Unimplemented Properties
 // HTMLTableElement.sortable => boolean

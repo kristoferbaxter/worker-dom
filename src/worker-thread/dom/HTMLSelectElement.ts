@@ -21,7 +21,7 @@ import { HTMLInputLabelsMixin } from './HTMLInputLabelsMixin';
 import { matchChildrenElements, matchChildElement, tagNameConditionPredicate } from './matchElements';
 import { HTMLOptionElement } from './HTMLOptionElement';
 
-const isOptionPredicate = tagNameConditionPredicate('option');
+const isOptionPredicate = tagNameConditionPredicate(['option']);
 const isSelectedOptionPredicate = (element: Element): boolean => element.tagName === 'option' && (element as HTMLOptionElement).selected;
 
 const enum SizeDefaults {

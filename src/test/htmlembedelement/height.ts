@@ -17,10 +17,12 @@
 import test from 'ava';
 import { NodeType } from '../../worker-thread/dom/Node';
 import { HTMLEmbedElement } from '../../worker-thread/dom/HTMLEmbedElement';
+import { Element } from '../../worker-thread/dom/Element';
 
 test.beforeEach(t => {
+  const document = new Element(NodeType.DOCUMENT_NODE, '#document', null, null);
   t.context = {
-    element: new HTMLEmbedElement(NodeType.ELEMENT_NODE, 'embed', null),
+    element: new HTMLEmbedElement(NodeType.ELEMENT_NODE, 'embed', null, document),
   };
 });
 

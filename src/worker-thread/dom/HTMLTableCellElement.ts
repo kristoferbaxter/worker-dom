@@ -18,17 +18,18 @@ import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 import { DOMTokenList } from './DOMTokenList';
+import { matchNearestParent, tagNameConditionPredicate, matchChildrenElements } from './matchElements';
 
 export class HTMLTableCellElement extends HTMLElement {
   public headers: DOMTokenList = new DOMTokenList(HTMLTableCellElement, this, 'headers', null, null);
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableCellElement
-   * @return position of the cell within the parent tr, if not nested directly in a tr the value is -1.
+   * @return position of the cell within the parent tr, if not nested in a tr the value is -1.
    */
   get cellIndex(): number {
-    const parent = this.parentNode;
-    return parent && parent.tagName === 'tr' ? parent.children.indexOf(this) : -1;
+    const parent = matchNearestParent(this, tagNameConditionPredicate(['tr']));
+    return parent !== null ? matchChildrenElements(parent, tagNameConditionPredicate(['th', 'td'])).indexOf(this) : -1;
   }
 }
 registerSubclass('th', HTMLTableCellElement);

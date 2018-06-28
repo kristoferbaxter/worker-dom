@@ -20,10 +20,11 @@ import { Element } from '../../worker-thread/dom/Element';
 import { Text } from '../../worker-thread/dom/Text';
 
 test.beforeEach(t => {
+  const document = new Element(NodeType.DOCUMENT_NODE, '#document', null, null);
   t.context = {
-    element: new Element(NodeType.ELEMENT_NODE, 'div', null),
-    child: new Element(NodeType.ELEMENT_NODE, 'p', null),
-    text: new Text('default text'),
+    element: new Element(NodeType.ELEMENT_NODE, 'div', null, document),
+    child: new Element(NodeType.ELEMENT_NODE, 'p', null, document),
+    text: new Text('default text', document),
   };
 });
 

@@ -22,16 +22,17 @@ import { Element } from '../../worker-thread/dom/Element';
 // button fieldset input object output select textarea
 
 test.beforeEach(t => {
+  const document = new Element(NodeType.DOCUMENT_NODE, '#document', null, null);
   t.context = {
-    element: new HTMLFieldSetElement(NodeType.ELEMENT_NODE, 'fieldset', null),
-    button: new Element(NodeType.ELEMENT_NODE, 'button', null),
-    buttonTwo: new Element(NodeType.ELEMENT_NODE, 'button', null),
-    fieldset: new HTMLFieldSetElement(NodeType.ELEMENT_NODE, 'fieldset', null),
-    input: new Element(NodeType.ELEMENT_NODE, 'input', null),
-    output: new Element(NodeType.ELEMENT_NODE, 'output', null),
-    select: new Element(NodeType.ELEMENT_NODE, 'select', null),
-    textarea: new Element(NodeType.ELEMENT_NODE, 'textarea', null),
-    div: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    element: new HTMLFieldSetElement(NodeType.ELEMENT_NODE, 'fieldset', null, document),
+    button: new Element(NodeType.ELEMENT_NODE, 'button', null, document),
+    buttonTwo: new Element(NodeType.ELEMENT_NODE, 'button', null, document),
+    fieldset: new HTMLFieldSetElement(NodeType.ELEMENT_NODE, 'fieldset', null, document),
+    input: new Element(NodeType.ELEMENT_NODE, 'input', null, document),
+    output: new Element(NodeType.ELEMENT_NODE, 'output', null, document),
+    select: new Element(NodeType.ELEMENT_NODE, 'select', null, document),
+    textarea: new Element(NodeType.ELEMENT_NODE, 'textarea', null, document),
+    div: new Element(NodeType.ELEMENT_NODE, 'div', null, document),
   };
 });
 

@@ -19,8 +19,9 @@ import { NodeType } from '../../worker-thread/dom/Node';
 import { Element } from '../../worker-thread/dom/Element';
 
 test.beforeEach(t => {
+  const document = new Element(NodeType.DOCUMENT_NODE, '#document', null, null);
   t.context = {
-    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    node: new Element(NodeType.ELEMENT_NODE, 'div', null, document),
   };
 });
 

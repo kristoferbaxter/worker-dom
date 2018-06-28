@@ -16,10 +16,12 @@
 
 import test from 'ava';
 import { Text } from '../../worker-thread/dom/Text';
+import { Node, NodeType } from '../../worker-thread/dom/Node';
 
 test.beforeEach(t => {
+  const document = new Node(NodeType.DOCUMENT_NODE, '#document', null);
   t.context = {
-    text: new Text('default value'),
+    text: new Text('default value', document),
   };
 });
 

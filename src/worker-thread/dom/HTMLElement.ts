@@ -16,7 +16,7 @@
 
 import { Element } from './Element';
 import { reflectProperties } from './enhanceElement';
-import { matchNearestParent } from './matchElements';
+import { matchNearestParent, tagNameConditionPredicate } from './matchElements';
 
 export class HTMLElement extends Element {
   /**
@@ -26,7 +26,7 @@ export class HTMLElement extends Element {
    * @return nearest parent form element.
    */
   get form(): Element | null {
-    return matchNearestParent(this, element => element.tagName === 'form');
+    return matchNearestParent(this, tagNameConditionPredicate(['form']));
   }
 }
 

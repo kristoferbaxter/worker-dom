@@ -42,6 +42,7 @@ import './HTMLStyleElement';
 import './HTMLTableCellElement';
 import './HTMLTableColElement';
 import './HTMLTableElement';
+import './HTMLTableRowElement';
 import './HTMLTimeElement';
 import { SVGElement } from './SVGElement';
 import { Node, NodeType, NamespaceURI } from './Node';
@@ -50,10 +51,6 @@ import { Text } from './Text';
 import { MutationObserver } from '../MutationObserver';
 import { observe as observeMutations } from '../../transfer/DocumentMutations';
 import { propagate as propagateEvents } from '../../transfer/TransferableEvent';
-
-type createElementFunc = (type: string) => Element;
-type createElementNSFunc = (type: string, namespace: string) => Element;
-type createTextNodeFunc = (text: string) => Text;
 
 export class Document extends Element {
   public defaultView: {
@@ -67,17 +64,18 @@ export class Document extends Element {
     Event: typeof Event;
   };
   public documentElement: Document;
-  public createElement: createElementFunc;
-  public createElementNS: createElementNSFunc;
-  public createTextNode: createTextNodeFunc;
+  public createElement: (tagName: string) => Element;
+  public createElementNS: (namespaceURI: NamespaceURI, tagName: string) => Element;
+  public createTextNode: (text: string) => Text;
   public body: Element;
 
-  constructor(createElement: createElementFunc, createElementNS: createElementNSFunc, createTextNode: createTextNodeFunc) {
-    super(NodeType.DOCUMENT_NODE, '#document', null);
+  constructor() {
+    super(NodeType.DOCUMENT_NODE, '#document', null, null);
     this.documentElement = this;
-    this.createElement = createElement;
-    this.createElementNS = createElementNS;
-    this.createTextNode = createTextNode;
+    this.createElement = (tagName: string): Element => this.createElementNS(null, tagName);
+    this.createElementNS = (namespaceURI: NamespaceURI, tagName: string): Element =>
+      new (NODE_NAME_MAPPING[tagName] || HTMLElement)(NodeType.ELEMENT_NODE, tagName, namespaceURI, document);
+    this.createTextNode = (text: string): Text => new Text(text, this);
     this.defaultView = {
       document: this,
       MutationObserver,
@@ -100,19 +98,9 @@ export class Document extends Element {
 }
 
 export const document = (() => {
-  function createElement(tagName: string): Element {
-    return createElementNS(null, tagName);
-  }
-
-  function createElementNS(namespaceURI: NamespaceURI, tagName: string): Element {
-    const element = new (NODE_NAME_MAPPING[tagName] || HTMLElement)(NodeType.ELEMENT_NODE, tagName, namespaceURI);
-    element.ownerDocument = document;
-    return element;
-  }
-
-  const document = new Document(createElement, createElementNS, (text: string): Text => new Text(text));
+  const document = new Document();
   document.isConnected = true;
-  document.appendChild((document.body = createElement('body')));
+  document.appendChild((document.body = document.createElement('body')));
   observeMutations(document);
   propagateEvents();
 

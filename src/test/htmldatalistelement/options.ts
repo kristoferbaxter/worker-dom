@@ -20,12 +20,13 @@ import { Element } from '../../worker-thread/dom/Element';
 import { HTMLDataListElement } from '../../worker-thread/dom/HTMLDataListElement';
 
 test.beforeEach(t => {
+  const document = new Element(NodeType.DOCUMENT_NODE, '#document', null, null);
   t.context = {
-    node: new HTMLDataListElement(NodeType.ELEMENT_NODE, 'datalist', null),
-    option: new Element(NodeType.ELEMENT_NODE, 'option', null),
-    optionTwo: new Element(NodeType.ELEMENT_NODE, 'option', null),
-    text: new Node(NodeType.TEXT_NODE, '#text'),
-    invalidElement: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    node: new HTMLDataListElement(NodeType.ELEMENT_NODE, 'datalist', null, document),
+    option: new Element(NodeType.ELEMENT_NODE, 'option', null, document),
+    optionTwo: new Element(NodeType.ELEMENT_NODE, 'option', null, document),
+    text: new Node(NodeType.TEXT_NODE, '#text', document),
+    invalidElement: new Element(NodeType.ELEMENT_NODE, 'div', null, document),
   };
 });
 

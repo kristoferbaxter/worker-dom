@@ -58,7 +58,7 @@ const propagate = (node: Node, property: string, value: any): void => {
 
 export class Node {
   [index: string]: any;
-  public ownerDocument: Node | null = null;
+  public ownerDocument: Node;
   public nodeType: NodeType;
   public nodeName: NodeName;
   public childNodes: Node[] = [];
@@ -70,9 +70,10 @@ export class Node {
     [index: string]: EventHandler[];
   } = {};
 
-  constructor(nodeType: NodeType, nodeName: NodeName) {
+  constructor(nodeType: NodeType, nodeName: NodeName, ownerDocument: Node | null) {
     this.nodeType = nodeType;
     this.nodeName = nodeName;
+    this.ownerDocument = ownerDocument !== null ? ownerDocument : this;
 
     this._index_ = mappingStoreNode(this);
   }

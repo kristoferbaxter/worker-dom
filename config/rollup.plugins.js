@@ -43,7 +43,7 @@ const GZIP_CONFIG = {
 
 export const babelPlugin = esmodules => {
   const targets = esmodules ? { esmodules: true } : { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] };
-  const excludeFromConsoleRemoval = DEBUG_BUNDLE_VALUE ? ['error', 'warn', 'info', 'log', 'time', 'timeEnd'] : [];
+  const exclude = DEBUG_BUNDLE_VALUE ? ['error', 'warn', 'info', 'log', 'time', 'timeEnd'] : [];
 
   return babel({
     exclude: 'node_modules/**',
@@ -51,7 +51,7 @@ export const babelPlugin = esmodules => {
       [
         '@babel/env',
         {
-          targets: targets(esmodules),
+          targets,
           loose: true,
           modules: false,
         },
@@ -60,7 +60,7 @@ export const babelPlugin = esmodules => {
     plugins: [
       ['@babel/plugin-proposal-object-rest-spread'],
       ['@babel/proposal-class-properties'],
-      ['babel-plugin-transform-remove-console', { exclude: excludeFromConsoleRemoval }],
+      ['babel-plugin-transform-remove-console', { exclude }],
       [
         'minify-replace',
         {

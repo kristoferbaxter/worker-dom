@@ -18,9 +18,10 @@ import test from 'ava';
 import { Node, NodeType } from '../../worker-thread/dom/Node';
 
 test.beforeEach(t => {
+  const document = new Node(NodeType.DOCUMENT_NODE, '#document', null);
   t.context = {
-    node: new Node(NodeType.ELEMENT_NODE, 'div'),
-    child: new Node(NodeType.ELEMENT_NODE, 'div'),
+    node: new Node(NodeType.ELEMENT_NODE, 'div', document),
+    child: new Node(NodeType.ELEMENT_NODE, 'div', document),
   };
 });
 
