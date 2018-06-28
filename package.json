@@ -9,7 +9,7 @@
   },
   "engines": {
     "yarn": ">=1.7.0",
-    "node": ">=10.3.0"
+    "node": ">=8.10.0"
   },
   "author": "Kristofer Baxter",
   "license": "Apache-2.0",
