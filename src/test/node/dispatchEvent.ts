@@ -19,8 +19,7 @@ import { Node, NodeType } from '../../worker-thread/dom/Node';
 import { Event } from '../../worker-thread/Event';
 
 test.beforeEach(t => {
-  const document = new Node(NodeType.DOCUMENT_NODE, '#document', null);
-  const node = new Node(NodeType.ELEMENT_NODE, 'div', document);
+  const node = new Node(NodeType.ELEMENT_NODE, 'div');
   const event = new Event('click', {});
   event.target = node;
 

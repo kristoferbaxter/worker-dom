@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { registerSubclass, Element } from './Element';
+import { registerSubclass } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { reflectProperties } from './enhanceElement';
 import { NodeType, NodeName, NamespaceURI } from './Node';
@@ -22,8 +22,8 @@ import { NodeType, NodeName, NamespaceURI } from './Node';
 export class HTMLOptionElement extends HTMLElement {
   private isSelected: boolean = false;
 
-  constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Element) {
-    super(nodeType, nodeName, namespaceURI, ownerDocument);
+  constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI) {
+    super(nodeType, nodeName, namespaceURI);
 
     this.propertyBackedAttributes_.selected = [(): string => String(this.isSelected), (value: string): boolean => (this.selected = value === 'true')];
   }

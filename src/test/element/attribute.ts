@@ -20,9 +20,8 @@ import { Element } from '../../worker-thread/dom/Element';
 import { Attr } from '../../worker-thread/dom/Attr';
 
 test.beforeEach(t => {
-  const document = new Element(NodeType.DOCUMENT_NODE, '#document', null, null);
   t.context = {
-    node: new Element(NodeType.ELEMENT_NODE, 'div', null, document),
+    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
     attr: { namespaceURI: null, name: 'name', value: 'value' } as Attr,
     attrOveride: { namespaceURI: null, name: 'name', value: 'value-overide' } as Attr,
     attrTwo: { namespaceURI: null, name: 'name-two', value: 'value-two' } as Attr,

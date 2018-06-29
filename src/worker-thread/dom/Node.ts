@@ -39,6 +39,8 @@ export const enum NodeType {
 export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
 export type NamespaceURI = string | null;
 
+export let globalDocument: Node | null = null;
+
 /**
  * Propagates a property change for a Node to itself and all childNodes.
  * @param node Node to start applying change to
@@ -70,10 +72,15 @@ export class Node {
     [index: string]: EventHandler[];
   } = {};
 
-  constructor(nodeType: NodeType, nodeName: NodeName, ownerDocument: Node | null) {
+  constructor(nodeType: NodeType, nodeName: NodeName) {
     this.nodeType = nodeType;
     this.nodeName = nodeName;
-    this.ownerDocument = ownerDocument !== null ? ownerDocument : this;
+
+    // The first Node created is the global document.
+    if (globalDocument === null) {
+      globalDocument = this;
+    }
+    this.ownerDocument = globalDocument;
 
     this._index_ = mappingStoreNode(this);
   }

@@ -20,12 +20,10 @@ import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
 import { Element } from '../../worker-thread/dom/Element';
 
 test.beforeEach(t => {
-  const document = new Element(NodeType.DOCUMENT_NODE, '#document', null, null);
   t.context = {
-    document,
-    element: new HTMLElement(NodeType.ELEMENT_NODE, 'label', null, document),
-    form: new Element(NodeType.ELEMENT_NODE, 'form', null, document),
-    intermediary: new Element(NodeType.ELEMENT_NODE, 'div', null, document),
+    element: new HTMLElement(NodeType.ELEMENT_NODE, 'label', null),
+    form: new Element(NodeType.ELEMENT_NODE, 'form', null),
+    intermediary: new Element(NodeType.ELEMENT_NODE, 'div', null),
   };
 });
 
@@ -51,8 +49,8 @@ test('form should return only form parent when deeply nested', t => {
 });
 
 test('form should return closest form to the fieldset element', t => {
-  const { element, form, intermediary, document } = t.context as { element: HTMLElement; form: Element; intermediary: Element; document: Element };
-  const secondForm = new Element(NodeType.ELEMENT_NODE, 'form', null, document);
+  const { element, form, intermediary } = t.context as { element: HTMLElement; form: Element; intermediary: Element };
+  const secondForm = new Element(NodeType.ELEMENT_NODE, 'form', null);
 
   secondForm.appendChild(form);
   form.appendChild(intermediary);

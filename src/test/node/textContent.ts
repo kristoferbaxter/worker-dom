@@ -19,12 +19,11 @@ import { Node, NodeType } from '../../worker-thread/dom/Node';
 import { Text } from '../../worker-thread/dom/Text';
 
 test.beforeEach(t => {
-  const document = new Node(NodeType.DOCUMENT_NODE, '#document', null);
   t.context = {
-    node: new Node(NodeType.ELEMENT_NODE, 'div', document),
-    child: new Node(NodeType.ELEMENT_NODE, 'p', document),
-    nodeText: new Text('text in node', document),
-    childText: new Text(' text in child', document),
+    node: new Node(NodeType.ELEMENT_NODE, 'div'),
+    child: new Node(NodeType.ELEMENT_NODE, 'p'),
+    nodeText: new Text('text in node'),
+    childText: new Text(' text in child'),
   };
 });
 

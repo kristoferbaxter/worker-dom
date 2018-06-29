@@ -17,11 +17,9 @@
 import test from 'ava';
 import { NodeType } from '../../worker-thread/dom/Node';
 import { HTMLFieldSetElement } from '../../worker-thread/dom/HTMLFieldSetElement';
-import { Element } from '../../worker-thread/dom/Element';
 
 test('type should be fieldset by default', t => {
-  const document = new Element(NodeType.DOCUMENT_NODE, '#document', null, null);
-  const element = new HTMLFieldSetElement(NodeType.ELEMENT_NODE, 'fieldset', null, document);
+  const element = new HTMLFieldSetElement(NodeType.ELEMENT_NODE, 'fieldset', null);
 
   t.is(element.type, 'fieldset');
 });

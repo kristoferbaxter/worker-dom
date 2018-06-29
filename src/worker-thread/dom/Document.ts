@@ -43,6 +43,7 @@ import './HTMLTableCellElement';
 import './HTMLTableColElement';
 import './HTMLTableElement';
 import './HTMLTableRowElement';
+import './HTMLTableSectionElement';
 import './HTMLTimeElement';
 import { SVGElement } from './SVGElement';
 import { Node, NodeType, NamespaceURI } from './Node';
@@ -70,12 +71,12 @@ export class Document extends Element {
   public body: Element;
 
   constructor() {
-    super(NodeType.DOCUMENT_NODE, '#document', null, null);
+    super(NodeType.DOCUMENT_NODE, '#document', null);
     this.documentElement = this;
     this.createElement = (tagName: string): Element => this.createElementNS(null, tagName);
     this.createElementNS = (namespaceURI: NamespaceURI, tagName: string): Element =>
-      new (NODE_NAME_MAPPING[tagName] || HTMLElement)(NodeType.ELEMENT_NODE, tagName, namespaceURI, document);
-    this.createTextNode = (text: string): Text => new Text(text, this);
+      new (NODE_NAME_MAPPING[tagName] || HTMLElement)(NodeType.ELEMENT_NODE, tagName, namespaceURI);
+    this.createTextNode = (text: string): Text => new Text(text);
     this.defaultView = {
       document: this,
       MutationObserver,

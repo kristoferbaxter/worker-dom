@@ -17,12 +17,10 @@
 import test from 'ava';
 import { NodeType } from '../../worker-thread/dom/Node';
 import { HTMLAnchorElement } from '../../worker-thread/dom/HTMLAnchorElement';
-import { Element } from '../../worker-thread/dom/Element';
 
 test.beforeEach(t => {
-  const document = new Element(NodeType.DOCUMENT_NODE, '#document', null, null);
   t.context = {
-    node: new HTMLAnchorElement(NodeType.ELEMENT_NODE, 'a', null, document),
+    node: new HTMLAnchorElement(NodeType.ELEMENT_NODE, 'a', null),
   };
 });
 

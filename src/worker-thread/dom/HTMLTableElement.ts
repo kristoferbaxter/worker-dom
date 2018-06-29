@@ -18,6 +18,8 @@ import { registerSubclass, Element } from './Element';
 import { HTMLElement } from './HTMLElement';
 import { matchChildElement, matchChildrenElements, tagNameConditionPredicate } from './matchElements';
 import { NodeName } from './Node';
+import { HTMLTableSectionElement } from './HTMLTableSectionElement';
+import { HTMLTableRowElement } from './HTMLTableRowElement';
 
 const removeElement = (element: Element | null): any => element && element.remove();
 const insertBeforeElementsWithTagName = (parent: Element, element: Element, tagNames: Array<NodeName>): void => {
@@ -57,15 +59,15 @@ export class HTMLTableElement extends HTMLElement {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableElement/tHead
    * @return first matching thead Element or null if none exists.
    */
-  get tHead(): Element | null {
-    return matchChildElement(this, tagNameConditionPredicate(['thead']));
+  get tHead(): HTMLTableSectionElement | null {
+    return matchChildElement(this, tagNameConditionPredicate(['thead'])) as HTMLTableSectionElement | null;
   }
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableElement/tHead
    * @param newElement new thead element to insert in this table.
    */
-  set tHead(newElement: Element | null) {
+  set tHead(newElement: HTMLTableSectionElement | null) {
     if (newElement && newElement.tagName === 'thead') {
       // If a correct object is given,
       // it is inserted in the tree immediately before the first element that is
@@ -81,15 +83,15 @@ export class HTMLTableElement extends HTMLElement {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableElement/tHead
    * @return first matching thead Element or null if none exists.
    */
-  get tFoot(): Element | null {
-    return matchChildElement(this, tagNameConditionPredicate(['tfoot']));
+  get tFoot(): HTMLTableSectionElement | null {
+    return matchChildElement(this, tagNameConditionPredicate(['tfoot'])) as HTMLTableSectionElement | null;
   }
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableElement/tHead
    * @param newElement new tfoot element to insert in this table.
    */
-  set tFoot(newElement: Element | null) {
+  set tFoot(newElement: HTMLTableSectionElement | null) {
     if (newElement && newElement.tagName === 'tfoot') {
       // If a correct object is given,
       // it is inserted in the tree immediately before the first element that is neither a <caption>,
@@ -105,16 +107,16 @@ export class HTMLTableElement extends HTMLElement {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableElement
    * @return array of 'tr' tagname elements
    */
-  get rows(): Array<Element> {
-    return matchChildrenElements(this, tagNameConditionPredicate(['tr']));
+  get rows(): Array<HTMLTableRowElement> {
+    return matchChildrenElements(this, tagNameConditionPredicate(['tr'])) as Array<HTMLTableRowElement>;
   }
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableElement
    * @return array of 'tbody' tagname elements
    */
-  get tBodies(): Array<Element> {
-    return matchChildrenElements(this, tagNameConditionPredicate(['tbody']));
+  get tBodies(): Array<HTMLTableSectionElement> {
+    return matchChildrenElements(this, tagNameConditionPredicate(['tbody'])) as Array<HTMLTableSectionElement>;
   }
 }
 registerSubclass('table', HTMLTableElement);

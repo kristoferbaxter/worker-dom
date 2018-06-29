@@ -20,9 +20,8 @@ import { Element } from '../../worker-thread/dom/Element';
 import { DOMTokenList } from '../../worker-thread/dom/DOMTokenList';
 
 test.beforeEach(t => {
-  const document = new Element(NodeType.DOCUMENT_NODE, '#document', null, null);
   t.context = {
-    tokenList: new DOMTokenList(Element, new Element(NodeType.ELEMENT_NODE, 'div', null, document), 'class', null, null),
+    tokenList: new DOMTokenList(Element, new Element(NodeType.ELEMENT_NODE, 'div', null), 'class', null, null),
   };
 });
 

@@ -35,8 +35,8 @@ export class Element extends Node {
   public style: CSSStyleDeclaration = new CSSStyleDeclaration(this);
   public namespaceURI: NamespaceURI;
 
-  constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI, ownerDocument: Element | null) {
-    super(nodeType, nodeName, ownerDocument);
+  constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI) {
+    super(nodeType, nodeName);
     this.namespaceURI = namespaceURI;
   }
 
@@ -116,7 +116,7 @@ export class Element extends Node {
   set textContent(text: string) {
     // TODO(KB): Investigate removing all children in a single .splice to childNodes.
     this.childNodes.forEach(childNode => childNode.remove());
-    this.appendChild(new Text(text, this.ownerDocument));
+    this.appendChild(new Text(text));
   }
 
   /**

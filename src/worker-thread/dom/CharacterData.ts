@@ -23,8 +23,8 @@ export abstract class CharacterData extends Node {
   // _data_ is private to ensure mutation observation occurs for all public setters.
   private _data_: string;
 
-  constructor(data: string, nodeType: NodeType, nodeName: NodeName, ownerDocument: Node) {
-    super(nodeType, nodeName, ownerDocument);
+  constructor(data: string, nodeType: NodeType, nodeName: NodeName) {
+    super(nodeType, nodeName);
     this._data_ = data;
   }
 

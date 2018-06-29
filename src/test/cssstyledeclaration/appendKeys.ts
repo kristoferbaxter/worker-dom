@@ -20,10 +20,9 @@ import { Element } from '../../worker-thread/dom/Element';
 import { NodeType } from '../../worker-thread/dom/Node';
 
 test.beforeEach(t => {
-  const document = new Element(NodeType.DOCUMENT_NODE, '#document', null, null);
   t.context = {
-    node: new Element(NodeType.ELEMENT_NODE, 'div', null, document),
-    declaration: new CSSStyleDeclaration(new Element(NodeType.ELEMENT_NODE, 'div', null, document)),
+    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    declaration: new CSSStyleDeclaration(new Element(NodeType.ELEMENT_NODE, 'div', null)),
   };
 });
 

@@ -19,6 +19,7 @@ import { HTMLElement } from './HTMLElement';
 import { matchNearestParent, tagNameConditionPredicate, ConditionPredicate, matchChildrenElements } from './matchElements';
 import { HTMLTableElement } from './HTMLTableElement';
 import { Document } from './Document';
+import { HTMLTableCellElement } from './HTMLTableCellElement';
 
 const TABLE_SECTION_TAGNAMES = 'table tbody thead tfoot'.split(' ');
 
@@ -33,8 +34,8 @@ export class HTMLTableRowElement extends HTMLElement {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLTableRowElement
    * @return td and th elements that are children of this row.
    */
-  get cells(): Array<Element> {
-    return matchChildrenElements(this, tagNameConditionPredicate(['td', 'th']));
+  get cells(): Array<HTMLTableCellElement> {
+    return matchChildrenElements(this, tagNameConditionPredicate(['td', 'th'])) as Array<HTMLTableCellElement>;
   }
 
   /**
@@ -68,9 +69,9 @@ export class HTMLTableRowElement extends HTMLElement {
    * @param index position in the children to insert before.
    * @return newly inserted td element.
    */
-  public insertCell(index: number): Element {
+  public insertCell(index: number): HTMLTableCellElement {
     const cells = this.cells;
-    const td = (this.ownerDocument as Document).createElement('td');
+    const td = (this.ownerDocument as Document).createElement('td') as HTMLTableCellElement;
     if (index < 0 || index >= cells.length) {
       this.appendChild(td);
     } else {

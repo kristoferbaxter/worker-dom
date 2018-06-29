@@ -17,12 +17,10 @@
 import test from 'ava';
 import { NodeType } from '../../worker-thread/dom/Node';
 import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
-import { Element } from '../../worker-thread/dom/Element';
 
 test.beforeEach(t => {
-  const document = new Element(NodeType.DOCUMENT_NODE, '#document', null, null);
   t.context = {
-    element: new HTMLElement(NodeType.ELEMENT_NODE, 'div', null, document),
+    element: new HTMLElement(NodeType.ELEMENT_NODE, 'div', null),
   };
 });
 
