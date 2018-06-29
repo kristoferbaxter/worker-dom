@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Document, document } from './Document';
-import { appendKeys } from './CSSStyleDeclaration';
+import { Document, document } from './dom/Document';
+import { appendKeys } from './css/CSSStyleDeclaration';
 
 interface MonkeyWorkerGlobalScope {
   document: Document;

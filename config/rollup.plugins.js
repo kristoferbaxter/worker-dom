@@ -15,21 +15,43 @@
  */
 
 import babel from 'rollup-plugin-babel';
-import uglify from 'rollup-plugin-uglify';
+import minify from '@kristoferbaxter/rollup-plugin-closure-compiler';
 import brotli from 'rollup-plugin-brotli';
-import gzip from "rollup-plugin-gzip";
-import { path, UGLIFY_BUNDLE_VALUE, DEBUG_BUNDLE_VALUE, COMPRESS_BUNDLE_VALUE } from './rollup.utils.js';
+import gzip from 'rollup-plugin-gzip';
+import { path, DEBUG_BUNDLE_VALUE } from './rollup.utils.js';
 
-const excludeFromConsoleRemoval = DEBUG_BUNDLE_VALUE ? ['error', 'warn', 'info', 'log'] : [];
-const targets = esmodules => esmodules ? { esmodules: true } : { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] };
-const babelConfiguration = esmodules => {
-  return {
+const BROTLI_CONFIG = {
+  options: {
+    mode: 0,
+    quality: 11,
+    lgwin: 22,
+    lgblock: 0,
+    disable_literal_context_modeling: false,
+    size_hint: 0,
+    large_window: false,
+    npostfix: 0,
+    ndirect: 0,
+  },
+  minSize: 0,
+};
+const GZIP_CONFIG = {
+  algorithm: 'zopfli',
+  options: {
+    numiterations: 1000,
+  },
+};
+
+export const babelPlugin = esmodules => {
+  const targets = esmodules ? { esmodules: true } : { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] };
+  const exclude = DEBUG_BUNDLE_VALUE ? ['error', 'warn', 'info', 'log', 'time', 'timeEnd'] : [];
+
+  return babel({
     exclude: 'node_modules/**',
     presets: [
       [
         '@babel/env',
         {
-          targets: targets(esmodules),
+          targets,
           loose: true,
           modules: false,
         },
@@ -38,7 +60,7 @@ const babelConfiguration = esmodules => {
     plugins: [
       ['@babel/plugin-proposal-object-rest-spread'],
       ['@babel/proposal-class-properties'],
-      ['babel-plugin-transform-remove-console', { exclude: excludeFromConsoleRemoval }],
+      ['babel-plugin-transform-remove-console', { exclude }],
       [
         'minify-replace',
         {
@@ -54,42 +76,8 @@ const babelConfiguration = esmodules => {
         },
       ],
     ],
-  };
-}
-const brotliConfiguration = {
-  options: {
-    mode: 0,
-    quality: 11,
-    lgwin: 22,
-    lgblock: 0,
-    disable_literal_context_modeling: false,
-    size_hint: 0,
-    large_window: false,
-    npostfix: 0,
-    ndirect: 0,
-  },
-  minSize: 0
+  });
 };
-const gzipConfiguration = {
-  algorithm: 'zopfli',
-  options: {
-    numiterations: 1000,
-  }
-}
-
-/**
- * @param {boolean} esmodules
- * @return {Array<Plugin>}
- */
-export function plugins(esmodules) {
-  let plugins = [babel(babelConfiguration(esmodules))];
-
-  if (UGLIFY_BUNDLE_VALUE) {
-    plugins.push(uglify());
-  }
-  if (COMPRESS_BUNDLE_VALUE) {
-    plugins.push(brotli(brotliConfiguration), gzip(gzipConfiguration));
-  }
-
-  return plugins;
-}
+export const minifyPlugin = _ => minify();
+export const brotliPlugin = _ => brotli(BROTLI_CONFIG);
+export const gzipPlugin = _ => gzip(GZIP_CONFIG);

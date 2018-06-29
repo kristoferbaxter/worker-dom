@@ -15,19 +15,18 @@
  */
 
 import test from 'ava';
-import { CSSStyleDeclaration, appendKeys } from '../../worker-thread/CSSStyleDeclaration';
-import { Element } from '../../worker-thread/Element';
-import { NodeType } from '../../worker-thread/Node';
+import { CSSStyleDeclaration, appendKeys } from '../../worker-thread/css/CSSStyleDeclaration';
+import { Element } from '../../worker-thread/dom/Element';
+import { NodeType } from '../../worker-thread/dom/Node';
 
 test.beforeEach(t => {
   t.context = {
     node: new Element(NodeType.ELEMENT_NODE, 'div', null),
-    storeAttributeMethod: () => '',
   };
 });
 
 test('removing a value stored eliminates the stored value', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const declaration = new CSSStyleDeclaration(t.context.node);
 
   appendKeys(['width']);
   declaration.width = '10px';
@@ -37,7 +36,7 @@ test('removing a value stored eliminates the stored value', t => {
 });
 
 test('removing a value stored returns the previously stored value', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const declaration = new CSSStyleDeclaration(t.context.node);
 
   appendKeys(['width']);
   declaration.width = '10px';

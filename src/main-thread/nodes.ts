@@ -19,11 +19,11 @@ import { RenderableElement } from './RenderableElement';
 import { NumericBoolean } from '../utils';
 
 export class Nodes {
-  private NODES: Map<number, RenderableElement> = new Map();
-  private baseElement: HTMLElement;
+  private NODES_: Map<number, RenderableElement> = new Map();
+  private baseElement_: HTMLElement;
 
   constructor(baseElement: Element) {
-    this.baseElement = baseElement as HTMLElement;
+    this.baseElement_ = baseElement as HTMLElement;
   }
 
   /**
@@ -64,13 +64,13 @@ export class Nodes {
    * @return
    */
   public getNode(id: number): RenderableElement {
-    const node = this.NODES.get(id);
+    const node = this.NODES_.get(id);
 
     if (node && node.nodeName === 'BODY') {
       // If the node requested is the "BODY"
       // Then we return the base node this specific <amp-script> comes from.
       // This encapsulates each <amp-script> node.
-      return this.baseElement as RenderableElement;
+      return this.baseElement_ as RenderableElement;
     }
     return node as RenderableElement;
   }
@@ -86,6 +86,6 @@ export class Nodes {
    */
   public storeNode(node: HTMLElement | SVGElement | Text, id: number): void {
     (node as RenderableElement)._index_ = id;
-    this.NODES.set(id, node as RenderableElement);
+    this.NODES_.set(id, node as RenderableElement);
   }
 }

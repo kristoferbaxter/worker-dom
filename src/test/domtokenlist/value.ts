@@ -15,18 +15,24 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../worker-thread/Node';
-import { Element } from '../../worker-thread/Element';
-import { DOMTokenList } from '../../worker-thread/DOMTokenList';
+import { NodeType } from '../../worker-thread/dom/Node';
+import { Element } from '../../worker-thread/dom/Element';
+import { DOMTokenList } from '../../worker-thread/dom/DOMTokenList';
+
+test.beforeEach(t => {
+  t.context = {
+    tokenList: new DOMTokenList(Element, new Element(NodeType.ELEMENT_NODE, 'div', null), 'class', null, null),
+  };
+});
 
 test('getter should be empty by default', t => {
-  const tokenList = new DOMTokenList(new Element(NodeType.ELEMENT_NODE, 'div', null), 'class', null, () => {});
+  const { tokenList } = t.context as { tokenList: DOMTokenList };
 
   t.is(tokenList.value, '');
 });
 
 test('should accept new total values via setter', t => {
-  const tokenList = new DOMTokenList(new Element(NodeType.ELEMENT_NODE, 'div', null), 'class', null, () => {});
+  const { tokenList } = t.context as { tokenList: DOMTokenList };
 
   tokenList.value = 'foo';
   t.is(tokenList.value, 'foo');
@@ -34,15 +40,4 @@ test('should accept new total values via setter', t => {
   t.is(tokenList.value, 'foo bar baz');
   tokenList.value = 'foo foo bar baz foo baz bar';
   t.is(tokenList.value, 'foo foo bar baz foo baz bar', 'duplicates are allowed and their position is retained');
-});
-
-test.cb('provided callback is fired when value changes', t => {
-  const tokenList = new DOMTokenList(new Element(NodeType.ELEMENT_NODE, 'div', null), 'class', null, (namespaceURI, name, value) => {
-    t.is(namespaceURI, null);
-    t.is(name, 'class');
-    t.is(value, 'foo');
-    t.end();
-  });
-
-  tokenList.value = 'foo';
 });

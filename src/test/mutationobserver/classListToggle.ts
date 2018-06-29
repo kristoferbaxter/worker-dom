@@ -15,7 +15,7 @@
  */
 
 import test from 'ava';
-import { document } from '../../worker-thread/Document';
+import { document } from '../../worker-thread/dom/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
 test.cb.serial('Element.classList.toggle mutation observed, toggle to remove', t => {

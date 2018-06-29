@@ -15,9 +15,9 @@
  */
 
 import test from 'ava';
-import { document } from '../../worker-thread/Document';
+import { document } from '../../worker-thread/dom/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
-import { appendKeys } from '../../worker-thread/CSSStyleDeclaration';
+import { appendKeys } from '../../worker-thread/css/CSSStyleDeclaration';
 
 test.cb.serial('Element.style.width mutation observed, single value', t => {
   const el = document.createElement('div');

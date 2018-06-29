@@ -15,7 +15,7 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../worker-thread/Node';
+import { Node, NodeType } from '../../worker-thread/dom/Node';
 import { Event } from '../../worker-thread/Event';
 
 test.beforeEach(t => {

@@ -15,19 +15,18 @@
  */
 
 import test from 'ava';
-import { CSSStyleDeclaration, appendKeys } from '../../worker-thread/CSSStyleDeclaration';
-import { Element } from '../../worker-thread/Element';
-import { NodeType } from '../../worker-thread/Node';
+import { CSSStyleDeclaration, appendKeys } from '../../worker-thread/css/CSSStyleDeclaration';
+import { Element } from '../../worker-thread/dom/Element';
+import { NodeType } from '../../worker-thread/dom/Node';
 
 test.beforeEach(t => {
   t.context = {
     node: new Element(NodeType.ELEMENT_NODE, 'div', null),
-    storeAttributeMethod: () => '',
   };
 });
 
 test('setting a value stores the value for a getter', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const declaration = new CSSStyleDeclaration(t.context.node);
 
   t.is(declaration.width, undefined);
   appendKeys(['width']);

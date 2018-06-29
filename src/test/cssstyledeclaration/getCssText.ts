@@ -15,25 +15,24 @@
  */
 
 import test from 'ava';
-import { CSSStyleDeclaration, appendKeys } from '../../worker-thread/CSSStyleDeclaration';
-import { Element } from '../../worker-thread/Element';
-import { NodeType } from '../../worker-thread/Node';
+import { CSSStyleDeclaration, appendKeys } from '../../worker-thread/css/CSSStyleDeclaration';
+import { Element } from '../../worker-thread/dom/Element';
+import { NodeType } from '../../worker-thread/dom/Node';
 
 test.beforeEach(t => {
   t.context = {
     node: new Element(NodeType.ELEMENT_NODE, 'div', null),
-    storeAttributeMethod: () => '',
   };
 });
 
 test('cssText is empty by default', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const declaration = new CSSStyleDeclaration(t.context.node);
 
   t.is(declaration.cssText, '');
 });
 
 test('cssText contains single mutated property', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const declaration = new CSSStyleDeclaration(t.context.node);
 
   appendKeys(['width']);
   declaration.width = '100px';
@@ -41,7 +40,7 @@ test('cssText contains single mutated property', t => {
 });
 
 test('cssText hyphenates only capitals after lowercase letters', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const declaration = new CSSStyleDeclaration(t.context.node);
 
   appendKeys(['linebreakFoo']);
   declaration.linebreakFoo = 'normal';
@@ -49,7 +48,7 @@ test('cssText hyphenates only capitals after lowercase letters', t => {
 });
 
 test('cssText contains multiple mutated properties', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const declaration = new CSSStyleDeclaration(t.context.node);
 
   appendKeys(['height', 'position']);
   declaration.height = '100px';
@@ -58,7 +57,7 @@ test('cssText contains multiple mutated properties', t => {
 });
 
 test('cssText contains webkit vendor prefixed property', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const declaration = new CSSStyleDeclaration(t.context.node);
 
   appendKeys(['webkitLineBreak']);
   declaration.webkitLineBreak = 'normal';
@@ -66,7 +65,7 @@ test('cssText contains webkit vendor prefixed property', t => {
 });
 
 test('cssText contains ms vendor prefixed property', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const declaration = new CSSStyleDeclaration(t.context.node);
 
   appendKeys(['msLineBreak']);
   declaration.msLineBreak = 'normal';
@@ -74,7 +73,7 @@ test('cssText contains ms vendor prefixed property', t => {
 });
 
 test('cssText contains moz vendor prefixed propertiy', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const declaration = new CSSStyleDeclaration(t.context.node);
 
   appendKeys(['mozLineBreak']);
   declaration.mozLineBreak = 'normal';
@@ -82,7 +81,7 @@ test('cssText contains moz vendor prefixed propertiy', t => {
 });
 
 test('cssText contains khtml vendor prefixed propertiy', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const declaration = new CSSStyleDeclaration(t.context.node);
 
   appendKeys(['khtmlLineBreak']);
   declaration.khtmlLineBreak = 'normal';
@@ -90,7 +89,7 @@ test('cssText contains khtml vendor prefixed propertiy', t => {
 });
 
 test('cssText does not prefix hyphenated keys containing vendor prefixes not in the first position', t => {
-  const declaration = new CSSStyleDeclaration(t.context.node, t.context.storeAttributeMethod);
+  const declaration = new CSSStyleDeclaration(t.context.node);
 
   appendKeys(['lineKhtmlBreak']);
   declaration.lineKhtmlBreak = 'normal';

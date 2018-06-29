@@ -15,8 +15,8 @@
  */
 
 import test from 'ava';
-import { document } from '../../worker-thread/Document';
-import { Element } from '../../worker-thread/Element';
+import { document } from '../../worker-thread/dom/Document';
+import { Element } from '../../worker-thread/dom/Element';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
 test.beforeEach(t => {
@@ -24,6 +24,9 @@ test.beforeEach(t => {
     el: document.createElement('div'),
     callback: () => undefined,
   };
+});
+test.afterEach(t => {
+  document.body.childNodes.forEach(childNode => childNode.remove());
 });
 
 test.cb.serial('Element.addEventListener mutation observed when node is connected.', t => {

@@ -18,6 +18,8 @@
     "alwaysStrict": true
   },
   "include": [
-    "./*.ts"
+    "./*.ts",
+    "./dom/*.ts",
+    "./css/*.ts"
   ]
 }

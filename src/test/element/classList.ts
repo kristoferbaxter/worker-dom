@@ -15,8 +15,8 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../worker-thread/Node';
-import { Element } from '../../worker-thread/Element';
+import { NodeType } from '../../worker-thread/dom/Node';
+import { Element } from '../../worker-thread/dom/Element';
 
 test.beforeEach(t => {
   t.context = {
@@ -29,6 +29,14 @@ test('classList should be empty by default', t => {
 
   t.is(node.classList.value, '');
   t.is(node.getAttribute('class'), null);
+});
+
+test('setAttribute should modify classList property', t => {
+  const { node } = t.context as { node: Element };
+
+  node.setAttribute('class', 'foo bar');
+  t.is(node.getAttribute('class'), 'foo bar');
+  t.is(node.className, 'foo bar');
 });
 
 test('classList.add of a single value should only add one class', t => {

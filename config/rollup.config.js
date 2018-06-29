@@ -14,17 +14,39 @@
  * limitations under the License.
  */
 
-import { plugins } from './rollup.plugins.js';
-import { output } from './rollup.output.js';
+import { babelPlugin, minifyPlugin, brotliPlugin, gzipPlugin } from './rollup.plugins.js';
+import { path, MINIFY_BUNDLE_VALUE, DEBUG_BUNDLE_VALUE, COMPRESS_BUNDLE_VALUE } from './rollup.utils.js';
 
 const config = ({ esmodules, forMainThread }) => {
-  const inputFilename = 'index.js';
-  const threadFoldername = forMainThread ? 'main-thread' : 'worker-thread';
-
   return {
-    input: `src/output/${threadFoldername}/${inputFilename}`,
-    output: output(esmodules, forMainThread),
-    plugins: plugins(esmodules),
+    input: `src/output/${forMainThread ? 'main-thread' : 'worker-thread'}/index.js`,
+    output: [
+      {
+        file: path(esmodules, forMainThread, 'index.module.js'),
+        format: 'es',
+        sourcemap: true,
+        outro: forMainThread ? 'window.MainThread = {upgradeElement: upgradeElement};' : '',
+      },
+      {
+        file: path(esmodules, forMainThread, 'index.js'),
+        format: 'iife',
+        sourcemap: true,
+        name: forMainThread ? 'MainThread' : 'WorkerThread',
+      },
+      {
+        file: path(esmodules, forMainThread, 'debug.js'),
+        format: 'iife',
+        sourcemap: true,
+        name: forMainThread ? 'MainThread' : 'WorkerThread',
+        outro: DEBUG_BUNDLE_VALUE && !forMainThread ? 'window.workerDocument = monkey.document;' : '',
+      },
+    ],
+    plugins: [
+      babelPlugin(esmodules), 
+      MINIFY_BUNDLE_VALUE ? minifyPlugin() : null, 
+      COMPRESS_BUNDLE_VALUE ? brotliPlugin() : null, 
+      COMPRESS_BUNDLE_VALUE ? gzipPlugin() : null,
+    ].filter(Boolean),
   };
 };
 

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Node } from '../worker-thread/Node';
-import { Document } from '../worker-thread/Document';
+import { Node } from '../worker-thread/dom/Node';
+import { Document } from '../worker-thread/dom/Document';
 import { MutationRecord } from '../worker-thread/MutationRecord';
 import { TransferableMutationRecord } from './TransferableRecord';
 import { TransferableNode, TransferredNode } from './TransferableNodes';
@@ -56,7 +56,7 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
     };
     hydrated = true;
 
-    postMessage(JSON.parse(JSON.stringify(mutationFromWorker)));
+    postMessage(mutationFromWorker);
   }
 }
 
