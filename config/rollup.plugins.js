@@ -15,7 +15,7 @@
  */
 
 import babel from 'rollup-plugin-babel';
-import minify from '@kristoferbaxter/rollup-plugin-closure-compiler';
+import minify from '@ampproject/rollup-plugin-closure-compiler';
 import brotli from 'rollup-plugin-brotli';
 import gzip from 'rollup-plugin-gzip';
 import { path, DEBUG_BUNDLE_VALUE } from './rollup.utils.js';
