@@ -16,6 +16,7 @@
 
 import { babelPlugin, minifyPlugin, brotliPlugin, gzipPlugin } from './rollup.plugins.js';
 import { path, MINIFY_BUNDLE_VALUE, DEBUG_BUNDLE_VALUE, COMPRESS_BUNDLE_VALUE } from './rollup.utils.js';
+import resolve from 'rollup-plugin-node-resolve';
 
 const config = ({ esmodules, forMainThread }) => {
   return {
@@ -42,9 +43,10 @@ const config = ({ esmodules, forMainThread }) => {
       },
     ],
     plugins: [
-      babelPlugin(esmodules), 
-      MINIFY_BUNDLE_VALUE ? minifyPlugin() : null, 
-      COMPRESS_BUNDLE_VALUE ? brotliPlugin() : null, 
+      resolve(),
+      babelPlugin(esmodules),
+      MINIFY_BUNDLE_VALUE ? minifyPlugin() : null,
+      COMPRESS_BUNDLE_VALUE ? brotliPlugin() : null,
       COMPRESS_BUNDLE_VALUE ? gzipPlugin() : null,
     ].filter(Boolean),
   };

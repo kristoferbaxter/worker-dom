@@ -20,6 +20,7 @@ import { TransferableMutationRecord } from '../transfer/TransferableRecord';
 import { TransferableNode } from '../transfer/TransferableNodes';
 import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { process } from './command';
+import { sanitize } from './sanitize';
 
 // TODO(KB): Restore mutation threshold timeout.
 // const GESTURE_TO_MUTATION_THRESHOLD = 5000;
@@ -41,7 +42,7 @@ const mutators: {
     if (addedNodes) {
       addedNodes.forEach(node => {
         parent.insertBefore(
-          nodesInstance.getNode(node._index_) || nodesInstance.createNode(node as TransferableNode),
+          nodesInstance.getNode(node._index_) || sanitize(nodesInstance.createNode(node as TransferableNode)),
           (nextSibling && nodesInstance.getNode(nextSibling._index_)) || null,
         );
       });
@@ -49,17 +50,22 @@ const mutators: {
   },
   [MutationRecordType.ATTRIBUTES]: (nodesInstance: Nodes, worker: Worker, { target, attributeName, value }: TransferableMutationRecord) => {
     if (attributeName !== null && value !== null) {
-      nodesInstance.getNode(target._index_).setAttribute(attributeName, value);
+      const node = nodesInstance.getNode(target._index_);
+      node.setAttribute(attributeName, value);
+      sanitize(node);
     }
   },
   [MutationRecordType.CHARACTER_DATA]: (nodesInstance: Nodes, worker: Worker, { target, value }: TransferableMutationRecord) => {
     if (value !== null) {
+      // Sanitization not necessary for textContent.
       nodesInstance.getNode(target._index_).textContent = value;
     }
   },
   [MutationRecordType.PROPERTIES]: (nodesInstance: Nodes, worker: Worker, { target, propertyName, value }: TransferableMutationRecord) => {
     if (propertyName !== null && value !== null) {
-      nodesInstance.getNode(target._index_)[propertyName] = value;
+      const node = nodesInstance.getNode(target._index_);
+      node[propertyName] = value;
+      sanitize(node);
     }
   },
   [MutationRecordType.COMMAND]: (nodesInstance: Nodes, worker: Worker, mutation: TransferableMutationRecord) =>

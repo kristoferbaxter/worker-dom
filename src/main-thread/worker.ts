@@ -25,6 +25,7 @@ export function createWorker(authorScriptURL: string): Promise<Worker | null> {
     .then(([workerScript, authorScript]) => {
       // TODO(KB): Minify this output during build process.
       const code = `
+        'use strict';
         ${workerScript}
         (function() {
           var self = this;
