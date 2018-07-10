@@ -70,7 +70,7 @@
     {
       "path": "./build/esmodules/main-thread/index.module.js",
       "compression": "brotli",
-      "maxSize": "2 kB"
+      "maxSize": "7 kB"
     }
   ],
   "dependencies": {
