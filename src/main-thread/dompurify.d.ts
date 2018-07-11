@@ -17,6 +17,7 @@
 declare module 'dompurify' {
   var purify: {
     sanitize(dirty: string | Node, cfg: Object): string | Node;
+    isValidAttribute(tag: string, attr: string, value: string): boolean;
   };
   export default purify;
 }

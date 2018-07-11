@@ -16,9 +16,38 @@
 
 import purify from 'dompurify';
 
+const propertyToAttribute: { [key: string]: string } = {}; // TODO
+
 /**
  * @param node
  */
-export function sanitize(node: Node) {
+export function sanitize(node: Node): void {
+  debugger;
+  const start = performance.now();
   purify.sanitize(node, { IN_PLACE: true });
+  const latency = performance.now() - start;
+  console.log({ latency });
+}
+
+/**
+ * @param tag
+ * @param attr
+ * @param value
+ */
+export function validAttribute(tag: string, attr: string, value: string): boolean {
+  return purify.isValidAttribute(tag, attr, value);
+}
+
+/**
+ * @param tag
+ * @param prop
+ * @param value
+ */
+export function validProperty(tag: string, prop: string, value: string): boolean {
+  const attr = propertyToAttribute[prop];
+  if (attr) {
+    return validAttribute(tag, attr, value);
+  } else {
+    return validAttribute(tag, prop, value);
+  }
 }

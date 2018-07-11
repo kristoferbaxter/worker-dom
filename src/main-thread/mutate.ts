@@ -20,7 +20,7 @@ import { TransferableMutationRecord } from '../transfer/TransferableRecord';
 import { TransferableNode } from '../transfer/TransferableNodes';
 import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { process } from './command';
-import { sanitize } from './sanitize';
+import { sanitize, validAttribute, validProperty } from './sanitize';
 
 // TODO(KB): Restore mutation threshold timeout.
 // const GESTURE_TO_MUTATION_THRESHOLD = 5000;
@@ -41,18 +41,23 @@ const mutators: {
 
     if (addedNodes) {
       addedNodes.forEach(node => {
-        parent.insertBefore(
-          nodesInstance.getNode(node._index_) || sanitize(nodesInstance.createNode(node as TransferableNode)),
-          (nextSibling && nodesInstance.getNode(nextSibling._index_)) || null,
-        );
+        let newChild = nodesInstance.getNode(node._index_);
+        if (!newChild) {
+          newChild = nodesInstance.createNode(node as TransferableNode);
+          sanitize(newChild); // TODO(choumx): Inform worker?
+        }
+        parent.insertBefore(newChild, (nextSibling && nodesInstance.getNode(nextSibling._index_)) || null);
       });
     }
   },
   [MutationRecordType.ATTRIBUTES]: (nodesInstance: Nodes, worker: Worker, { target, attributeName, value }: TransferableMutationRecord) => {
     if (attributeName !== null && value !== null) {
       const node = nodesInstance.getNode(target._index_);
-      node.setAttribute(attributeName, value);
-      sanitize(node);
+      if (validAttribute(node.nodeName, attributeName, value)) {
+        node.setAttribute(attributeName, value);
+      } else {
+        // TODO(choumx): Inform worker?
+      }
     }
   },
   [MutationRecordType.CHARACTER_DATA]: (nodesInstance: Nodes, worker: Worker, { target, value }: TransferableMutationRecord) => {
@@ -64,8 +69,11 @@ const mutators: {
   [MutationRecordType.PROPERTIES]: (nodesInstance: Nodes, worker: Worker, { target, propertyName, value }: TransferableMutationRecord) => {
     if (propertyName !== null && value !== null) {
       const node = nodesInstance.getNode(target._index_);
-      node[propertyName] = value;
-      sanitize(node);
+      if (validProperty(node.nodeName, propertyName, value)) {
+        node[propertyName] = value;
+      } else {
+        // TODO(choumx): Inform worker?
+      }
     }
   },
   [MutationRecordType.COMMAND]: (nodesInstance: Nodes, worker: Worker, mutation: TransferableMutationRecord) =>
