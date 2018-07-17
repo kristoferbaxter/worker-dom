@@ -1,0 +1,22 @@
+import test from 'ava';
+import { testReflectedProperties } from '../reflectPropertiesHelper';
+import { NodeType } from '../../worker-thread/dom/Node';
+import { HTMLLinkElement } from '../../worker-thread/dom/HTMLLinkElement';
+
+test.beforeEach(t => {
+  t.context = {
+    element: new HTMLLinkElement(NodeType.ELEMENT_NODE, 'link', null),
+  };
+});
+
+testReflectedProperties([
+  { as: [''] },
+  { crossOrigin: [''] },
+  { disabled: [false] },
+  { href: [''] },
+  { hreflang: [''] },
+  { media: [''] },
+  { referrerPolicy: [''] },
+  { sizes: [''] },
+  { type: [''] },
+]);
