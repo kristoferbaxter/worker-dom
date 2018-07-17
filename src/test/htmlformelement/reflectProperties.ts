@@ -5,7 +5,7 @@ import { HTMLFormElement } from '../../worker-thread/dom/HTMLFormElement';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLFormElement(NodeType.ELEMENT_NODE, 'fieldset', null),
+    element: new HTMLFormElement(NodeType.ELEMENT_NODE, 'form', null),
   };
 });
 
