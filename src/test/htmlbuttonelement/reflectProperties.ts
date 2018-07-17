@@ -1,5 +1,5 @@
 import test from 'ava';
-import { testReflectedProperty } from '../common/reflectProperties';
+import { testReflectedProperty } from '../reflectPropertiesHelper';
 import { NodeType } from '../../worker-thread/dom/Node';
 import { HTMLButtonElement } from '../../worker-thread/dom/HTMLButtonElement';
 

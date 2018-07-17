@@ -14,28 +14,14 @@
  * limitations under the License.
  */
 
-import { PropertyPair } from '../../worker-thread/dom/enhanceElement';
+import { PropertyPair } from '../worker-thread/dom/enhanceElement';
 import test from 'ava';
 
-export function testReflectedProperty(propertyPair: PropertyPair, alternateValue: any = null) {
+export function testReflectedProperty(propertyPair: PropertyPair, valueToTest: string | boolean | number | null = null) {
   const propertyName = Object.keys(propertyPair)[0];
   const defaultValue = propertyPair[propertyName][0];
   const attributeName = propertyPair[propertyName][1] || propertyName.toLowerCase();
-  let altValue = alternateValue;
-
-  if (altValue === null) {
-    switch (typeof defaultValue) {
-      case 'string':
-        altValue = `alt-${defaultValue || ''}`;
-        break;
-      case 'boolean':
-        altValue = !defaultValue;
-        break;
-      case 'number':
-        altValue = Number(defaultValue) + 1;
-        break;
-    }
-  }
+  const altValue = deriveValueToTest(defaultValue, valueToTest);
 
   test(`${propertyName} should be ${defaultValue} by default`, t => {
     const { element } = t.context;
@@ -59,4 +45,19 @@ export function testReflectedProperty(propertyPair: PropertyPair, alternateValue
     element.setAttribute(attributeName, String(altValue));
     t.is(element[propertyName], altValue);
   });
+}
+
+function deriveValueToTest(defaultValue: string | boolean | number, valueToTest: string | boolean | number | null): string | boolean | number {
+  if (valueToTest !== null) {
+    return valueToTest;
+  }
+  switch (typeof defaultValue) {
+    case 'string':
+      return `alt-${defaultValue || ''}`;
+    case 'boolean':
+      return !defaultValue;
+    case 'number':
+      return Number(defaultValue) + 1;
+  }
+  return defaultValue;
 }
