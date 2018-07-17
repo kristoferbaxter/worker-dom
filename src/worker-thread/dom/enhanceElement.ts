@@ -17,7 +17,7 @@
 import { Element } from './Element';
 import { toLower } from '../../utils';
 
-interface PropertyPair {
+export interface PropertyPair {
   [key: string]: [string | boolean | number, string] | [string | boolean | number];
 }
 export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typeof Element): void => {
