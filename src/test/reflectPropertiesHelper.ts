@@ -17,11 +17,11 @@
 import { PropertyPair } from '../worker-thread/dom/enhanceElement';
 import test from 'ava';
 
-export function testReflectedProperty(propertyPair: PropertyPair, valueToTest: string | boolean | number | null = null) {
+export function testReflectedProperty(propertyPair: PropertyPair, overrideValueToTest: string | boolean | number | null = null) {
   const propertyName = Object.keys(propertyPair)[0];
   const defaultValue = propertyPair[propertyName][0];
   const attributeName = propertyPair[propertyName][1] || propertyName.toLowerCase();
-  const altValue = deriveValueToTest(defaultValue, valueToTest);
+  const valueToTest = deriveValueToTest(overrideValueToTest !== null ? overrideValueToTest : defaultValue);
 
   test(`${propertyName} should be ${defaultValue} by default`, t => {
     const { element } = t.context;
@@ -30,34 +30,32 @@ export function testReflectedProperty(propertyPair: PropertyPair, valueToTest: s
 
   test(`${propertyName} should be settable to a single value`, t => {
     const { element } = t.context;
-    element[propertyName] = altValue;
-    t.is(element[propertyName], altValue);
+    element[propertyName] = valueToTest;
+    t.is(element[propertyName], valueToTest);
   });
 
   test(`${propertyName} property change should be reflected in attribute`, t => {
     const { element } = t.context;
-    element[propertyName] = altValue;
-    t.is(element.getAttribute(attributeName), String(altValue));
+    element[propertyName] = valueToTest;
+    t.is(element.getAttribute(attributeName), String(valueToTest));
   });
 
   test(`${propertyName} attribute change should be reflected in property`, t => {
     const { element } = t.context;
-    element.setAttribute(attributeName, String(altValue));
-    t.is(element[propertyName], altValue);
+    element.setAttribute(attributeName, String(valueToTest));
+    t.is(element[propertyName], valueToTest);
   });
 }
 
-function deriveValueToTest(defaultValue: string | boolean | number, valueToTest: string | boolean | number | null): string | boolean | number {
-  if (valueToTest !== null) {
-    return valueToTest;
-  }
-  switch (typeof defaultValue) {
+function deriveValueToTest(valueToTest: string | boolean | number): string | boolean | number {
+  switch (typeof valueToTest) {
     case 'string':
-      return `alt-${defaultValue || ''}`;
+      return `alt-${valueToTest || ''}`;
     case 'boolean':
-      return !defaultValue;
+      return !valueToTest;
     case 'number':
-      return Number(defaultValue) + 1;
+      return Number(valueToTest) + 1;
+    default:
+      return valueToTest;
   }
-  return defaultValue;
 }
