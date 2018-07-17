@@ -17,6 +17,12 @@
 import { PropertyPair } from '../../worker-thread/dom/enhanceElement';
 import test from 'ava';
 
+export function testReflectedProperties(propertyPairs: Array<PropertyPair>) {
+  propertyPairs.forEach(pair => {
+    testReflectedProperty(pair);
+  });
+}
+
 export function testReflectedProperty(propertyPair: PropertyPair, alternateValue: any = null) {
   const propertyName = Object.keys(propertyPair)[0];
   const defaultValue = propertyPair[propertyName][0];
