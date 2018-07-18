@@ -5,7 +5,7 @@ import { HTMLOptionElement } from '../../worker-thread/dom/HTMLOptionElement';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLOptionElement(NodeType.ELEMENT_NODE, 'label', null),
+    element: new HTMLOptionElement(NodeType.ELEMENT_NODE, 'option', null),
   };
 });
 

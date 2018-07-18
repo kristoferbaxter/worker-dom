@@ -5,7 +5,7 @@ import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLElement(NodeType.ELEMENT_NODE, 'form', null),
+    element: new HTMLElement(NodeType.ELEMENT_NODE, 'div', null),
   };
 });
 

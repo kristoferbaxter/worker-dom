@@ -5,7 +5,7 @@ import { HTMLEmbedElement } from '../../worker-thread/dom/HTMLEmbedElement';
 
 test.beforeEach(t => {
   t.context = {
-    element: new HTMLEmbedElement(NodeType.ELEMENT_NODE, 'ember', null),
+    element: new HTMLEmbedElement(NodeType.ELEMENT_NODE, 'embed', null),
   };
 });
 
