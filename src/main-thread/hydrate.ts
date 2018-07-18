@@ -20,7 +20,7 @@ import { NodeType } from '../worker-thread/dom/Node';
 import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { RenderableElement } from './RenderableElement';
 import { NumericBoolean } from '../utils';
-import { process } from './command';
+import { process, applyDefaultChangeListener } from './command';
 import { TransferableMutationRecord } from '../transfer/TransferableRecord';
 
 const allTextNodes = (nodes: NodeList | Array<TransferableNode | TransferredNode>): boolean =>
@@ -76,9 +76,16 @@ export class Hydration {
       node.textContent = skeleton.textContent;
     }
 
-    this.nodesInstance_.storeNode(node as RenderableElement, skeleton._index_);
-    skeleton.childNodes.forEach((childNode: TransferableNode | TransferredNode, index: number): void =>
-      this.hydrateNode_(node.childNodes[index], childNode as TransferableNode),
+    this.nodesInstance_.storeNode(node, skeleton._index_);
+
+    // When hydrating an HTMLElement, there are some values that need to be synced to the background
+    // independently of if the background code has subscribed to an event on the Element.
+    // Primary Case: `<form><input><button onClick={function(){console.log(input.value)}} /></form>`
+    applyDefaultChangeListener(this.worker_, node);
+
+    skeleton.childNodes.forEach(
+      (childNode: TransferableNode | TransferredNode, index: number): void =>
+        this.hydrateNode_(node.childNodes[index], childNode as TransferableNode),
     );
   }
 

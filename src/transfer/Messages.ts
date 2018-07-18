@@ -16,6 +16,7 @@
 
 import { TransferableEvent } from './TransferableEvent';
 import { TransferableMutationRecord } from './TransferableRecord';
+import { TransferableSyncValue } from './TransferableSyncValue';
 
 export const enum MessageType {
   // INIT = 0,
@@ -23,6 +24,7 @@ export const enum MessageType {
   HYDRATE = 2,
   MUTATE = 3,
   COMMAND = 4,
+  SYNC = 5,
   // NAVIGATION_PUSH_STATE = 5,
   // NAVIGATION_REPLACE_STATE = 6,
   // NAVIGATION_POP_STATE = 7,
@@ -40,4 +42,8 @@ interface EventToWorker {
   type: MessageType.EVENT;
   event: TransferableEvent;
 }
-export type MessageToWorker = EventToWorker;
+interface ValueSyncToWorker {
+  type: MessageType.SYNC;
+  sync: TransferableSyncValue;
+}
+export type MessageToWorker = EventToWorker | ValueSyncToWorker;

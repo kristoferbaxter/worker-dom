@@ -19,10 +19,15 @@ import { Nodes } from './nodes';
 import { messageToWorker } from './worker';
 import { RenderableElement } from './RenderableElement';
 import { NumericBoolean } from '../utils';
-import { TransferableEventSubscriptionChange } from '../transfer/TransferableEvent';
 import { TransferableMutationRecord } from '../transfer/TransferableRecord';
 
 const knownListeners: Array<(event: Event) => any> = [];
+
+const shouldTrackChanges = (node: HTMLElement): boolean => 'value' in node;
+
+export const applyDefaultChangeListener = (worker: Worker, node: RenderableElement): void => {
+  shouldTrackChanges(node as HTMLElement) && node.onchange === null && (node.onchange = valueChangedHandler(worker, node));
+};
 
 /**
  * Register an event handler for dispatching events to worker thread
@@ -31,6 +36,7 @@ const knownListeners: Array<(event: Event) => any> = [];
  * @return eventHandler function consuming event and dispatching to worker thread
  */
 const eventHandler = (worker: Worker, _index_: number) => (event: Event): void => {
+  fireValueChange(worker, event.currentTarget as RenderableElement);
   messageToWorker(worker, {
     type: MessageType.EVENT,
     event: {
@@ -57,6 +63,22 @@ const eventHandler = (worker: Worker, _index_: number) => (event: Event): void =
   });
 };
 
+const fireValueChange = (worker: Worker, node: RenderableElement): void => {
+  if (shouldTrackChanges(node as HTMLElement)) {
+    messageToWorker(worker, {
+      type: MessageType.SYNC,
+      sync: {
+        _index_: node._index_,
+        value: node.value,
+      },
+    });
+  }
+};
+
+const valueChangedHandler = (worker: Worker, node: RenderableElement) => (event: Event): void => {
+  fireValueChange(worker, node);
+};
+
 /**
  * Process commands transfered from worker thread to main thread.
  * @param nodesInstance nodes instance to execute commands against.
@@ -64,16 +86,25 @@ const eventHandler = (worker: Worker, _index_: number) => (event: Event): void =
  * @param mutation mutation record containing commands to execute.
  */
 export function process(nodesInstance: Nodes, worker: Worker, mutation: TransferableMutationRecord): void {
-  let events: TransferableEventSubscriptionChange[] | null;
-  if ((events = mutation.removedEvents)) {
-    events.forEach(listener =>
-      (nodesInstance.getNode(mutation.target._index_) as EventTarget).removeEventListener(listener.type, knownListeners[listener.index]),
-    );
-  }
-  if ((events = mutation.addedEvents)) {
-    events.forEach(listener => {
-      const index: number = mutation.target._index_;
-      (nodesInstance.getNode(index) as EventTarget).addEventListener(listener.type, (knownListeners[listener.index] = eventHandler(worker, index)));
-    });
+  const index: number = mutation.target._index_;
+  const target = nodesInstance.getNode(index) as HTMLElement;
+  const shouldTrack: boolean = shouldTrackChanges(target);
+  let changeEventSubscribed: boolean = target.onchange !== null;
+
+  (mutation.removedEvents || []).forEach(eventSub => {
+    if (eventSub.type === 'change') {
+      changeEventSubscribed = false;
+    }
+    target.removeEventListener(eventSub.type, knownListeners[eventSub.index]);
+  });
+  (mutation.addedEvents || []).forEach(eventSub => {
+    if (eventSub.type === 'change') {
+      changeEventSubscribed = true;
+      target.onchange = null;
+    }
+    target.addEventListener(eventSub.type, (knownListeners[eventSub.index] = eventHandler(worker, index)));
+  });
+  if (shouldTrack && !changeEventSubscribed) {
+    applyDefaultChangeListener(worker, target as RenderableElement);
   }
 }
