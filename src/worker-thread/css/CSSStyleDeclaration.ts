@@ -171,7 +171,6 @@ export class CSSStyleDeclaration implements StyleDeclaration {
       type: MutationRecordType.ATTRIBUTES,
       target: this.element_,
       attributeName: 'style',
-      attributeNamespace: null,
       value,
       oldValue,
     });

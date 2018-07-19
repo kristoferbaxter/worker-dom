@@ -249,7 +249,7 @@ export class Element extends Node {
       type: MutationRecordType.ATTRIBUTES,
       target: this,
       attributeName: name,
-      attributeNamespace: namespaceURI,
+      attributeNamespace: namespaceURI !== null ? namespaceURI : undefined,
       value,
       oldValue,
     });
@@ -306,7 +306,7 @@ export class Element extends Node {
         type: MutationRecordType.ATTRIBUTES,
         target: this,
         attributeName: name,
-        attributeNamespace: namespaceURI,
+        attributeNamespace: namespaceURI !== null ? namespaceURI : undefined,
         oldValue,
       });
     }

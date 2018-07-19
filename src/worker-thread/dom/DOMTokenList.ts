@@ -183,7 +183,6 @@ export class DOMTokenList extends Array {
       type: MutationRecordType.ATTRIBUTES,
       target: this.element_,
       attributeName: this.attributeName_,
-      attributeNamespace: null,
       value,
       oldValue,
     });
