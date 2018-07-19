@@ -30,6 +30,7 @@ export function upgradeElement(baseElement: Element): void {
   // The document element is constructed before the worker MutationObserver is attached.
   // As a result, we must manually store the reference node for the main thread.
   nodesInstance.storeNode(baseElement as HTMLElement, 1);
+  nodesInstance.storeNode(baseElement as HTMLElement, 2);
 
   // console.log(`creating worker, author code: ${authorURL}`);
   createWorker(authorURL).then(worker => {

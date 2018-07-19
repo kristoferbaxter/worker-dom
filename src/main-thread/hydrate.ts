@@ -48,9 +48,12 @@ export class Hydration {
 
     mutations.forEach(hydration => {
       if (hydration.type === MutationRecordType.CHILD_LIST && hydration.addedNodes !== null) {
-        hydration.addedNodes.forEach(nodeToAdd => {
-          const baseNode = this.nodesInstance_.getNode(nodeToAdd._index_) || this.baseElement_;
+        hydration.addedNodes.forEach((nodeToAdd, index) => {
           if (nodeToAdd.transferred === NumericBoolean.FALSE) {
+            const baseNode =
+              this.nodesInstance_.getNode(nodeToAdd._index_) ||
+              this.nodesInstance_.getNode(hydration.target._index_).childNodes[index] ||
+              this.baseElement_;
             this.hydrateNode_(baseNode, nodeToAdd as TransferableNode);
           }
         });
@@ -77,8 +80,9 @@ export class Hydration {
     }
 
     this.nodesInstance_.storeNode(node as RenderableElement, skeleton._index_);
-    skeleton.childNodes.forEach((childNode: TransferableNode | TransferredNode, index: number): void =>
-      this.hydrateNode_(node.childNodes[index], childNode as TransferableNode),
+    skeleton.childNodes.forEach(
+      (childNode: TransferableNode | TransferredNode, index: number): void =>
+        this.hydrateNode_(node.childNodes[index], childNode as TransferableNode),
     );
   }
 
