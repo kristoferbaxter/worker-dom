@@ -17,7 +17,6 @@
 import { TransferredNode } from './TransferableNodes';
 import { MessageToWorker, MessageType } from './Messages';
 import { get } from '../worker-thread/NodeMapping';
-import { Node } from '../worker-thread/dom/Node';
 import { Event } from '../worker-thread/Event';
 
 type TransferableTarget = TransferredNode;
@@ -51,13 +50,14 @@ export interface TransferableEventSubscriptionChange {
  */
 export function propagate(): void {
   if (typeof addEventListener !== 'undefined') {
-    addEventListener('message', ({ data: { type, event } }: { data: MessageToWorker }) => {
-      if (type !== MessageType.EVENT) {
+    addEventListener('message', ({ data }: { data: MessageToWorker }) => {
+      if (data.type !== MessageType.EVENT) {
         return;
       }
 
-      const node: Node | null = get(event._index_);
-      if (node) {
+      const event = data.event;
+      const node = get(event._index_);
+      if (node !== null) {
         node.dispatchEvent(
           Object.assign(new Event(event.type, { bubbles: event.bubbles, cancelable: event.cancelable }), {
             cancelBubble: event.cancelBubble,
