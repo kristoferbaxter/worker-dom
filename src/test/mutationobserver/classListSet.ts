@@ -20,20 +20,22 @@ import { MutationRecord, MutationRecordType } from '../../worker-thread/Mutation
 
 test.cb('Element.classList.set mutation observed', t => {
   const el = document.createElement('div');
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.ATTRIBUTES,
-        attributeName: 'class',
-        attributeNamespace: null,
-        target: el,
-        value: 'foo bar',
-        oldValue: '',
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.ATTRIBUTES,
+          attributeName: 'class',
+
+          target: el,
+          value: 'foo bar',
+          oldValue: '',
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   document.body.appendChild(el);
   observer.observe(document.body);

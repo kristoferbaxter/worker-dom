@@ -21,20 +21,22 @@ import { MutationRecord, MutationRecordType } from '../../worker-thread/Mutation
 test.cb.serial('Element.classList.toggle mutation observed, toggle to remove', t => {
   const el = document.createElement('div');
   el.className = 'foo';
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.ATTRIBUTES,
-        attributeName: 'class',
-        attributeNamespace: null,
-        target: el,
-        value: '',
-        oldValue: 'foo',
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.ATTRIBUTES,
+          attributeName: 'class',
+
+          target: el,
+          value: '',
+          oldValue: 'foo',
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   document.body.appendChild(el);
   observer.observe(document.body);
@@ -44,20 +46,22 @@ test.cb.serial('Element.classList.toggle mutation observed, toggle to remove', t
 test.cb.serial('Element.classList.toggle mutation observed, toggle to add', t => {
   const el = document.createElement('div');
   el.className = 'foo';
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.ATTRIBUTES,
-        attributeName: 'class',
-        attributeNamespace: null,
-        target: el,
-        value: 'foo bar',
-        oldValue: 'foo',
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.ATTRIBUTES,
+          attributeName: 'class',
+
+          target: el,
+          value: 'foo bar',
+          oldValue: 'foo',
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   document.body.appendChild(el);
   observer.observe(document.body);
