@@ -22,8 +22,8 @@ import { TransferableNode, TransferredNode } from './TransferableNodes';
 import { MutationFromWorker, MessageType } from './Messages';
 
 const SUPPORTS_POST_MESSAGE = typeof postMessage !== 'undefined';
-const sanitizeNodes = (nodes: Node[] | undefined): Array<TransferableNode | TransferredNode> | null =>
-  (nodes && nodes.map(node => node._sanitize_())) || null;
+const sanitizeNodes = (nodes: Node[] | undefined): Array<TransferableNode | TransferredNode> | undefined =>
+  (nodes && nodes.map(node => node._sanitize_())) || undefined;
 let observing = false;
 let hydrated = false;
 
@@ -31,22 +31,24 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
   const mutations: TransferableMutationRecord[] = [];
 
   incomingMutations.forEach(mutation => {
-    mutations.push({
+    let transferableMutation: TransferableMutationRecord = {
       target: mutation.target._sanitize_(),
       addedNodes: sanitizeNodes(mutation.addedNodes),
       removedNodes: sanitizeNodes(mutation.removedNodes),
-      previousSibling: (mutation.previousSibling && mutation.previousSibling._sanitize_()) || null,
-      nextSibling: (mutation.nextSibling && mutation.nextSibling._sanitize_()) || null,
-      attributeName: mutation.attributeName || null,
-      attributeNamespace: mutation.attributeNamespace || null,
-      oldValue: mutation.oldValue === '' ? '' : mutation.oldValue || null,
+      previousSibling: mutation.previousSibling && mutation.previousSibling._sanitize_(),
+      nextSibling: mutation.nextSibling && mutation.nextSibling._sanitize_(),
+      attributeName: mutation.attributeName,
+      attributeNamespace: mutation.attributeNamespace,
+      oldValue: mutation.oldValue,
       type: mutation.type,
-      propertyName: mutation.propertyName || null,
-      value: mutation.value === '' ? '' : mutation.value || null,
-      addedEvents: mutation.addedEvents || null,
-      removedEvents: mutation.removedEvents || null,
-      measure: null,
-    });
+      propertyName: mutation.propertyName,
+      value: mutation.value,
+      addedEvents: mutation.addedEvents,
+      removedEvents: mutation.removedEvents,
+    };
+    Object.keys(transferableMutation).forEach(key => transferableMutation[key] === undefined && delete transferableMutation[key]);
+
+    mutations.push(transferableMutation);
   });
 
   if (SUPPORTS_POST_MESSAGE) {

@@ -23,18 +23,18 @@ export interface MutationRecord {
   readonly target: Node;
   readonly addedNodes?: Node[];
   readonly removedNodes?: Node[];
-  readonly previousSibling?: Node | null;
-  readonly nextSibling?: Node | null;
-  readonly attributeName?: string | null;
-  readonly attributeNamespace?: string | null;
-  readonly oldValue?: string | null;
+  readonly previousSibling?: Node;
+  readonly nextSibling?: Node;
+  readonly attributeName?: string;
+  readonly attributeNamespace?: string;
+  readonly oldValue?: string;
 
   // MutationRecord Extensions
   readonly type: MutationRecordType;
   // Modifications of properties pass the property name modified.
-  readonly propertyName?: string | null;
+  readonly propertyName?: string;
   // Mutation of attributes or properties must pass a value representing the new value.
-  readonly value?: string | null;
+  readonly value?: string;
   // Event subscription mutations
   readonly addedEvents?: EventSubscriptionChange[];
   readonly removedEvents?: EventSubscriptionChange[];

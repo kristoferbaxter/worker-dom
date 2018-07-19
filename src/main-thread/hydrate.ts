@@ -48,7 +48,7 @@ export class Hydration {
 
     mutations.forEach(hydration => {
       if (hydration.type === MutationRecordType.CHILD_LIST && hydration.addedNodes !== null) {
-        hydration.addedNodes.forEach((nodeToAdd, index) => {
+        (hydration.addedNodes || []).forEach((nodeToAdd, index) => {
           if (nodeToAdd.transferred === NumericBoolean.FALSE) {
             const baseNode =
               this.nodesInstance_.getNode(nodeToAdd._index_) ||

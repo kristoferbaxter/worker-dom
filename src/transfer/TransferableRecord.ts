@@ -24,21 +24,29 @@ import { TransferableEventSubscriptionChange } from './TransferableEvent';
 
 // For more info on MutationRecords: https://developer.mozilla.org/en-US/docs/Web/API/MutationRecord
 export interface TransferableMutationRecord {
-  readonly target: TransferableNode | TransferredNode;
-  readonly addedNodes: Array<TransferableNode | TransferredNode> | null;
-  readonly removedNodes: Array<TransferableNode | TransferredNode> | null;
-  readonly previousSibling: TransferableNode | TransferredNode | null;
-  readonly nextSibling: TransferableNode | TransferredNode | null;
-  readonly attributeName: string | null;
-  readonly attributeNamespace: string | null;
-  readonly oldValue: string | null;
+  [key: string]:
+    | undefined
+    | TransferableNode
+    | TransferredNode
+    | Array<TransferableNode | TransferredNode>
+    | string
+    | MutationRecordType
+    | Array<TransferableEventSubscriptionChange>;
+  target: TransferableNode | TransferredNode;
+  addedNodes?: Array<TransferableNode | TransferredNode>;
+  removedNodes?: Array<TransferableNode | TransferredNode>;
+  previousSibling?: TransferableNode | TransferredNode;
+  nextSibling?: TransferableNode | TransferredNode;
+  attributeName?: string;
+  attributeNamespace?: string;
+  oldValue?: string;
 
-  readonly type: MutationRecordType;
-  readonly propertyName: string | null;
-  readonly value: string | null;
-  readonly addedEvents: TransferableEventSubscriptionChange[] | null;
-  readonly removedEvents: TransferableEventSubscriptionChange[] | null;
-  readonly measure: TransferredNode[] | null;
+  type: MutationRecordType;
+  propertyName?: string;
+  value?: string;
+  addedEvents?: Array<TransferableEventSubscriptionChange>;
+  removedEvents?: Array<TransferableEventSubscriptionChange>;
+  measure?: Array<TransferredNode>;
 }
 
 // TODO(KB): Hydrations are not allowed to contain TransferredNodes.

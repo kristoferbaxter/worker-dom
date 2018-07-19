@@ -20,19 +20,21 @@ import { MutationRecord, MutationRecordType } from '../../worker-thread/Mutation
 
 test.cb.serial('Element.removeAttribute mutation observed', t => {
   const el = document.createElement('div');
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.ATTRIBUTES,
-        attributeName: 'data-foo',
-        attributeNamespace: null,
-        target: el,
-        oldValue: 'bar',
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.ATTRIBUTES,
+          attributeName: 'data-foo',
+          attributeNamespace: undefined,
+          target: el,
+          oldValue: 'bar',
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   el.setAttribute('data-foo', 'bar');
   document.body.appendChild(el);
@@ -42,19 +44,21 @@ test.cb.serial('Element.removeAttribute mutation observed', t => {
 
 test.cb.serial('Element.removeAttribute mutation observed, with namespace', t => {
   const el = document.createElement('div');
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.ATTRIBUTES,
-        attributeName: 'data-foo',
-        attributeNamespace: 'namespace',
-        target: el,
-        oldValue: 'bar',
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.ATTRIBUTES,
+          attributeName: 'data-foo',
+          attributeNamespace: 'namespace',
+          target: el,
+          oldValue: 'bar',
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   el.setAttributeNS('namespace', 'data-foo', 'bar');
   document.body.appendChild(el);

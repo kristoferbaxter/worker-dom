@@ -53,12 +53,12 @@ const mutators: {
     }
   },
   [MutationRecordType.CHARACTER_DATA]: (nodesInstance: Nodes, worker: Worker, { target, value }: TransferableMutationRecord) => {
-    if (value !== null) {
+    if (value !== undefined) {
       nodesInstance.getNode(target._index_).textContent = value;
     }
   },
   [MutationRecordType.PROPERTIES]: (nodesInstance: Nodes, worker: Worker, { target, propertyName, value }: TransferableMutationRecord) => {
-    if (propertyName !== null && value !== null) {
+    if (propertyName !== undefined && value !== undefined) {
       nodesInstance.getNode(target._index_)[propertyName] = value;
     }
   },
