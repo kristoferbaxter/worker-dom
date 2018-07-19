@@ -38,7 +38,7 @@ const shouldTrackChanges = (node: HTMLElement): boolean => node && 'value' in no
  * @param node node to listen to value changes on.
  */
 export const applyDefaultChangeListener = (worker: Worker, node: RenderableElement): void => {
-  shouldTrackChanges(node as HTMLElement) && node.onchange === null && (node.onchange = fireValueChange(worker, node));
+  shouldTrackChanges(node as HTMLElement) && node.onchange === null && (node.onchange = () => fireValueChange(worker, node));
 };
 
 /**
