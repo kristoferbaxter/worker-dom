@@ -23,10 +23,22 @@ import { TransferableMutationRecord } from '../transfer/TransferableRecord';
 
 const knownListeners: Array<(event: Event) => any> = [];
 
+/**
+ * Instead of a whitelist of elements that need their value tracked, use the existence
+ * of a property called value to drive the decision.
+ * @param node node to check if values should be tracked.
+ * @return boolean if the node should have its value property tracked.
+ */
 const shouldTrackChanges = (node: HTMLElement): boolean => node && 'value' in node;
 
+/**
+ * When a node that has a value needing synced doesn't already have an event listener
+ * listening for changed values, ensure the value is synced with a default listener.
+ * @param worker whom to dispatch value toward.
+ * @param node node to listen to value changes on.
+ */
 export const applyDefaultChangeListener = (worker: Worker, node: RenderableElement): void => {
-  shouldTrackChanges(node as HTMLElement) && node.onchange === null && (node.onchange = valueChangedHandler(worker, node));
+  shouldTrackChanges(node as HTMLElement) && node.onchange === null && (node.onchange = fireValueChange(worker, node));
 };
 
 /**
@@ -36,7 +48,9 @@ export const applyDefaultChangeListener = (worker: Worker, node: RenderableEleme
  * @return eventHandler function consuming event and dispatching to worker thread
  */
 const eventHandler = (worker: Worker, _index_: number) => (event: Event): void => {
-  fireValueChange(worker, event.currentTarget as RenderableElement);
+  if (shouldTrackChanges(event.currentTarget as HTMLElement)) {
+    fireValueChange(worker, event.currentTarget as RenderableElement);
+  }
   messageToWorker(worker, {
     type: MessageType.EVENT,
     event: {
@@ -63,20 +77,19 @@ const eventHandler = (worker: Worker, _index_: number) => (event: Event): void =
   });
 };
 
+/**
+ * Tell the worker DOM what the value is for a Node.
+ * @param worker whom to dispatch value toward.
+ * @param node where to get the value from.
+ */
 const fireValueChange = (worker: Worker, node: RenderableElement): void => {
-  if (shouldTrackChanges(node as HTMLElement)) {
-    messageToWorker(worker, {
-      type: MessageType.SYNC,
-      sync: {
-        _index_: node._index_,
-        value: node.value,
-      },
-    });
-  }
-};
-
-const valueChangedHandler = (worker: Worker, node: RenderableElement) => (event: Event): void => {
-  fireValueChange(worker, node);
+  messageToWorker(worker, {
+    type: MessageType.SYNC,
+    sync: {
+      _index_: node._index_,
+      value: node.value,
+    },
+  });
 };
 
 /**
