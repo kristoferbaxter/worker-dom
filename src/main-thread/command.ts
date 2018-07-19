@@ -23,7 +23,7 @@ import { TransferableMutationRecord } from '../transfer/TransferableRecord';
 
 const knownListeners: Array<(event: Event) => any> = [];
 
-const shouldTrackChanges = (node: HTMLElement): boolean => 'value' in node;
+const shouldTrackChanges = (node: HTMLElement): boolean => node && 'value' in node;
 
 export const applyDefaultChangeListener = (worker: Worker, node: RenderableElement): void => {
   shouldTrackChanges(node as HTMLElement) && node.onchange === null && (node.onchange = valueChangedHandler(worker, node));
