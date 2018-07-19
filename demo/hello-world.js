@@ -7,7 +7,9 @@ btn.appendChild(text);
 root.appendChild(btn);
 
 btn.addEventListener('click', () => {
-  console.log('yo');
+  const heading = document.createElement('h1');
+  heading.textContent = 'Hello World';
+  root.appendChild(heading);
 });
 
 document.body.appendChild(root);
