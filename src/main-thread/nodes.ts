@@ -42,7 +42,11 @@ export class Nodes {
 
     const node = document.createElement(skeleton.nodeName);
     skeleton.attributes.forEach(attribute => {
-      node.setAttributeNS(attribute.namespaceURI, attribute.name, attribute.value);
+      if (attribute.namespaceURI) {
+        node.setAttributeNS(attribute.namespaceURI, attribute.name, attribute.value);
+      } else {
+        node.setAttribute(attribute.name, attribute.value);
+      }
     });
     // TODO(KB): Restore Properties
     // skeleton.properties.forEach(property => {
