@@ -34,7 +34,7 @@ test.beforeEach(t => {
 });
 
 test('Element should serialize to a TransferableNode', t => {
-  const serializedDiv = t.context.div._serialize_();
+  const serializedDiv = t.context.div.serialize();
   t.is(serializedDiv.nodeType, NodeType.ELEMENT_NODE);
   t.is(serializedDiv.nodeName, 'div');
   t.is(serializedDiv.childNodes.length, 1);
@@ -51,14 +51,14 @@ test('Element should serialize to a TransferableNode', t => {
 test('Element should serialize namespace', t => {
   const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
   const svg = new Element(NodeType.ELEMENT_NODE, 'svg', SVG_NAMESPACE);
-  t.is((svg._serialize_() as TransferableNode).namespaceName, SVG_NAMESPACE);
+  t.is((svg.serialize() as TransferableNode).namespaceName, SVG_NAMESPACE);
 });
 
 test('Element should serialize child node as well', t => {
   const div = new Element(NodeType.ELEMENT_NODE, 'div', null);
   const childDiv = new Element(NodeType.ELEMENT_NODE, 'div', null);
   div.appendChild(childDiv);
-  const serializedDiv = div._serialize_() as TransferableNode;
+  const serializedDiv = div.serialize() as TransferableNode;
   t.is(serializedDiv.childNodes.length, 1);
-  t.deepEqual(serializedDiv.childNodes[0], childDiv._serialize_());
+  t.deepEqual(serializedDiv.childNodes[0], childDiv.serialize());
 });

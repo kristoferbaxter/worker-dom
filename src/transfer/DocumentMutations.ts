@@ -23,7 +23,7 @@ import { MutationFromWorker, MessageType } from './Messages';
 
 const SUPPORTS_POST_MESSAGE = typeof postMessage !== 'undefined';
 const sanitizeNodes = (nodes: Node[] | undefined): Array<TransferableNode | TransferredNode> | null =>
-  (nodes && nodes.map(node => node._serialize_())) || null;
+  (nodes && nodes.map(node => node.serialize())) || null;
 let observing = false;
 let hydrated = false;
 
@@ -32,11 +32,11 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
 
   incomingMutations.forEach(mutation => {
     mutations.push({
-      target: mutation.target._serialize_(),
+      target: mutation.target.serialize(),
       addedNodes: sanitizeNodes(mutation.addedNodes),
       removedNodes: sanitizeNodes(mutation.removedNodes),
-      previousSibling: (mutation.previousSibling && mutation.previousSibling._serialize_()) || null,
-      nextSibling: (mutation.nextSibling && mutation.nextSibling._serialize_()) || null,
+      previousSibling: (mutation.previousSibling && mutation.previousSibling.serialize()) || null,
+      nextSibling: (mutation.nextSibling && mutation.nextSibling.serialize()) || null,
       attributeName: mutation.attributeName || null,
       attributeNamespace: mutation.attributeNamespace || null,
       oldValue: mutation.oldValue === '' ? '' : mutation.oldValue || null,

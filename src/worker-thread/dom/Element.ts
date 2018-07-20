@@ -344,7 +344,7 @@ export class Element extends Node {
     return matchChildrenElements(this, tagName === '*' ? _ => true : element => element.tagName === tagName);
   }
 
-  public _serialize_(): TransferableNode | TransferredNode {
+  public serialize(): TransferableNode | TransferredNode {
     if (this._transferred_ !== null) {
       return this._transferred_;
     }
@@ -364,7 +364,7 @@ export class Element extends Node {
       attributes: this.attributes,
       namespaceName: this.namespaceURI,
       properties: [], // TODO(KB): Properties!
-      childNodes: this.childNodes.map(childNode => childNode._serialize_()),
+      childNodes: this.childNodes.map(childNode => childNode.serialize()),
     };
   }
 }
