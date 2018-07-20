@@ -71,7 +71,7 @@ export class Text extends CharacterData {
     return remainderTextNode;
   }
 
-  public _sanitize_(): TransferableNode | TransferredNode {
+  public serialize(): TransferableNode | TransferredNode {
     if (this._transferred_ !== null) {
       return this._transferred_;
     }

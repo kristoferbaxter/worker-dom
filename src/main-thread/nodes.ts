@@ -40,9 +40,18 @@ export class Nodes {
       return node as RenderableElement;
     }
 
-    const node = document.createElement(skeleton.nodeName);
+    let node: HTMLElement | SVGElement;
+    if (skeleton.namespaceName) {
+      node = document.createElementNS(skeleton.namespaceName, skeleton.nodeName) as SVGElement;
+    } else {
+      node = document.createElement(skeleton.nodeName);
+    }
     skeleton.attributes.forEach(attribute => {
-      node.setAttributeNS(attribute.namespaceURI, attribute.name, attribute.value);
+      if (attribute.namespaceURI) {
+        node.setAttributeNS(attribute.namespaceURI, attribute.name, attribute.value);
+      } else {
+        node.setAttribute(attribute.name, attribute.value);
+      }
     });
     // TODO(KB): Restore Properties
     // skeleton.properties.forEach(property => {

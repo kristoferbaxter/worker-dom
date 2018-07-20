@@ -28,6 +28,7 @@ export interface TransferableNode extends TransferredNode {
   }>;
   readonly childNodes: Array<TransferableNode | TransferredNode>;
   readonly textContent: string;
+  readonly namespaceName: string;
 }
 
 // If a Node has been transferred once already to main thread then we need only pass its index.
