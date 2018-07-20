@@ -362,7 +362,7 @@ export class Element extends Node {
       nodeType: this.nodeType,
       nodeName: this.nodeName,
       attributes: this.attributes,
-      namespace: this.namespaceURI,
+      namespaceName: this.namespaceURI,
       properties: [], // TODO(KB): Properties!
       childNodes: this.childNodes.map(childNode => childNode._serialize_()),
     };

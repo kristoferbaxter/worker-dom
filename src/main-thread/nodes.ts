@@ -41,8 +41,8 @@ export class Nodes {
     }
 
     let node: HTMLElement | SVGElement;
-    if (skeleton.namespace) {
-      node = document.createElementNS(skeleton.namespace, skeleton.nodeName) as SVGElement;
+    if (skeleton.namespaceName) {
+      node = document.createElementNS(skeleton.namespaceName, skeleton.nodeName) as SVGElement;
     } else {
       node = document.createElement(skeleton.nodeName);
     }

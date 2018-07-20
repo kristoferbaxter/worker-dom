@@ -51,7 +51,7 @@ test('Element should serialize to a TransferableNode', t => {
 test('Element should serialize namespace', t => {
   const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
   const svg = new Element(NodeType.ELEMENT_NODE, 'svg', SVG_NAMESPACE);
-  t.is((svg._serialize_() as TransferableNode).namespace, SVG_NAMESPACE);
+  t.is((svg._serialize_() as TransferableNode).namespaceName, SVG_NAMESPACE);
 });
 
 test('Element should serialize child node as well', t => {
