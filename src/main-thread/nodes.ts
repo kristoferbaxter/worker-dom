@@ -40,7 +40,12 @@ export class Nodes {
       return node as RenderableElement;
     }
 
-    const node = document.createElement(skeleton.nodeName);
+    let node: HTMLElement | SVGElement;
+    if (skeleton.namespace) {
+      node = document.createElementNS(skeleton.namespace, skeleton.nodeName) as SVGElement;
+    } else {
+      node = document.createElement(skeleton.nodeName);
+    }
     skeleton.attributes.forEach(attribute => {
       if (attribute.namespaceURI) {
         node.setAttributeNS(attribute.namespaceURI, attribute.name, attribute.value);
