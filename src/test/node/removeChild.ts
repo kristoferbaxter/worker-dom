@@ -15,18 +15,27 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../worker-thread/dom/Node';
+import { Element } from '../../worker-thread/dom/Element';
+import { NodeType } from '../../worker-thread/dom/Node';
+
+type Context = {
+  node: Element;
+  child: Element;
+  childTwo: Element;
+};
 
 test.beforeEach(t => {
-  t.context = {
-    node: new Node(NodeType.ELEMENT_NODE, 'div'),
-    child: new Node(NodeType.ELEMENT_NODE, 'div'),
-    childTwo: new Node(NodeType.ELEMENT_NODE, 'div'),
+  const context: Context = {
+    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    child: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    childTwo: new Element(NodeType.ELEMENT_NODE, 'div', null),
   };
+
+  t.context = context;
 });
 
 test('remove only child Node from parent', t => {
-  const { node, child } = t.context;
+  const { node, child } = t.context as Context;
 
   node.appendChild(child);
   node.removeChild(child);
@@ -35,7 +44,7 @@ test('remove only child Node from parent', t => {
 });
 
 test('remove child Node from parent with multiple children', t => {
-  const { node, child, childTwo } = t.context;
+  const { node, child, childTwo } = t.context as Context;
 
   node.appendChild(child);
   node.appendChild(childTwo);

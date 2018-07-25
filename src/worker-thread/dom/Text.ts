@@ -16,8 +16,10 @@
 
 import { NodeType } from './Node';
 import { CharacterData } from './CharacterData';
-import { TransferableNode, TransferredNode } from '../../transfer/TransferableNodes';
-import { NumericBoolean } from '../../utils';
+import { Transferable } from '../../transfer/Transferable';
+import { Opcode } from '../../transfer/Opcode';
+// import { TransferableNode, TransferredNode } from 'TransferableNodes';
+// import { NumericBoolean } from '../../utils';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Text
 export class Text extends CharacterData {
@@ -71,27 +73,19 @@ export class Text extends CharacterData {
     return remainderTextNode;
   }
 
-  public _sanitize_(): TransferableNode | TransferredNode {
-    if (this._transferred_ !== null) {
-      return this._transferred_;
+  public serialize(transferable: Transferable) {
+    if (this.transfered !== null) {
+      transferable.appendStore(this.transfered);
+      return;
     }
 
-    Promise.resolve().then(_ => {
-      // After transmission of the current unsanitized form across a message, we can start to send the more compressed format.
-      this._transferred_ = {
-        _index_: this._index_,
-        transferred: NumericBoolean.TRUE,
-      };
-    });
-    return {
-      _index_: this._index_,
-      transferred: NumericBoolean.FALSE,
-      nodeType: this.nodeType,
-      nodeName: this.nodeName,
-      attributes: null,
-      properties: [],
-      childNodes: [], // Text cannot have childNodes.
-      textContent: this.nodeValue,
-    };
+    // In the future send a transfered representation of this Node
+    // This helps to minimize the total size of transfers.
+    Promise.resolve().then(_ => (this.transfered = new Uint8Array([Opcode.TRANSFERRED_NODE, this._index_])));
+
+    transferable.appendNumbers([this._index_, this.nodeType], Opcode.NODE);
+    transferable.appendString(this.nodeName, Opcode.NODE_NAME);
+    transferable.appendString(this.nodeValue, Opcode.TEXT_CONTENT);
+    transferable.appendOpcode(Opcode.END_NODE);
   }
 }

@@ -19,12 +19,14 @@ import { DOMTokenList } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate } from './Attr';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { TransferableNode, TransferredNode } from '../../transfer/TransferableNodes';
-import { NumericBoolean } from '../../utils';
+// import { TransferableNode, TransferredNode } from '../../transfer/TransferableNodes';
+// import { NumericBoolean } from '../../utils';
 import { Text } from './Text';
 import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
 import { matchChildrenElements } from './matchElements';
 import { reflectProperties } from './enhanceElement';
+import { Transferable } from '../../transfer/Transferable';
+import { Opcode } from '../../transfer/Opcode';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
@@ -344,27 +346,29 @@ export class Element extends Node {
     return matchChildrenElements(this, tagName === '*' ? _ => true : element => element.tagName === tagName);
   }
 
-  public _sanitize_(): TransferableNode | TransferredNode {
-    if (this._transferred_ !== null) {
-      return this._transferred_;
+  public serialize(transferable: Transferable) {
+    if (this.transfered !== null) {
+      transferable.appendStore(this.transfered);
+      return;
     }
 
-    Promise.resolve().then(_ => {
-      // After transmission of the current unsanitized form across a message, we can start to send the more compressed format.
-      this._transferred_ = {
-        _index_: this._index_,
-        transferred: NumericBoolean.TRUE,
-      };
-    });
-    return {
-      _index_: this._index_,
-      transferred: NumericBoolean.FALSE,
-      nodeType: this.nodeType,
-      nodeName: this.nodeName,
-      attributes: this.attributes,
-      properties: [], // TODO(KB): Properties!
-      childNodes: this.childNodes.map(childNode => childNode._sanitize_()),
-    };
+    // In the future send a transfered representation of this Node
+    // This helps to minimize the total size of transfers.
+    Promise.resolve().then(_ => (this.transfered = new Uint8Array([Opcode.TRANSFERRED_NODE, this._index_])));
+
+    // When transfering the entire Element, we must specify all the attributes, properties, and childNodes.
+    transferable.appendNumbers([this._index_, this.nodeType], Opcode.NODE);
+    transferable.appendString(this.nodeName, Opcode.NODE_NAME);
+    transferable.appendString(this.namespaceURI || 'null', Opcode.NAMESPACE_URI);
+    if (this.attributes) {
+      this.attributes.forEach(attribute =>
+        transferable.appendStrings([attribute.namespaceURI || 'null', attribute.name, attribute.value], Opcode.ATTRIBUTE),
+      );
+    }
+    if (this.childNodes) {
+      this.childNodes.forEach(node => node.serialize(transferable));
+    }
+    transferable.appendOpcode(Opcode.END_NODE);
   }
 }
 reflectProperties([{ id: [''] }], Element);

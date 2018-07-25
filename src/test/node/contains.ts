@@ -15,37 +15,46 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../worker-thread/dom/Node';
+import { NodeType } from '../../worker-thread/dom/Node';
+import { Element } from '../../worker-thread/dom/Element';
+
+type Context = {
+  node: Element;
+  child: Element;
+  childTwo: Element;
+};
 
 test.beforeEach(t => {
-  t.context = {
-    node: new Node(NodeType.ELEMENT_NODE, 'div'),
-    child: new Node(NodeType.ELEMENT_NODE, 'div'),
-    childTwo: new Node(NodeType.ELEMENT_NODE, 'div'),
+  const context: Context = {
+    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    child: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    childTwo: new Element(NodeType.ELEMENT_NODE, 'div', null),
   };
+
+  t.context = context;
 });
 
 test('returns true for a node containing itself', t => {
-  const { node } = t.context;
+  const { node } = t.context as Context;
 
   t.is(node.contains(node), true);
 });
 
 test('returns false for a node not contained by a parent', t => {
-  const { node, child } = t.context;
+  const { node, child } = t.context as Context;
 
   t.is(node.contains(child), false);
 });
 
 test('returns true for a node contained directly by a parent', t => {
-  const { node, child } = t.context;
+  const { node, child } = t.context as Context;
 
   node.appendChild(child);
   t.is(node.contains(child), true);
 });
 
 test('returns true for a node contained deeper within a tree', t => {
-  const { node, child, childTwo } = t.context;
+  const { node, child, childTwo } = t.context as Context;
 
   child.appendChild(childTwo);
   node.appendChild(child);
@@ -53,7 +62,7 @@ test('returns true for a node contained deeper within a tree', t => {
 });
 
 test('returns false for a node deep within a tree containing parents', t => {
-  const { node, child, childTwo } = t.context;
+  const { node, child, childTwo } = t.context as Context;
 
   child.appendChild(childTwo);
   node.appendChild(child);

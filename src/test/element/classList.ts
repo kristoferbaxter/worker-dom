@@ -18,21 +18,27 @@ import test from 'ava';
 import { NodeType } from '../../worker-thread/dom/Node';
 import { Element } from '../../worker-thread/dom/Element';
 
+type Context = {
+  node: Element;
+};
+
 test.beforeEach(t => {
-  t.context = {
+  const context: Context = {
     node: new Element(NodeType.ELEMENT_NODE, 'div', null),
   };
+
+  t.context = context;
 });
 
 test('classList should be empty by default', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context as Context;
 
   t.is(node.classList.value, '');
   t.is(node.getAttribute('class'), null);
 });
 
 test('setAttribute should modify classList property', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context as Context;
 
   node.setAttribute('class', 'foo bar');
   t.is(node.getAttribute('class'), 'foo bar');
@@ -40,7 +46,7 @@ test('setAttribute should modify classList property', t => {
 });
 
 test('classList.add of a single value should only add one class', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context as Context;
 
   node.classList.add('foo');
   t.is(node.classList.value, 'foo');
@@ -49,7 +55,7 @@ test('classList.add of a single value should only add one class', t => {
 });
 
 test('classList.add of a multiple value should only add all classes', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context as Context;
 
   node.classList.add('foo', 'bar', 'baz');
   t.is(node.classList.value, 'foo bar baz');
@@ -58,7 +64,7 @@ test('classList.add of a multiple value should only add all classes', t => {
 });
 
 test('classList.remove of a single value should only remove one class', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context as Context;
 
   node.className = 'foo bar';
   node.classList.remove('foo');
@@ -68,7 +74,7 @@ test('classList.remove of a single value should only remove one class', t => {
 });
 
 test('classList.remove of a multiple values should remove all values', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context as Context;
 
   node.className = 'foo bar baz';
   node.classList.remove('foo', 'bar');
@@ -78,7 +84,7 @@ test('classList.remove of a multiple values should remove all values', t => {
 });
 
 test('classList.toggle should add a value that is not present already', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context as Context;
 
   node.classList.toggle('foo');
   t.is(node.classList.value, 'foo');
@@ -87,7 +93,7 @@ test('classList.toggle should add a value that is not present already', t => {
 });
 
 test('classList.toggle should remove a value that is present already', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context as Context;
 
   node.className = 'foo';
   node.classList.toggle('foo');

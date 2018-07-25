@@ -18,17 +18,26 @@ import test from 'ava';
 import { NodeType } from '../../worker-thread/dom/Node';
 import { Element } from '../../worker-thread/dom/Element';
 
+type Context = {
+  node: Element;
+  child: Element;
+  childTwo: Element;
+  childThree: Element;
+};
+
 test.beforeEach(t => {
-  t.context = {
+  const context: Context = {
     node: new Element(NodeType.ELEMENT_NODE, 'div', null),
     child: new Element(NodeType.ELEMENT_NODE, 'div', null),
     childTwo: new Element(NodeType.ELEMENT_NODE, 'p', null),
     childThree: new Element(NodeType.ELEMENT_NODE, 'p', null),
   };
+
+  t.context = context;
 });
 
 test('single direct child', t => {
-  const { node, child } = t.context as { node: Element; child: Element };
+  const { node, child } = t.context as Context;
 
   node.appendChild(child);
 
@@ -40,7 +49,7 @@ test('single direct child', t => {
 });
 
 test('multiple direct children', t => {
-  const { node, child, childTwo } = t.context as { node: Element; child: Element; childTwo: Element };
+  const { node, child, childTwo } = t.context as Context;
 
   node.appendChild(child);
   node.appendChild(childTwo);
@@ -55,7 +64,7 @@ test('multiple direct children', t => {
 });
 
 test('tree with depth > 1', t => {
-  const { node, child, childTwo, childThree } = t.context as { node: Element; child: Element; childTwo: Element; childThree: Element };
+  const { node, child, childTwo, childThree } = t.context as Context;
 
   child.appendChild(childTwo);
   child.appendChild(childThree);

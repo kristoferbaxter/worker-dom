@@ -14,49 +14,30 @@
  * limitations under the License.
  */
 
-import { Node } from '../worker-thread/dom/Node';
 import { Document } from '../worker-thread/dom/Document';
 import { MutationRecord } from '../worker-thread/MutationRecord';
-import { TransferableMutationRecord } from './TransferableRecord';
-import { TransferableNode, TransferredNode } from './TransferableNodes';
 import { MutationFromWorker, MessageType } from './Messages';
+import { Transferable } from './Transferable';
+import { serializeMutation } from './TransferableRecord';
 
 const SUPPORTS_POST_MESSAGE = typeof postMessage !== 'undefined';
-const sanitizeNodes = (nodes: Node[] | undefined): Array<TransferableNode | TransferredNode> | null =>
-  (nodes && nodes.map(node => node._sanitize_())) || null;
+const transferable = new Transferable();
 let observing = false;
 let hydrated = false;
 
 function handleMutations(incomingMutations: MutationRecord[]): void {
-  const mutations: TransferableMutationRecord[] = [];
-
-  incomingMutations.forEach(mutation => {
-    mutations.push({
-      target: mutation.target._sanitize_(),
-      addedNodes: sanitizeNodes(mutation.addedNodes),
-      removedNodes: sanitizeNodes(mutation.removedNodes),
-      previousSibling: (mutation.previousSibling && mutation.previousSibling._sanitize_()) || null,
-      nextSibling: (mutation.nextSibling && mutation.nextSibling._sanitize_()) || null,
-      attributeName: mutation.attributeName || null,
-      attributeNamespace: mutation.attributeNamespace || null,
-      oldValue: mutation.oldValue === '' ? '' : mutation.oldValue || null,
-      type: mutation.type,
-      propertyName: mutation.propertyName || null,
-      value: mutation.value === '' ? '' : mutation.value || null,
-      addedEvents: mutation.addedEvents || null,
-      removedEvents: mutation.removedEvents || null,
-      measure: null,
-    });
-  });
+  incomingMutations.forEach(mutation => serializeMutation(transferable, mutation));
 
   if (SUPPORTS_POST_MESSAGE) {
+    const mutations = transferable.consume();
     const mutationFromWorker: MutationFromWorker = {
       type: hydrated ? MessageType.MUTATE : MessageType.HYDRATE,
       mutations,
     };
     hydrated = true;
 
-    postMessage(mutationFromWorker);
+    debugger;
+    postMessage(mutationFromWorker, [mutations.buffer]);
   }
 }
 

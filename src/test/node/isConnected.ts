@@ -15,24 +15,33 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../worker-thread/dom/Node';
+import { NodeType } from '../../worker-thread/dom/Node';
+import { Element } from '../../worker-thread/dom/Element';
+
+type Context = {
+  node: Element;
+  child: Element;
+  childTwo: Element;
+};
 
 test.beforeEach(t => {
-  t.context = {
-    node: new Node(NodeType.ELEMENT_NODE, 'div'),
-    child: new Node(NodeType.ELEMENT_NODE, 'div'),
-    childTwo: new Node(NodeType.ELEMENT_NODE, 'p'),
+  const context: Context = {
+    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    child: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    childTwo: new Element(NodeType.ELEMENT_NODE, 'p', null),
   };
+
+  t.context = context;
 });
 
 test('without a connected parent, tree depth 1 nodes are not connected', t => {
-  const { node } = t.context as { node: Node };
+  const { node } = t.context as Context;
 
   t.is(node.isConnected, false);
 });
 
 test('without a connected parent, tree depth > 1 are not connected', t => {
-  const { node, child } = t.context as { node: Node; child: Node };
+  const { node, child } = t.context as Context;
 
   node.appendChild(child);
 
@@ -41,7 +50,7 @@ test('without a connected parent, tree depth > 1 are not connected', t => {
 });
 
 test('with a connected parent, nodes are connected during append', t => {
-  const { node, child, childTwo } = t.context as { node: Node; child: Node; childTwo: Node };
+  const { node, child, childTwo } = t.context as Context;
 
   node.isConnected = true;
   child.appendChild(childTwo);
@@ -53,7 +62,7 @@ test('with a connected parent, nodes are connected during append', t => {
 });
 
 test('nodes are disconnected during removal', t => {
-  const { node, child, childTwo } = t.context as { node: Node; child: Node; childTwo: Node };
+  const { node, child, childTwo } = t.context as Context;
 
   node.isConnected = true;
   child.appendChild(childTwo);

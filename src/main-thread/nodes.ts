@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { TransferableNode } from '../transfer/TransferableNodes';
+// import { TransferableNode } from '../transfer/TransferableNodes';
 import { RenderableElement } from './RenderableElement';
-import { NumericBoolean } from '../utils';
+// import { NumericBoolean } from '../utils';
 
 export class Nodes {
   private NODES_: Map<number, RenderableElement> = new Map();
@@ -33,30 +33,39 @@ export class Nodes {
    * @example <caption>Element node</caption>
    *   createNode({ nodeType:1, nodeName:'div', attributes:[{ name:'a', value:'b' }], childNodes:[ ... ] })
    */
-  public createNode(skeleton: TransferableNode): RenderableElement {
-    if (skeleton.nodeType === Node.TEXT_NODE) {
-      const node = document.createTextNode(skeleton.textContent);
-      this.storeNode(node, skeleton._index_);
-      return node as RenderableElement;
-    }
+  // public createNode(skeleton: TransferableNode): RenderableElement {
+  //   if (skeleton.nodeType === Node.TEXT_NODE) {
+  //     const node = document.createTextNode(skeleton.textContent);
+  //     this.storeNode(node, skeleton._index_);
+  //     return node as RenderableElement;
+  //   }
 
-    const node = document.createElement(skeleton.nodeName);
-    skeleton.attributes.forEach(attribute => {
-      node.setAttributeNS(attribute.namespaceURI, attribute.name, attribute.value);
-    });
-    // TODO(KB): Restore Properties
-    // skeleton.properties.forEach(property => {
-    //   node[`${property.name}`] = property.value;
-    // });
-    skeleton.childNodes.forEach(childNode => {
-      if (childNode.transferred === NumericBoolean.FALSE) {
-        node.appendChild(this.createNode(childNode as TransferableNode));
-      }
-    });
+  //   let node: HTMLElement;
+  //   if (skeleton.namespaceName) {
+  //     node = document.createElementNS(skeleton.namespaceName, skeleton.nodeName);
+  //   } else {
+  //     node = document.createElement(skeleton.nodeName);
+  //   }
+  //   skeleton.attributes.forEach(attribute => {
+  //     if (attribute.namespaceURI) {
+  //       node.setAttributeNS(attribute.namespaceURI, attribute.name, attribute.value);
+  //     } else {
+  //       node.setAttribute(attribute.name, attribute.value);
+  //     }
+  //   });
+  //   // TODO(KB): Restore Properties
+  //   // skeleton.properties.forEach(property => {
+  //   //   node[`${property.name}`] = property.value;
+  //   // });
+  //   skeleton.childNodes.forEach(childNode => {
+  //     if (childNode.transfered === NumericBoolean.FALSE) {
+  //       node.appendChild(this.createNode(childNode as TransferableNode));
+  //     }
+  //   });
 
-    this.storeNode(node, skeleton._index_);
-    return node as RenderableElement;
-  }
+  //   this.storeNode(node, skeleton._index_);
+  //   return node as RenderableElement;
+  // }
 
   /**
    * Returns the real DOM Element corresponding to a serialized Element object.

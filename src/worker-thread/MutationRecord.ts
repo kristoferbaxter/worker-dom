@@ -49,7 +49,7 @@ export const enum MutationRecordType {
   COMMAND = 4,
 }
 
-interface EventSubscriptionChange {
+export interface EventSubscriptionChange {
   readonly type: string;
   readonly index: number;
 }

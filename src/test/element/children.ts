@@ -15,26 +15,35 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../worker-thread/dom/Node';
+import { NodeType } from '../../worker-thread/dom/Node';
 import { Element } from '../../worker-thread/dom/Element';
+import { Text } from '../../worker-thread/dom/Text';
+
+type Context = {
+  node: Element;
+  child: Element;
+  childTwo: Text;
+};
 
 test.beforeEach(t => {
-  t.context = {
+  const context: Context = {
     node: new Element(NodeType.ELEMENT_NODE, 'div', null),
     child: new Element(NodeType.ELEMENT_NODE, 'div', null),
-    childTwo: new Node(NodeType.TEXT_NODE, '#text'),
+    childTwo: new Text(''),
   };
+
+  t.context = context;
 });
 
 test('children should be an empty array when there are no childNodes', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context as Context;
 
   t.is(node.children.length, 0);
   t.deepEqual(node.children, []);
 });
 
 test('children should contain all childNodes when all are the correct NodeType', t => {
-  const { node, child } = t.context as { node: Element; child: Element };
+  const { node, child } = t.context as Context;
 
   node.appendChild(child);
   t.is(node.children.length, 1);
@@ -42,7 +51,7 @@ test('children should contain all childNodes when all are the correct NodeType',
 });
 
 test('children should contain only childNodes of NodeType.ELEMENT_NODE', t => {
-  const { node, child, childTwo } = t.context as { node: Element; child: Element; childTwo: Node };
+  const { node, child, childTwo } = t.context as Context;
 
   node.appendChild(child);
   node.appendChild(childTwo);
@@ -51,7 +60,7 @@ test('children should contain only childNodes of NodeType.ELEMENT_NODE', t => {
 });
 
 test('children should be an empty array when there are no childNodes of NodeType.ELEMENT_NODE', t => {
-  const { node, childTwo } = t.context as { node: Element; childTwo: Node };
+  const { node, childTwo } = t.context as Context;
 
   node.appendChild(childTwo);
   t.is(node.children.length, 0);

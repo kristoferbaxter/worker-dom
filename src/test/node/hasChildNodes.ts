@@ -15,31 +15,40 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../worker-thread/dom/Node';
+import { NodeType } from '../../worker-thread/dom/Node';
+import { Element } from '../../worker-thread/dom/Element';
+
+type Context = {
+  node: Element;
+  child: Element;
+  childTwo: Element;
+};
 
 test.beforeEach(t => {
-  t.context = {
-    node: new Node(NodeType.ELEMENT_NODE, 'div'),
-    child: new Node(NodeType.ELEMENT_NODE, 'div'),
-    childTwo: new Node(NodeType.ELEMENT_NODE, 'p'),
+  const context: Context = {
+    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    child: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    childTwo: new Element(NodeType.ELEMENT_NODE, 'p', null),
   };
+
+  t.context = context;
 });
 
 test('return false when node contains no children', t => {
-  const { node } = t.context as { node: Node };
+  const { node } = t.context as Context;
 
   t.is(node.hasChildNodes(), false);
 });
 
 test('return true when node contains a child', t => {
-  const { node, child } = t.context as { node: Node; child: Node };
+  const { node, child } = t.context as Context;
 
   node.appendChild(child);
   t.is(node.hasChildNodes(), true);
 });
 
 test('return true when node contains multiple children', t => {
-  const { node, child, childTwo } = t.context as { node: Node; child: Node; childTwo: Node };
+  const { node, child, childTwo } = t.context as Context;
 
   node.appendChild(child);
   node.appendChild(childTwo);

@@ -14,33 +14,44 @@
  * limitations under the License.
  */
 
-import { TransferredNode } from './TransferableNodes';
 import { MessageToWorker, MessageType } from './Messages';
 import { get } from '../worker-thread/NodeMapping';
 import { Event } from '../worker-thread/Event';
+import { Transferable } from './Transferable';
+import { Opcode } from './Opcode';
+import { EventSubscriptionChange } from '../worker-thread/MutationRecord';
 
-type TransferableTarget = TransferredNode;
+/**
+ * Event ArrayBuffer Representation
+ * ...[
+ *   Opcode.ADDED_EVENT/REMOVED_EVENT
+ *   ...[Transferable.string(type), index]
+ * ]
+ */
+export const serializeEventSubscription = (transferable: Transferable, type: Opcode, subscriptions: Array<EventSubscriptionChange>) => {
+  subscriptions.forEach(subscription => {
+    transferable.appendString(subscription.type, type);
+    transferable.appendNumber(subscription.index);
+  });
+};
 
-export interface TransferableEvent {
+type TransferredNodeIndex = number;
+
+export interface TransferredEventFromMainThread {
   readonly _index_: number;
   readonly bubbles?: boolean;
   readonly cancelable?: boolean;
   cancelBubble?: boolean;
-  readonly currentTarget?: TransferableTarget;
+  readonly currentTarget?: TransferredNodeIndex;
   readonly defaultPrevented?: boolean;
   readonly eventPhase?: number;
   readonly isTrusted?: boolean;
   returnValue?: boolean;
   // readonly srcElement: TransferableTarget | null;
-  readonly target?: TransferableTarget | null;
+  readonly target?: TransferredNodeIndex | null;
   readonly timeStamp?: number;
   readonly type: string;
   readonly scoped?: boolean;
-}
-
-export interface TransferableEventSubscriptionChange {
-  readonly type: string;
-  readonly index: number;
 }
 
 /**
@@ -65,7 +76,7 @@ export function propagate(): void {
             eventPhase: event.eventPhase,
             isTrusted: event.isTrusted,
             returnValue: event.returnValue,
-            target: get(event.target ? event.target._index_ : null),
+            target: get(event.target ? event.target : null),
             timeStamp: event.timeStamp,
             scoped: event.scoped,
           }),

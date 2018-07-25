@@ -15,18 +15,27 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../worker-thread/dom/Node';
+import { Element } from '../../worker-thread/dom/Element';
+import { NodeType } from '../../worker-thread/dom/Node';
+
+type Context = {
+  node: Element;
+  child: Element;
+  childTwo: Element;
+};
 
 test.beforeEach(t => {
-  t.context = {
-    node: new Node(NodeType.ELEMENT_NODE, 'div'),
-    child: new Node(NodeType.ELEMENT_NODE, 'div'),
-    childTwo: new Node(NodeType.ELEMENT_NODE, 'div'),
+  const context: Context = {
+    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    child: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    childTwo: new Element(NodeType.ELEMENT_NODE, 'div', null),
   };
+
+  t.context = context;
 });
 
 test('when a parent contains two children, the previous sibling of the second is the first', t => {
-  const { node, child, childTwo } = t.context;
+  const { node, child, childTwo } = t.context as Context;
 
   node.appendChild(child);
   node.appendChild(childTwo);
@@ -34,13 +43,13 @@ test('when a parent contains two children, the previous sibling of the second is
 });
 
 test('when a node does not have a parent, its previous sibling is null', t => {
-  const { node } = t.context;
+  const { node } = t.context as Context;
 
   t.is(node.previousSibling, null);
 });
 
 test('when a node is the first child of a parent, the previous sibling is null', t => {
-  const { node, child } = t.context;
+  const { node, child } = t.context as Context;
 
   node.appendChild(child);
   t.is(child.previousSibling, null);

@@ -18,27 +18,33 @@ import test from 'ava';
 import { NodeType } from '../../worker-thread/dom/Node';
 import { Element } from '../../worker-thread/dom/Element';
 
+type Context = {
+  node: Element;
+};
+
 test.beforeEach(t => {
-  t.context = {
+  const context: Context = {
     node: new Element(NodeType.ELEMENT_NODE, 'div', null),
   };
+
+  t.context = context;
 });
 
 test('className should be empty by default', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context as Context;
 
   t.is(node.className, '');
 });
 
 test('className should be settable to a single value', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context as Context;
 
   node.className = 'foo';
   t.is(node.className, 'foo');
 });
 
 test('className should be settable to multiple values', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context as Context;
 
   node.className = 'foo bar baz';
   t.is(node.className, 'foo bar baz');

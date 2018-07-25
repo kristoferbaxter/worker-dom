@@ -16,8 +16,8 @@
 
 // import {getNode, createNode} from './nodes.js';
 import { Nodes } from './nodes';
-import { TransferableMutationRecord } from '../transfer/TransferableRecord';
-import { TransferableNode } from '../transfer/TransferableNodes';
+// import { TransferableMutationRecord } from '../transfer/TransferableRecord';
+// import { TransferableNode } from '../transfer/TransferableNodes';
 import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { process } from './command';
 
@@ -25,49 +25,45 @@ import { process } from './command';
 // const GESTURE_TO_MUTATION_THRESHOLD = 5000;
 
 const mutators: {
-  [key: number]: (nodesInstance: Nodes, worker: Worker, mutation: TransferableMutationRecord) => void;
+  [key: number]: (nodesInstance: Nodes, worker: Worker, mutation: any) => void;
 } = {
-  [MutationRecordType.CHILD_LIST]: (
-    nodesInstance: Nodes,
-    worker: Worker,
-    { target, removedNodes, addedNodes, nextSibling }: TransferableMutationRecord,
-  ) => {
-    const parent = nodesInstance.getNode(target._index_);
+  [MutationRecordType.CHILD_LIST]: (nodesInstance: Nodes, worker: Worker, { target, removedNodes, addedNodes, nextSibling }: any) => {
+    console.log('mutate CHILD_LIST handler');
+    // const parent = nodesInstance.getNode(target._index_);
 
-    if (removedNodes) {
-      removedNodes.forEach(node => parent.removeChild(nodesInstance.getNode(node._index_)));
-    }
+    // if (removedNodes) {
+    //   removedNodes.forEach(node => parent.removeChild(nodesInstance.getNode(node._index_)));
+    // }
 
-    if (addedNodes) {
-      addedNodes.forEach(node => {
-        parent.insertBefore(
-          nodesInstance.getNode(node._index_) || nodesInstance.createNode(node as TransferableNode),
-          (nextSibling && nodesInstance.getNode(nextSibling._index_)) || null,
-        );
-      });
-    }
+    // if (addedNodes) {
+    //   addedNodes.forEach(node => {
+    //     parent.insertBefore(
+    //       nodesInstance.getNode(node._index_) || nodesInstance.createNode(node as TransferableNode),
+    //       (nextSibling && nodesInstance.getNode(nextSibling._index_)) || null,
+    //     );
+    //   });
+    // }
   },
-  [MutationRecordType.ATTRIBUTES]: (nodesInstance: Nodes, worker: Worker, { target, attributeName, value }: TransferableMutationRecord) => {
+  [MutationRecordType.ATTRIBUTES]: (nodesInstance: Nodes, worker: Worker, { target, attributeName, value }: any) => {
     if (attributeName !== null && value !== null) {
       nodesInstance.getNode(target._index_).setAttribute(attributeName, value);
     }
   },
-  [MutationRecordType.CHARACTER_DATA]: (nodesInstance: Nodes, worker: Worker, { target, value }: TransferableMutationRecord) => {
+  [MutationRecordType.CHARACTER_DATA]: (nodesInstance: Nodes, worker: Worker, { target, value }: any) => {
     if (value !== null) {
       nodesInstance.getNode(target._index_).textContent = value;
     }
   },
-  [MutationRecordType.PROPERTIES]: (nodesInstance: Nodes, worker: Worker, { target, propertyName, value }: TransferableMutationRecord) => {
+  [MutationRecordType.PROPERTIES]: (nodesInstance: Nodes, worker: Worker, { target, propertyName, value }: any) => {
     if (propertyName !== null && value !== null) {
       nodesInstance.getNode(target._index_)[propertyName] = value;
     }
   },
-  [MutationRecordType.COMMAND]: (nodesInstance: Nodes, worker: Worker, mutation: TransferableMutationRecord) =>
-    process(nodesInstance, worker, mutation),
+  [MutationRecordType.COMMAND]: (nodesInstance: Nodes, worker: Worker, mutation: any) => process(nodesInstance, worker, mutation),
 };
 
 export class Mutation {
-  private MUTATION_QUEUE_: TransferableMutationRecord[] = [];
+  private MUTATION_QUEUE_: any[] = [];
   private pendingMutations_: boolean = false;
   // private lastGestureTime: number;
   private nodesInstance_: Nodes;
@@ -82,7 +78,7 @@ export class Mutation {
    * Process MutationRecord from worker thread applying changes to the existing DOM.
    * @param hydrationFromWorker contains mutations to apply
    */
-  public process = (mutations: TransferableMutationRecord[]): void => {
+  public process = (mutations: any[]): void => {
     //mutations: TransferableMutationRecord[]): void {
     // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferableMutationRecord[])
     // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {

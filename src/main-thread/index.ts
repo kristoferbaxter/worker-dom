@@ -15,10 +15,10 @@
  */
 
 import { Nodes } from './nodes';
-import { Hydration } from './hydrate';
-import { Mutation } from './mutate';
+// import { Hydration } from './hydrate';
+// import { Mutation } from './mutate';
 import { createWorker } from './worker';
-import { MessageFromWorker, MessageType } from '../transfer/Messages';
+import { MessageFromWorker } from '../transfer/Messages';
 
 export function upgradeElement(baseElement: Element): void {
   const authorURL = baseElement.getAttribute('src');
@@ -29,7 +29,9 @@ export function upgradeElement(baseElement: Element): void {
   const nodesInstance = new Nodes(baseElement);
   // The document element is constructed before the worker MutationObserver is attached.
   // As a result, we must manually store the reference node for the main thread.
+  // The first entry is the "document", the second entry is "document.body".
   nodesInstance.storeNode(baseElement as HTMLElement, 1);
+  nodesInstance.storeNode(baseElement as HTMLElement, 2);
 
   // console.log(`creating worker, author code: ${authorURL}`);
   createWorker(authorURL).then(worker => {
@@ -37,20 +39,21 @@ export function upgradeElement(baseElement: Element): void {
       return;
     }
 
-    const hydrationInstance = new Hydration(baseElement, nodesInstance, worker);
-    const mutationInstance = new Mutation(nodesInstance, worker);
+    // const hydrationInstance = new Hydration(baseElement, nodesInstance, worker);
+    // const mutationInstance = new Mutation(nodesInstance, worker);
 
     worker.onmessage = ({ data }: MessageFromWorker) => {
-      switch (data.type) {
-        case MessageType.HYDRATE:
-          // console.info(`hydration from worker: ${data.type}`, data.mutations);
-          hydrationInstance.process(data.mutations);
-          break;
-        case MessageType.MUTATE:
-          // console.info(`mutation from worker: ${data.type}`, data.mutations);
-          mutationInstance.process(data.mutations);
-          break;
-      }
+      console.info(`mutation from worker`, data);
+      // switch (data.type) {
+      //   case MessageType.HYDRATE:
+      //     // console.info(`hydration from worker: ${data.type}`, data.mutations);
+      //     hydrationInstance.process(data.mutations);
+      //     break;
+      //   case MessageType.MUTATE:
+      //     // console.info(`mutation from worker: ${data.type}`, data.mutations);
+      //     mutationInstance.process(data.mutations);
+      //     break;
+      // }
     };
   });
 }

@@ -14,24 +14,55 @@
  * limitations under the License.
  */
 
-import { NodeType, NodeName } from '../worker-thread/dom/Node';
-import { NumericBoolean } from '../utils';
+import { Transferable } from './Transferable';
+import { Node } from '../worker-thread/dom/Node';
+import { Opcode } from './Opcode';
 
-export interface TransferableNode extends TransferredNode {
-  readonly nodeType: NodeType;
-  readonly nodeName: NodeName;
-  readonly attributes: Array<{
-    [index: string]: string;
-  }>;
-  readonly properties: Array<{
-    [index: string]: any;
-  }>;
-  readonly childNodes: Array<TransferableNode | TransferredNode>;
-  readonly textContent: string;
-}
+// Both Text and Element implement a method named `serialize(transferable: Transferable)`
+// When they add a NODE or TRANSFERRED_NODE to the stack for transmission they must follow
+// the format specified, the encoder and decoder cannot diverge in this definition.
 
-// If a Node has been transferred once already to main thread then we need only pass its index.
-export interface TransferredNode {
-  readonly _index_: number;
-  readonly transferred: NumericBoolean;
-}
+// TODO(KB): There must be a way to enforce this format with TypeScript.
+
+export const serializeNodes = (transferable: Transferable, nodes: Array<Node> | undefined, opcode?: Opcode) => {
+  if (nodes && nodes.length > 0) {
+    nodes.forEach(node => {
+      transferable.appendOpcode(opcode);
+      node.serialize(transferable);
+    });
+  }
+};
+
+/**
+ * Node ArrayBuffer Representation
+ * [
+ *   Opcode.NODE,
+ *   index,
+ *   nodeType
+ *
+ *   Opcode.NODE_NAME,
+ *   Transferable.string(nodeName),
+ *
+ *   Opcode.NAMESPACE_URI
+ *   Transferable.string(namespaceURI)
+ *
+ *   ...[Opcode.ATTRIBUTE, Transferable.string(attribute.namespaceURI || 'null), Transferable.string(attribute.name), Transferable.string(attribute.value)]
+ *
+ *   ...[Opcode.PROPERTY, Transferable.string(key), Transferable.string(value)]
+ *
+ *   ...[Opcode.CHILD_NODE, Node | TransferredNode]
+ *
+ *   Opcode.TEXT_CONTENT,
+ *   Transferable.string(node.nodeValue)
+ *
+ *   Opcode.END_NODE
+ * ]
+ */
+
+/**
+ * TransferredNode ArrayBuffer Representation
+ * [
+ *   Opcode.TRANSFERRED_NODE
+ *   index
+ * ]
+ */

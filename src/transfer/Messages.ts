@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { TransferableEvent } from './TransferableEvent';
-import { TransferableMutationRecord } from './TransferableRecord';
+import { TransferredEventFromMainThread } from './TransferableEvent';
 import { TransferableSyncValue } from './TransferableSyncValue';
 
 export const enum MessageType {
@@ -32,7 +31,7 @@ export const enum MessageType {
 
 export interface MutationFromWorker {
   type: MessageType.HYDRATE | MessageType.MUTATE;
-  mutations: TransferableMutationRecord[];
+  mutations: Uint8Array;
 }
 export interface MessageFromWorker {
   data: MutationFromWorker;
@@ -40,7 +39,7 @@ export interface MessageFromWorker {
 
 interface EventToWorker {
   type: MessageType.EVENT;
-  event: TransferableEvent;
+  event: TransferredEventFromMainThread;
 }
 interface ValueSyncToWorker {
   type: MessageType.SYNC;

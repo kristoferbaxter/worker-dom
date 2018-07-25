@@ -18,48 +18,54 @@ import test from 'ava';
 import { NodeType } from '../../worker-thread/dom/Node';
 import { Element } from '../../worker-thread/dom/Element';
 
+type Context = {
+  node: Element;
+};
+
 test.beforeEach(t => {
-  t.context = {
+  const context: Context = {
     node: new Element(NodeType.ELEMENT_NODE, 'div', null),
   };
+
+  t.context = context;
 });
 
 test('hasAttribute is false by default', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context as Context;
 
   t.is(node.hasAttribute('class'), false);
 });
 
 test('hasAttribute is true, when attribute is added', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context as Context;
 
   node.setAttribute('data-foo', 'bar');
   t.is(node.hasAttribute('data-foo'), true);
 });
 
 test('hasAttribute is true, when empty className is added', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context as Context;
 
   node.className = '';
   t.is(node.hasAttribute('class'), true);
 });
 
 test('hasAttribute is true, when valid className is added', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context as Context;
 
   node.className = 'foo';
   t.is(node.hasAttribute('class'), true);
 });
 
 test('hasAttribute is true, when DOMTokenList is set to empty string', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context as Context;
 
   node.classList.value = '';
   t.is(node.hasAttribute('class'), true);
 });
 
 test('hasAttribute is true when last value is removed from DOMTokenList driven attribute', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context as Context;
 
   node.classList.value = 'foo';
   node.classList.toggle('foo');

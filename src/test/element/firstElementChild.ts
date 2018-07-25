@@ -15,32 +15,41 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../worker-thread/dom/Node';
+import { NodeType } from '../../worker-thread/dom/Node';
 import { Element } from '../../worker-thread/dom/Element';
+import { Text } from '../../worker-thread/dom/Text';
+
+type Context = {
+  node: Element;
+  child: Element;
+  childTwo: Text;
+};
 
 test.beforeEach(t => {
-  t.context = {
+  const context: Context = {
     node: new Element(NodeType.ELEMENT_NODE, 'div', null),
     child: new Element(NodeType.ELEMENT_NODE, 'div', null),
-    childTwo: new Node(NodeType.TEXT_NODE, '#text'),
+    childTwo: new Text(''),
   };
+
+  t.context = context;
 });
 
 test('should return null when an Element does not have any childNodes.', t => {
-  const { node } = t.context as { node: Element };
+  const { node } = t.context as Context;
 
   t.is(node.firstElementChild, null);
 });
 
 test('should return the only child when only one Element is appended', t => {
-  const { node, child } = t.context as { node: Element; child: Element };
+  const { node, child } = t.context as Context;
 
   node.appendChild(child);
   t.deepEqual(node.firstElementChild, child);
 });
 
 test('should return the only Element in Node.childNodes, not another Node', t => {
-  const { node, child, childTwo } = t.context as { node: Element; child: Element; childTwo: Node };
+  const { node, child, childTwo } = t.context as Context;
 
   node.appendChild(childTwo);
   node.appendChild(child);
@@ -48,7 +57,7 @@ test('should return the only Element in Node.childNodes, not another Node', t =>
 });
 
 test('should return null when an Element only contains Node childNodes', t => {
-  const { node, childTwo } = t.context as { node: Element; childTwo: Node };
+  const { node, childTwo } = t.context as Context;
 
   node.appendChild(childTwo);
   t.is(node.firstElementChild, null);

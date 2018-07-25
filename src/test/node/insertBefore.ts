@@ -15,24 +15,35 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../worker-thread/dom/Node';
+import { NodeType } from '../../worker-thread/dom/Node';
+import { Element } from '../../worker-thread/dom/Element';
+
+type Context = {
+  node: Element;
+  child: Element;
+  childTwo: Element;
+  childThree: Element;
+};
 
 test.beforeEach(t => {
-  t.context = {
-    node: new Node(NodeType.ELEMENT_NODE, 'div'),
-    child: new Node(NodeType.ELEMENT_NODE, 'div'),
-    childTwo: new Node(NodeType.ELEMENT_NODE, 'div'),
-    childThree: new Node(NodeType.ELEMENT_NODE, 'div'),
+  const context: Context = {
+    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    child: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    childTwo: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    childThree: new Element(NodeType.ELEMENT_NODE, 'div', null),
   };
+
+  t.context = context;
 });
 
 test('will not insert child when ref is not a direct child of Node', t => {
-  const { node, child, childTwo } = t.context;
+  const { node, child, childTwo } = t.context as Context;
   t.is(node.insertBefore(child, childTwo), null);
 });
 
 test('will append child when ref is null or undefined', t => {
-  const { node, child, childTwo } = t.context;
+  const { node, child, childTwo } = t.context as Context;
+
   t.is(node.insertBefore(child, undefined), child, 'inserting child before undefined ref returns the appended child');
   t.deepEqual(node.childNodes[0], child, 'child is appended when ref is undefined in insertBefore');
   t.is(node.insertBefore(childTwo, null), childTwo, 'inserting child before null ref returns the appended child');
@@ -40,22 +51,25 @@ test('will append child when ref is null or undefined', t => {
 });
 
 test('will NOOP when requested to insert a child before the same child', t => {
-  const { node, child } = t.context;
-  const inserted: Node = node.insertBefore(child, null) as Node;
+  const { node, child } = t.context as Context;
+  const inserted: Element = node.insertBefore(child, null) as Element;
+
   t.is(node.childNodes.indexOf(child), 0);
   t.deepEqual(node.insertBefore(inserted, child), child, 'returns the child that passed as both arguments');
   t.is(node.childNodes.indexOf(child), 0, 'position of child inserted remains when Node.insertBefore');
 });
 
 test('will insert a child before ref', t => {
-  const { node, child, childTwo } = t.context;
+  const { node, child, childTwo } = t.context as Context;
+
   node.insertBefore(child, null);
   t.deepEqual(node.insertBefore(childTwo, child), childTwo, 'will return childTwo inserted before child');
   t.is(node.childNodes.indexOf(childTwo), 0, 'childTwo was inserted before ref (child)');
 });
 
 test('will insert a child in the middle of Node.childNodes, when ref is later within Node.childNodes', t => {
-  const { node, child, childTwo, childThree } = t.context;
+  const { node, child, childTwo, childThree } = t.context as Context;
+
   node.insertBefore(child, null);
   node.insertBefore(childTwo, null);
   t.deepEqual(node.insertBefore(childThree, childTwo), childThree);

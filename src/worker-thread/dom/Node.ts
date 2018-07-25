@@ -19,7 +19,8 @@ import { Event, EventHandler } from '../Event';
 import { toLower } from '../../utils';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { TransferredNode } from '../../transfer/TransferableNodes';
+import { Transferable } from '../../transfer/Transferable';
+// import { TransferredNode } from 'TransferableNodes';
 
 export const enum NodeType {
   ELEMENT_NODE = 1,
@@ -58,7 +59,7 @@ const propagate = (node: Node, property: string, value: any): void => {
 // Please note, in this implmentation Node doesn't extend EventTarget.
 // This is intentional to reduce the number of classes.
 
-export class Node {
+export abstract class Node {
   [index: string]: any;
   public ownerDocument: Node;
   public nodeType: NodeType;
@@ -67,7 +68,8 @@ export class Node {
   public parentNode: Node | null = null;
   public isConnected: boolean = false;
   public _index_: number;
-  protected _transferred_: TransferredNode | null = null;
+  abstract serialize(transferable: Transferable): void;
+  protected transfered: Uint8Array | null = null;
   private _handlers_: {
     [index: string]: EventHandler[];
   } = {};

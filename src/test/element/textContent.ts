@@ -19,16 +19,24 @@ import { NodeType } from '../../worker-thread/dom/Node';
 import { Element } from '../../worker-thread/dom/Element';
 import { Text } from '../../worker-thread/dom/Text';
 
+type Context = {
+  element: Element;
+  child: Element;
+  text: Text;
+};
+
 test.beforeEach(t => {
-  t.context = {
+  const context: Context = {
     element: new Element(NodeType.ELEMENT_NODE, 'div', null),
     child: new Element(NodeType.ELEMENT_NODE, 'p', null),
     text: new Text('default text'),
   };
+
+  t.context = context;
 });
 
 test('textContent setter adds a child text node to Element.', t => {
-  const { element } = t.context as { element: Element };
+  const { element } = t.context as Context;
 
   t.is(element.childNodes.length, 0);
   element.textContent = 'foo';
@@ -36,7 +44,7 @@ test('textContent setter adds a child text node to Element.', t => {
 });
 
 test('clearing textContent via setter removes value stored as text inside element', t => {
-  const { element, text } = t.context as { element: Element; text: Text };
+  const { element, text } = t.context as Context;
 
   element.appendChild(text);
   t.is(element.childNodes[0].data, 'default text');
@@ -46,7 +54,7 @@ test('clearing textContent via setter removes value stored as text inside elemen
 });
 
 test('textContent setter replaces childNodes with single text node.', t => {
-  const { element, child, text } = t.context as { element: Element; child: Element; text: Text };
+  const { element, child, text } = t.context as Context;
 
   child.appendChild(text);
   element.appendChild(child);

@@ -15,14 +15,23 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../worker-thread/dom/Node';
+import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
+import { NodeType } from '../../worker-thread/dom/Node';
+
+type Context = {
+  node: HTMLElement;
+  callback: () => undefined;
+  callbackTwo: () => false;
+};
 
 test.beforeEach(t => {
-  t.context = {
-    node: new Node(NodeType.ELEMENT_NODE, 'div'),
+  const context: Context = {
+    node: new HTMLElement(NodeType.ELEMENT_NODE, 'div', null),
     callback: () => undefined,
     callbackTwo: () => false,
   };
+
+  t.context = context;
 });
 
 test('removing the only registered callback retains array with zero length', t => {

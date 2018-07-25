@@ -15,17 +15,25 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../worker-thread/dom/Node';
+import { Element } from '../../worker-thread/dom/Element';
+import { NodeType } from '../../worker-thread/dom/Node';
+
+type Context = {
+  node: Element;
+  child: Element;
+};
 
 test.beforeEach(t => {
-  t.context = {
-    node: new Node(NodeType.ELEMENT_NODE, 'div'),
-    child: new Node(NodeType.ELEMENT_NODE, 'div'),
+  const context: Context = {
+    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    child: new Element(NodeType.ELEMENT_NODE, 'div', null),
   };
+
+  t.context = context;
 });
 
 test('removes child Node from parent', t => {
-  const { node, child } = t.context;
+  const { node, child } = t.context as Context;
 
   node.appendChild(child);
   child.remove();
@@ -34,7 +42,7 @@ test('removes child Node from parent', t => {
 });
 
 test('removes Node without parent', t => {
-  const { node } = t.context;
+  const { node } = t.context as Context;
 
   node.remove();
   t.pass('removing a node without a parent does not error');

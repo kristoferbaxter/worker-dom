@@ -15,12 +15,17 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../worker-thread/dom/Node';
+import { NodeType } from '../../worker-thread/dom/Node';
+import { Element } from '../../worker-thread/dom/Element';
+import { Text } from '../../worker-thread/dom/Text';
+import { Document } from '../../worker-thread/dom/Document';
 
 test('returns the name of the Node', t => {
-  const node = new Node(NodeType.TEXT_NODE, '#text');
-  const nodeTwo = new Node(NodeType.ELEMENT_NODE, 'div');
+  const node = new Text('');
+  const nodeTwo = new Element(NodeType.ELEMENT_NODE, 'div', null);
+  const document = new Document();
 
   t.is(node.nodeName, '#text', 'text node returns a valid text node name');
   t.is(nodeTwo.nodeName, 'div', 'standard element node returns a valid node name');
+  t.is(document.nodeName, '#document', 'document element returns a valid node name');
 });

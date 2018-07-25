@@ -15,7 +15,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "pretest": "rimraf src/output && tsc -p config/tsconfig.test.worker-thread.json & tsc -p config/tsconfig.test.json & tsc -p config/tsconfig.test.main-thread.json & wait",
-    "test": "ava src/output/test/",
+    "test": "ava src/output/test/**/*.js",
     "pre~rollup": "rimraf src/output build && tsc -p config/tsconfig.build.worker-thread.json & tsc -p config/tsconfig.build.main-thread.json",
     "~rollup": "rollup --config config/rollup.config.js",
     "lint": "tslint -c config/tslint.json -p src/worker-thread/ & tslint -c config/tslint.json -p src/main-thread/",
@@ -40,7 +40,7 @@
     "polka": "0.4.0",
     "prettier": "1.13.7",
     "rimraf": "2.6.2",
-    "rollup": "0.62.0",
+    "rollup": "0.63.4",
     "rollup-plugin-babel": "4.0.0-beta.7",
     "rollup-plugin-brotli": "1.1.0",
     "rollup-plugin-gzip": "1.4.0",
