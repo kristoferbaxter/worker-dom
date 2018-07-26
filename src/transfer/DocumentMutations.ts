@@ -20,7 +20,6 @@ import { MutationRecord } from '../worker-thread/MutationRecord';
 import { TransferableMutationRecord } from './TransferableRecord';
 import { TransferableNode, TransferredNode } from './TransferableNodes';
 import { MutationFromWorker, MessageType } from './Messages';
-import { stringPosition, transfer as transferStringPool } from './StringPool';
 
 const SUPPORTS_POST_MESSAGE = typeof postMessage !== 'undefined';
 const serializeNodes = (nodes: Node[] | undefined): Array<TransferableNode | TransferredNode> | undefined =>
@@ -32,7 +31,6 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
   const mutations: TransferableMutationRecord[] = [];
 
   incomingMutations.forEach(mutation => {
-    debugger;
     let transferableMutation: TransferableMutationRecord = {
       type: mutation.type,
       target: mutation.target.serialize(),
@@ -47,19 +45,19 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
       transferableMutation.nextSibling = mutation.nextSibling.serialize();
     }
     if (mutation.attributeName != null) {
-      transferableMutation.attributeName = stringPosition(mutation.attributeName);
+      transferableMutation.attributeName = mutation.attributeName;
     }
     if (mutation.attributeNamespace) {
-      transferableMutation.attributeNamespace = stringPosition(mutation.attributeNamespace);
+      transferableMutation.attributeNamespace = mutation.attributeNamespace;
     }
     if (mutation.oldValue) {
-      transferableMutation.oldValue = stringPosition(mutation.oldValue);
+      transferableMutation.oldValue = mutation.oldValue;
     }
     if (mutation.propertyName) {
-      transferableMutation.propertyName = stringPosition(mutation.propertyName);
+      transferableMutation.propertyName = mutation.propertyName;
     }
     if (mutation.value) {
-      transferableMutation.value = stringPosition(mutation.value);
+      transferableMutation.value = mutation.value;
     }
     if (mutation.addedEvents) {
       transferableMutation.addedEvents = mutation.addedEvents;
@@ -71,12 +69,10 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
     mutations.push(transferableMutation);
   });
 
-  debugger;
   if (SUPPORTS_POST_MESSAGE) {
     const mutationFromWorker: MutationFromWorker = {
       type: hydrated ? MessageType.MUTATE : MessageType.HYDRATE,
       mutations,
-      strings: transferStringPool(),
     };
     hydrated = true;
 

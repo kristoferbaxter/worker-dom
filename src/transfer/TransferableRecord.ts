@@ -31,11 +31,11 @@ export interface TransferableMutationRecord {
   removedNodes?: Array<TransferableNode | TransferredNode>;
   previousSibling?: TransferableNode | TransferredNode;
   nextSibling?: TransferableNode | TransferredNode;
-  attributeName?: number;
-  attributeNamespace?: number;
-  propertyName?: number;
-  value?: number;
-  oldValue?: number;
+  attributeName?: string;
+  attributeNamespace?: string;
+  propertyName?: string;
+  value?: string;
+  oldValue?: string;
   addedEvents?: TransferableEventSubscriptionChange[];
   removedEvents?: TransferableEventSubscriptionChange[];
 }

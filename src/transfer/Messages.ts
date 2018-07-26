@@ -33,7 +33,6 @@ export const enum MessageType {
 export interface MutationFromWorker {
   type: MessageType.HYDRATE | MessageType.MUTATE;
   mutations: TransferableMutationRecord[];
-  strings: string[];
 }
 export interface MessageFromWorker {
   data: MutationFromWorker;
