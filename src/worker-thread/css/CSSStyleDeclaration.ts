@@ -139,9 +139,13 @@ export class CSSStyleDeclaration implements StyleDeclaration {
    */
   get cssText(): string {
     let value: string;
-    return Object.keys(this.properties_)
-      .reduce((accumulator, key) => accumulator + ((value = this.getPropertyValue(key)) !== '' ? `${key}: ${value}; ` : ''), '')
-      .trim();
+    let returnValue: string = '';
+    for (let key in this.properties_) {
+      if ((value = this.getPropertyValue(key)) !== '') {
+        returnValue += `${key}: ${value}; `;
+      }
+    }
+    return returnValue.trim();
   }
 
   /**

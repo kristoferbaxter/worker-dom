@@ -15,14 +15,14 @@
  */
 
 import { MessageType } from '../transfer/Messages';
-import { Nodes } from './nodes';
 import { messageToWorker } from './worker';
 import { RenderableElement } from './RenderableElement';
 import { NumericBoolean } from '../utils';
 import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { getNode } from './nodes';
 
-const knownListeners: Array<(event: Event) => any> = [];
+const KNOWN_LISTENERS: Array<(event: Event) => any> = [];
 
 /**
  * Instead of a whitelist of elements that need their value tracked, use the existence
@@ -40,6 +40,21 @@ const shouldTrackChanges = (node: HTMLElement): boolean => node && 'value' in no
  */
 export const applyDefaultChangeListener = (worker: Worker, node: RenderableElement): void => {
   shouldTrackChanges(node as HTMLElement) && node.onchange === null && (node.onchange = () => fireValueChange(worker, node));
+};
+
+/**
+ * Tell the worker DOM what the value is for a Node.
+ * @param worker whom to dispatch value toward.
+ * @param node where to get the value from.
+ */
+const fireValueChange = (worker: Worker, node: RenderableElement): void => {
+  messageToWorker(worker, {
+    [TransferrableKeys.type]: MessageType.SYNC,
+    [TransferrableKeys.sync]: {
+      [TransferrableKeys._index_]: node._index_,
+      [TransferrableKeys.value]: node.value,
+    },
+  });
 };
 
 /**
@@ -79,29 +94,14 @@ const eventHandler = (worker: Worker, _index_: number) => (event: Event): void =
 };
 
 /**
- * Tell the worker DOM what the value is for a Node.
- * @param worker whom to dispatch value toward.
- * @param node where to get the value from.
- */
-const fireValueChange = (worker: Worker, node: RenderableElement): void => {
-  messageToWorker(worker, {
-    [TransferrableKeys.type]: MessageType.SYNC,
-    [TransferrableKeys.sync]: {
-      [TransferrableKeys._index_]: node._index_,
-      [TransferrableKeys.value]: node.value,
-    },
-  });
-};
-
-/**
  * Process commands transfered from worker thread to main thread.
  * @param nodesInstance nodes instance to execute commands against.
  * @param worker whom to dispatch events toward.
  * @param mutation mutation record containing commands to execute.
  */
-export function process(nodesInstance: Nodes, worker: Worker, mutation: TransferrableMutationRecord): void {
+export function process(worker: Worker, mutation: TransferrableMutationRecord): void {
   const index: number = mutation[TransferrableKeys.target][TransferrableKeys._index_];
-  const target = nodesInstance.getNode(index) as HTMLElement;
+  const target = getNode(index) as HTMLElement;
   const shouldTrack: boolean = shouldTrackChanges(target);
   let changeEventSubscribed: boolean = target.onchange !== null;
 
@@ -109,14 +109,14 @@ export function process(nodesInstance: Nodes, worker: Worker, mutation: Transfer
     if (eventSub[TransferrableKeys.type] === 'change') {
       changeEventSubscribed = false;
     }
-    target.removeEventListener(eventSub[TransferrableKeys.type], knownListeners[eventSub[TransferrableKeys.index]]);
+    target.removeEventListener(eventSub[TransferrableKeys.type], KNOWN_LISTENERS[eventSub[TransferrableKeys.index]]);
   });
   (mutation[TransferrableKeys.addedEvents] || []).forEach(eventSub => {
     if (eventSub[TransferrableKeys.type] === 'change') {
       changeEventSubscribed = true;
       target.onchange = null;
     }
-    target.addEventListener(eventSub[TransferrableKeys.type], (knownListeners[eventSub[TransferrableKeys.index]] = eventHandler(worker, index)));
+    target.addEventListener(eventSub[TransferrableKeys.type], (KNOWN_LISTENERS[eventSub[TransferrableKeys.index]] = eventHandler(worker, index)));
   });
   if (shouldTrack && !changeEventSubscribed) {
     applyDefaultChangeListener(worker, target as RenderableElement);

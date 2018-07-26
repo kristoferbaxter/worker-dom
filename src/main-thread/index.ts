@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { Nodes } from './nodes';
-import { Hydration } from './hydrate';
-import { Mutation } from './mutate';
+import { hydrate } from './hydrate';
+import { prepareMutate, mutate } from './mutate';
 import { createWorker } from './worker';
 import { MessageFromWorker, MessageType } from '../transfer/Messages';
+import { prepare as prepareNodes } from './nodes';
 
 export function upgradeElement(baseElement: Element): void {
   const authorURL = baseElement.getAttribute('src');
@@ -32,19 +32,19 @@ export function upgradeElement(baseElement: Element): void {
       return;
     }
 
-    const nodesInstance = new Nodes(baseElement);
-    const hydrationInstance = new Hydration(baseElement, nodesInstance, worker);
-    const mutationInstance = new Mutation(nodesInstance, worker);
+    prepareNodes(baseElement);
+    prepareMutate(worker);
 
     worker.onmessage = ({ data }: MessageFromWorker) => {
       switch (data.type) {
         case MessageType.HYDRATE:
           // console.info(`hydration from worker: ${data.type}`, data.mutations);
-          hydrationInstance.process(data.mutations);
+          hydrate(data.mutations, baseElement, worker);
           break;
         case MessageType.MUTATE:
           // console.info(`mutation from worker: ${data.type}`, data.mutations);
-          mutationInstance.process(data.mutations);
+          // mutationInstance.process(data.mutations);
+          mutate(data.mutations);
           break;
       }
     };

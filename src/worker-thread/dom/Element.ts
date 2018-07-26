@@ -233,7 +233,7 @@ export class Element extends Node {
    * @param value attribute value
    */
   public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): void {
-    if (Object.keys(this.propertyBackedAttributes_).includes(name)) {
+    if (this.propertyBackedAttributes_[name] !== undefined) {
       if (!this.attributes.find(matchAttrPredicate(namespaceURI, name))) {
         this.attributes.push({
           namespaceURI,
@@ -283,7 +283,7 @@ export class Element extends Node {
   public getAttributeNS(namespaceURI: NamespaceURI, name: string): string | null {
     const attr = this.attributes.find(matchAttrPredicate(namespaceURI, name));
     if (attr) {
-      return Object.keys(this.propertyBackedAttributes_).includes(name) ? this.propertyBackedAttributes_[name][0]() : attr.value;
+      return this.propertyBackedAttributes_[name] !== undefined ? this.propertyBackedAttributes_[name][0]() : attr.value;
     }
     return null;
   }
