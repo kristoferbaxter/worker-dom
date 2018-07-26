@@ -17,7 +17,7 @@
   <!-- <script src="./build/esmodules/main-thread/index.js" defer></script> -->
 </head>
 <body>
-  <div src="author-vanilla.js" class="amp-script">Hello World!<span>spaner</span><input /></div>
+  <div src="author-vanilla.js" class="amp-script"><div>Hello World!<span>spaner</span><input /></div></div>
   <script type="module">
     import {upgradeElement} from './build/esmodules/main-thread/index.module.js';
     upgradeElement(document.getElementsByClassName('amp-script')[0]);

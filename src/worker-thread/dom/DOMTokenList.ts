@@ -179,6 +179,7 @@ export class DOMTokenList extends Array {
    */
   private mutationCompleteHandler_(oldValue: string, value: string): void {
     this.storeAttributeMethod_(null, this.attributeName_, value);
+    debugger;
     mutate({
       type: MutationRecordType.ATTRIBUTES,
       target: this.element_,

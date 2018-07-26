@@ -49,7 +49,7 @@ const mutators: {
   [MutationRecordType.ATTRIBUTES]: (nodesInstance: Nodes, worker: Worker, mutation: TransferrableMutationRecord) => {
     const attributeName = mutation[TransferrableKeys.attributeName];
     const value = mutation[TransferrableKeys.value];
-    if (attributeName && value) {
+    if (attributeName != null && value != null) {
       nodesInstance.getNode(mutation[TransferrableKeys.target][TransferrableKeys._index_]).setAttribute(attributeName, value);
     }
   },

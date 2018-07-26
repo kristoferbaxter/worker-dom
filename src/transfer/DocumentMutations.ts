@@ -51,13 +51,13 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
     if (mutation.attributeNamespace != null) {
       transferableMutation[TransferrableKeys.attributeNamespace] = mutation.attributeNamespace;
     }
-    if (mutation.oldValue) {
+    if (mutation.oldValue != null) {
       transferableMutation[TransferrableKeys.oldValue] = mutation.oldValue;
     }
     if (mutation.propertyName) {
       transferableMutation[TransferrableKeys.propertyName] = mutation.propertyName;
     }
-    if (mutation.value) {
+    if (mutation.value != null) {
       transferableMutation[TransferrableKeys.value] = mutation.value;
     }
     if (mutation.addedEvents) {
@@ -71,6 +71,7 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
   });
 
   if (SUPPORTS_POST_MESSAGE) {
+    console.log(mutations);
     const mutationFromWorker: MutationFromWorker = {
       type: hydrated ? MessageType.MUTATE : MessageType.HYDRATE,
       mutations,
