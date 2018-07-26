@@ -21,20 +21,22 @@ import { appendKeys } from '../../worker-thread/css/CSSStyleDeclaration';
 
 test.cb.serial('Element.style.width mutation observed, single value', t => {
   const el = document.createElement('div');
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.ATTRIBUTES,
-        attributeName: 'style',
-        attributeNamespace: null,
-        target: el,
-        value: '',
-        oldValue: 'width: 10px;',
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.ATTRIBUTES,
+          attributeName: 'style',
+
+          target: el,
+          value: '',
+          oldValue: 'width: 10px;',
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   document.body.appendChild(el);
   appendKeys(['width']);
@@ -45,20 +47,22 @@ test.cb.serial('Element.style.width mutation observed, single value', t => {
 
 test.cb.serial('Element.style.width mutation observed, single value, via setProperty', t => {
   const el = document.createElement('div');
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.ATTRIBUTES,
-        attributeName: 'style',
-        attributeNamespace: null,
-        target: el,
-        value: '',
-        oldValue: 'width: 10px;',
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.ATTRIBUTES,
+          attributeName: 'style',
+
+          target: el,
+          value: '',
+          oldValue: 'width: 10px;',
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   document.body.appendChild(el);
   appendKeys(['width']);
@@ -69,20 +73,22 @@ test.cb.serial('Element.style.width mutation observed, single value, via setProp
 
 test.cb.serial('Element.style.width mutation observed, single value, via removeProperty', t => {
   const el = document.createElement('div');
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.ATTRIBUTES,
-        attributeName: 'style',
-        attributeNamespace: null,
-        target: el,
-        value: '',
-        oldValue: 'width: 10px;',
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.ATTRIBUTES,
+          attributeName: 'style',
+
+          target: el,
+          value: '',
+          oldValue: 'width: 10px;',
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   document.body.appendChild(el);
   appendKeys(['width']);
@@ -93,20 +99,22 @@ test.cb.serial('Element.style.width mutation observed, single value, via removeP
 
 test.cb.serial('Element.style.width mutation observed, single value, via cssText', t => {
   const el = document.createElement('div');
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.ATTRIBUTES,
-        attributeName: 'style',
-        attributeNamespace: null,
-        target: el,
-        value: '',
-        oldValue: 'width: 10px;',
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.ATTRIBUTES,
+          attributeName: 'style',
+
+          target: el,
+          value: '',
+          oldValue: 'width: 10px;',
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   document.body.appendChild(el);
   appendKeys(['width']);

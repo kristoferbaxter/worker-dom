@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-import { TransferableNode } from '../transfer/TransferableNodes';
+import { TransferrableNode } from '../transfer/TransferrableNodes';
 import { RenderableElement } from './RenderableElement';
 import { NumericBoolean } from '../utils';
+import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
 export class Nodes {
   private NODES_: Map<number, RenderableElement> = new Map();
   private baseElement_: HTMLElement;
 
   constructor(baseElement: Element) {
+    // The document element is constructed before the worker MutationObserver is attached.
+    // As a result, we must manually store the reference node for the main thread.
+    // The first entry is the "document", the second entry is "document.body".
+    this.NODES_.set(1, baseElement as RenderableElement);
+    this.NODES_.set(2, baseElement as RenderableElement);
     this.baseElement_ = baseElement as HTMLElement;
   }
 
@@ -33,20 +39,20 @@ export class Nodes {
    * @example <caption>Element node</caption>
    *   createNode({ nodeType:1, nodeName:'div', attributes:[{ name:'a', value:'b' }], childNodes:[ ... ] })
    */
-  public createNode(skeleton: TransferableNode): RenderableElement {
-    if (skeleton.nodeType === Node.TEXT_NODE) {
-      const node = document.createTextNode(skeleton.textContent);
-      this.storeNode(node, skeleton._index_);
+  public createNode(skeleton: TransferrableNode): RenderableElement {
+    if (skeleton[TransferrableKeys.nodeType] === Node.TEXT_NODE) {
+      const node = document.createTextNode(skeleton[TransferrableKeys.textContent]);
+      this.storeNode(node, skeleton[TransferrableKeys._index_]);
       return node as RenderableElement;
     }
 
     let node: HTMLElement | SVGElement;
-    if (skeleton.namespaceURI) {
-      node = document.createElementNS(skeleton.namespaceURI, skeleton.nodeName) as SVGElement;
+    if (skeleton[TransferrableKeys.namespaceURI]) {
+      node = document.createElementNS(skeleton[TransferrableKeys.namespaceURI], skeleton[TransferrableKeys.nodeName]) as SVGElement;
     } else {
-      node = document.createElement(skeleton.nodeName);
+      node = document.createElement(skeleton[TransferrableKeys.nodeName]);
     }
-    skeleton.attributes.forEach(attribute => {
+    skeleton[TransferrableKeys.attributes].forEach(attribute => {
       if (attribute.namespaceURI) {
         node.setAttributeNS(attribute.namespaceURI, attribute.name, attribute.value);
       } else {
@@ -57,13 +63,13 @@ export class Nodes {
     // skeleton.properties.forEach(property => {
     //   node[`${property.name}`] = property.value;
     // });
-    (skeleton.childNodes || []).forEach(childNode => {
-      if (childNode.transferred === NumericBoolean.FALSE) {
-        node.appendChild(this.createNode(childNode as TransferableNode));
+    (skeleton[TransferrableKeys.childNodes] || []).forEach(childNode => {
+      if (childNode[TransferrableKeys.transferred] === NumericBoolean.FALSE) {
+        node.appendChild(this.createNode(childNode as TransferrableNode));
       }
     });
 
-    this.storeNode(node, skeleton._index_);
+    this.storeNode(node, skeleton[TransferrableKeys._index_]);
     return node as RenderableElement;
   }
 

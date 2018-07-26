@@ -17,53 +17,54 @@
 import { Node } from '../worker-thread/dom/Node';
 import { Document } from '../worker-thread/dom/Document';
 import { MutationRecord } from '../worker-thread/MutationRecord';
-import { TransferableMutationRecord } from './TransferableRecord';
-import { TransferableNode, TransferredNode } from './TransferableNodes';
+import { TransferrableMutationRecord } from './TransferrableRecord';
+import { TransferrableNode, TransferredNode } from './TransferrableNodes';
 import { MutationFromWorker, MessageType } from './Messages';
+import { TransferrableKeys } from './TransferrableKeys';
 
 const SUPPORTS_POST_MESSAGE = typeof postMessage !== 'undefined';
-const serializeNodes = (nodes: Node[] | undefined): Array<TransferableNode | TransferredNode> | undefined =>
+const serializeNodes = (nodes: Node[] | undefined): Array<TransferrableNode | TransferredNode> | undefined =>
   (nodes && nodes.map(node => node.serialize())) || undefined;
 let observing = false;
 let hydrated = false;
 
 function handleMutations(incomingMutations: MutationRecord[]): void {
-  const mutations: TransferableMutationRecord[] = [];
+  const mutations: TransferrableMutationRecord[] = [];
 
   incomingMutations.forEach(mutation => {
-    let transferableMutation: TransferableMutationRecord = {
-      type: mutation.type,
-      target: mutation.target.serialize(),
+    let transferableMutation: TransferrableMutationRecord = {
+      [TransferrableKeys.type]: mutation.type,
+      [TransferrableKeys.target]: mutation.target.serialize(),
     };
     if (mutation.addedNodes) {
-      transferableMutation.addedNodes = serializeNodes(mutation.addedNodes);
+      transferableMutation[TransferrableKeys.addedNodes] = serializeNodes(mutation.addedNodes);
     }
     if (mutation.removedNodes) {
-      transferableMutation.removedNodes = serializeNodes(mutation.removedNodes);
+      transferableMutation[TransferrableKeys.removedNodes] = serializeNodes(mutation.removedNodes);
     }
     if (mutation.nextSibling) {
-      transferableMutation.nextSibling = mutation.nextSibling.serialize();
+      transferableMutation[TransferrableKeys.nextSibling] = mutation.nextSibling.serialize();
     }
     if (mutation.attributeName != null) {
-      transferableMutation.attributeName = mutation.attributeName;
+      transferableMutation[TransferrableKeys.attributeName] = mutation.attributeName;
     }
-    if (mutation.attributeNamespace) {
-      transferableMutation.attributeNamespace = mutation.attributeNamespace;
+    if (mutation.attributeNamespace != null) {
+      transferableMutation[TransferrableKeys.attributeNamespace] = mutation.attributeNamespace;
     }
     if (mutation.oldValue) {
-      transferableMutation.oldValue = mutation.oldValue;
+      transferableMutation[TransferrableKeys.oldValue] = mutation.oldValue;
     }
     if (mutation.propertyName) {
-      transferableMutation.propertyName = mutation.propertyName;
+      transferableMutation[TransferrableKeys.propertyName] = mutation.propertyName;
     }
     if (mutation.value) {
-      transferableMutation.value = mutation.value;
+      transferableMutation[TransferrableKeys.value] = mutation.value;
     }
     if (mutation.addedEvents) {
-      transferableMutation.addedEvents = mutation.addedEvents;
+      transferableMutation[TransferrableKeys.addedEvents] = mutation.addedEvents;
     }
     if (mutation.removedEvents) {
-      transferableMutation.removedEvents = mutation.removedEvents;
+      transferableMutation[TransferrableKeys.removedEvents] = mutation.removedEvents;
     }
 
     mutations.push(transferableMutation);

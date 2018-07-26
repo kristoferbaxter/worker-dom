@@ -26,19 +26,13 @@ export function upgradeElement(baseElement: Element): void {
     return;
   }
 
-  const nodesInstance = new Nodes(baseElement);
-  // The document element is constructed before the worker MutationObserver is attached.
-  // As a result, we must manually store the reference node for the main thread.
-  // The first entry is the "document", the second entry is "document.body".
-  nodesInstance.storeNode(baseElement as HTMLElement, 1);
-  nodesInstance.storeNode(baseElement as HTMLElement, 2);
-
   // console.log(`creating worker, author code: ${authorURL}`);
   createWorker(authorURL).then(worker => {
     if (worker === null) {
       return;
     }
 
+    const nodesInstance = new Nodes(baseElement);
     const hydrationInstance = new Hydration(baseElement, nodesInstance, worker);
     const mutationInstance = new Mutation(nodesInstance, worker);
 

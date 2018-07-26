@@ -19,7 +19,8 @@ import { Event, EventHandler } from '../Event';
 import { toLower } from '../../utils';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { TransferredNode } from '../../transfer/TransferableNodes';
+import { TransferredNode } from '../../transfer/TransferrableNodes';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 export const enum NodeType {
   ELEMENT_NODE = 1,
@@ -330,7 +331,12 @@ export class Node {
     mutate({
       target: this,
       type: MutationRecordType.COMMAND,
-      addedEvents: [{ type, index }],
+      addedEvents: [
+        {
+          [TransferrableKeys.type]: type,
+          [TransferrableKeys.index]: index,
+        },
+      ],
     });
   }
 
@@ -349,7 +355,12 @@ export class Node {
       mutate({
         target: this,
         type: MutationRecordType.COMMAND,
-        removedEvents: [{ type, index }],
+        removedEvents: [
+          {
+            [TransferrableKeys.type]: type,
+            [TransferrableKeys.index]: index,
+          },
+        ],
       });
     }
   }

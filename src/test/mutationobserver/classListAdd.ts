@@ -20,20 +20,21 @@ import { MutationRecord, MutationRecordType } from '../../worker-thread/Mutation
 
 test.cb.serial('Element.classList.add mutation observed, single value', t => {
   const el = document.createElement('div');
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.ATTRIBUTES,
-        attributeName: 'class',
-        attributeNamespace: null,
-        target: el,
-        value: 'bar',
-        oldValue: '',
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.ATTRIBUTES,
+          attributeName: 'class',
+          target: el,
+          value: 'bar',
+          oldValue: '',
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   document.body.appendChild(el);
   observer.observe(document.body);
@@ -43,20 +44,21 @@ test.cb.serial('Element.classList.add mutation observed, single value', t => {
 test.cb.serial('Element.classList.add mutation observed, single value to existing values', t => {
   const el = document.createElement('div');
   el.classList.value = 'foo';
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.ATTRIBUTES,
-        attributeName: 'class',
-        attributeNamespace: null,
-        target: el,
-        value: 'foo bar',
-        oldValue: 'foo',
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.ATTRIBUTES,
+          attributeName: 'class',
+          target: el,
+          value: 'foo bar',
+          oldValue: 'foo',
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   document.body.appendChild(el);
   observer.observe(document.body);
@@ -65,20 +67,21 @@ test.cb.serial('Element.classList.add mutation observed, single value to existin
 
 test.cb.serial('Element.classList.add mutation observed, multiple values', t => {
   const el = document.createElement('div');
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.ATTRIBUTES,
-        attributeName: 'class',
-        attributeNamespace: null,
-        target: el,
-        value: 'foo bar',
-        oldValue: '',
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.ATTRIBUTES,
+          attributeName: 'class',
+          target: el,
+          value: 'foo bar',
+          oldValue: '',
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   document.body.appendChild(el);
   observer.observe(document.body);
@@ -88,20 +91,21 @@ test.cb.serial('Element.classList.add mutation observed, multiple values', t => 
 test.cb.serial('Element.classList.add mutation observed, multiple value to existing values', t => {
   const el = document.createElement('div');
   el.classList.value = 'foo';
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.ATTRIBUTES,
-        attributeName: 'class',
-        attributeNamespace: null,
-        target: el,
-        value: 'foo bar baz',
-        oldValue: 'foo',
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.ATTRIBUTES,
+          attributeName: 'class',
+          target: el,
+          value: 'foo bar baz',
+          oldValue: 'foo',
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   document.body.appendChild(el);
   observer.observe(document.body);

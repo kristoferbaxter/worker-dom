@@ -15,58 +15,63 @@
  */
 
 import { Nodes } from './nodes';
-import { TransferableMutationRecord } from '../transfer/TransferableRecord';
-import { TransferableNode } from '../transfer/TransferableNodes';
+import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
+import { TransferrableNode } from '../transfer/TransferrableNodes';
 import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { process } from './command';
+import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
 // TODO(KB): Restore mutation threshold timeout.
 // const GESTURE_TO_MUTATION_THRESHOLD = 5000;
 
 const mutators: {
-  [key: number]: (nodesInstance: Nodes, worker: Worker, mutation: TransferableMutationRecord) => void;
+  [key: number]: (nodesInstance: Nodes, worker: Worker, mutation: TransferrableMutationRecord) => void;
 } = {
-  [MutationRecordType.CHILD_LIST]: (
-    nodesInstance: Nodes,
-    worker: Worker,
-    { target, removedNodes, addedNodes, nextSibling }: TransferableMutationRecord,
-  ) => {
-    const parent = nodesInstance.getNode(target._index_);
+  [MutationRecordType.CHILD_LIST]: (nodesInstance: Nodes, worker: Worker, mutation: TransferrableMutationRecord) => {
+    const parent = nodesInstance.getNode(mutation[TransferrableKeys.target][TransferrableKeys._index_]);
 
+    const removedNodes = mutation[TransferrableKeys.removedNodes];
     if (removedNodes) {
-      removedNodes.forEach(node => parent.removeChild(nodesInstance.getNode(node._index_)));
+      removedNodes.forEach(node => parent.removeChild(nodesInstance.getNode(node[TransferrableKeys._index_])));
     }
 
+    const addedNodes = mutation[TransferrableKeys.addedNodes];
+    const nextSibling = mutation[TransferrableKeys.nextSibling];
     if (addedNodes) {
       addedNodes.forEach(node => {
         parent.insertBefore(
-          nodesInstance.getNode(node._index_) || nodesInstance.createNode(node as TransferableNode),
-          (nextSibling && nodesInstance.getNode(nextSibling._index_)) || null,
+          nodesInstance.getNode(node[TransferrableKeys._index_]) || nodesInstance.createNode(node as TransferrableNode),
+          (nextSibling && nodesInstance.getNode(nextSibling[TransferrableKeys._index_])) || null,
         );
       });
     }
   },
-  [MutationRecordType.ATTRIBUTES]: (nodesInstance: Nodes, worker: Worker, { target, attributeName, value }: TransferableMutationRecord) => {
-    if (attributeName !== null && value !== null) {
-      nodesInstance.getNode(target._index_).setAttribute(attributeName, value);
+  [MutationRecordType.ATTRIBUTES]: (nodesInstance: Nodes, worker: Worker, mutation: TransferrableMutationRecord) => {
+    const attributeName = mutation[TransferrableKeys.attributeName];
+    const value = mutation[TransferrableKeys.value];
+    if (attributeName && value) {
+      nodesInstance.getNode(mutation[TransferrableKeys.target][TransferrableKeys._index_]).setAttribute(attributeName, value);
     }
   },
-  [MutationRecordType.CHARACTER_DATA]: (nodesInstance: Nodes, worker: Worker, { target, value }: TransferableMutationRecord) => {
+  [MutationRecordType.CHARACTER_DATA]: (nodesInstance: Nodes, worker: Worker, mutation: TransferrableMutationRecord) => {
+    const value = mutation[TransferrableKeys.value];
     if (value) {
-      nodesInstance.getNode(target._index_).textContent = value;
+      nodesInstance.getNode(mutation[TransferrableKeys.target][TransferrableKeys._index_]).textContent = value;
     }
   },
-  [MutationRecordType.PROPERTIES]: (nodesInstance: Nodes, worker: Worker, { target, propertyName, value }: TransferableMutationRecord) => {
+  [MutationRecordType.PROPERTIES]: (nodesInstance: Nodes, worker: Worker, mutation: TransferrableMutationRecord) => {
+    const propertyName = mutation[TransferrableKeys.propertyName];
+    const value = mutation[TransferrableKeys.value];
     if (propertyName && value) {
-      nodesInstance.getNode(target._index_)[propertyName] = value;
+      nodesInstance.getNode(mutation[TransferrableKeys.target][TransferrableKeys._index_])[propertyName] = value;
     }
   },
-  [MutationRecordType.COMMAND]: (nodesInstance: Nodes, worker: Worker, mutation: TransferableMutationRecord) =>
+  [MutationRecordType.COMMAND]: (nodesInstance: Nodes, worker: Worker, mutation: TransferrableMutationRecord) =>
     process(nodesInstance, worker, mutation),
 };
 
 export class Mutation {
-  private MUTATION_QUEUE_: TransferableMutationRecord[] = [];
+  private MUTATION_QUEUE_: TransferrableMutationRecord[] = [];
   private pendingMutations_: boolean = false;
   // private lastGestureTime: number;
   private nodesInstance_: Nodes;
@@ -81,9 +86,9 @@ export class Mutation {
    * Process MutationRecord from worker thread applying changes to the existing DOM.
    * @param hydrationFromWorker contains mutations to apply
    */
-  public process = (mutations: TransferableMutationRecord[]): void => {
-    //mutations: TransferableMutationRecord[]): void {
-    // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferableMutationRecord[])
+  public process = (mutations: TransferrableMutationRecord[]): void => {
+    //mutations: TransferrableMutationRecord[]): void {
+    // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferrableMutationRecord[])
     // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {
     //   return;
     // }
@@ -103,7 +108,7 @@ export class Mutation {
    */
   private syncFlush_ = (): void => {
     const length = this.MUTATION_QUEUE_.length;
-    this.MUTATION_QUEUE_.forEach(mutation => mutators[mutation.type](this.nodesInstance_, this.worker_, mutation));
+    this.MUTATION_QUEUE_.forEach(mutation => mutators[mutation[TransferrableKeys.type]](this.nodesInstance_, this.worker_, mutation));
 
     this.MUTATION_QUEUE_.splice(0, length);
     this.pendingMutations_ = false;

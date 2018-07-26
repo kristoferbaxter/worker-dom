@@ -15,16 +15,22 @@
  */
 
 import { Nodes } from './nodes';
-import { TransferableNode, TransferredNode } from '../transfer/TransferableNodes';
+import { TransferrableNode, TransferredNode } from '../transfer/TransferrableNodes';
 import { NodeType } from '../worker-thread/dom/Node';
 import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { RenderableElement } from './RenderableElement';
 import { NumericBoolean } from '../utils';
 import { process, applyDefaultChangeListener } from './command';
-import { TransferableMutationRecord } from '../transfer/TransferableRecord';
+import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
+import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
-const allTextNodes = (nodes: NodeList | Array<TransferableNode | TransferredNode>): boolean =>
-  nodes.length > 0 && [].every.call(nodes, (node: Node | TransferableNode): boolean => node.nodeType === NodeType.TEXT_NODE);
+const allTextNodes = (nodes: NodeList | Array<TransferrableNode | TransferredNode>): boolean =>
+  nodes.length > 0 &&
+  [].every.call(
+    nodes,
+    (node: Node | TransferrableNode): boolean =>
+      ('nodeType' in node ? node.nodeType : (node as TransferrableNode)[TransferrableKeys.nodeType]) === NodeType.TEXT_NODE,
+  );
 
 export class Hydration {
   private nodesInstance_: Nodes;
@@ -41,23 +47,23 @@ export class Hydration {
    * Process MutationRecord from worker thread by comparing it versus the current DOM.
    * @param hydrationFromWorker contains mutations to compare or apply
    */
-  public process(mutations: TransferableMutationRecord[]): void {
+  public process(mutations: TransferrableMutationRecord[]): void {
     // TODO(KB): Hydrations are not allowed to contain TransferredNodes.
-    // Perhaps we should create a TransferableHydrationRecord.
-    const commands: TransferableMutationRecord[] = [];
+    // Perhaps we should create a TransferrableHydrationRecord.
+    const commands: TransferrableMutationRecord[] = [];
     mutations.forEach(hydration => {
-      if (hydration.type === MutationRecordType.CHILD_LIST && hydration.addedNodes !== undefined) {
-        hydration.addedNodes.forEach((nodeToAdd, index) => {
-          if (nodeToAdd.transferred === NumericBoolean.FALSE) {
+      if (hydration[TransferrableKeys.type] === MutationRecordType.CHILD_LIST && hydration[TransferrableKeys.addedNodes] !== undefined) {
+        (hydration[TransferrableKeys.addedNodes] || []).forEach((nodeToAdd, index) => {
+          if (nodeToAdd[TransferrableKeys.transferred] === NumericBoolean.FALSE) {
             const baseNode =
-              this.nodesInstance_.getNode(nodeToAdd._index_) ||
-              this.nodesInstance_.getNode(hydration.target._index_).childNodes[index] ||
+              this.nodesInstance_.getNode(nodeToAdd[TransferrableKeys._index_]) ||
+              this.nodesInstance_.getNode(hydration[TransferrableKeys.target][TransferrableKeys._index_]).childNodes[index] ||
               this.baseElement_;
-            this.hydrateNode_(baseNode, nodeToAdd as TransferableNode);
+            this.hydrateNode_(baseNode, nodeToAdd as TransferrableNode);
           }
         });
         // TODO(KB): Hydration can include changes to props and attrs. Let's allow mutation of attrs/props during hydration.
-      } else if (hydration.type === MutationRecordType.COMMAND) {
+      } else if (hydration[TransferrableKeys.type] === MutationRecordType.COMMAND) {
         commands.push(hydration);
       }
     });
@@ -72,21 +78,21 @@ export class Hydration {
    * @param node Real Node in DOM.
    * @param skeleton Skeleton Node representation created by WorkerDOM and transmitted across threads.
    */
-  private hydrateElement_(node: RenderableElement, skeleton: TransferableNode): void {
-    if (skeleton.textContent) {
-      node.textContent = skeleton.textContent;
+  private hydrateElement_(node: RenderableElement, skeleton: TransferrableNode): void {
+    if (skeleton[TransferrableKeys.textContent]) {
+      node.textContent = skeleton[TransferrableKeys.textContent];
     }
 
-    this.nodesInstance_.storeNode(node, skeleton._index_);
+    this.nodesInstance_.storeNode(node, skeleton[TransferrableKeys._index_]);
 
     // When hydrating an HTMLElement, there are some values that need to be synced to the background
     // independently of if the background code has subscribed to an event on the Element.
     // Primary Case: `<form><input><button onClick={function(){console.log(input.value)}} /></form>`
     applyDefaultChangeListener(this.worker_, node);
 
-    (skeleton.childNodes || []).forEach(
-      (childNode: TransferableNode | TransferredNode, index: number): void =>
-        this.hydrateNode_(node.childNodes[index], childNode as TransferableNode),
+    (skeleton[TransferrableKeys.childNodes] || []).forEach(
+      (childNode: TransferrableNode | TransferredNode, index: number): void =>
+        this.hydrateNode_(node.childNodes[index], childNode as TransferrableNode),
     );
   }
 
@@ -96,30 +102,30 @@ export class Hydration {
    * @param node Real Node in DOM
    * @param skeleton Skeleton Node representation created by WorkerDOM and transmitted across threads.
    */
-  private hydrateNode_(node: Node, skeleton: TransferableNode): void {
-    if (node.childNodes.length !== (skeleton.childNodes || []).length) {
+  private hydrateNode_(node: Node, skeleton: TransferrableNode): void {
+    if (node.childNodes.length !== (skeleton[TransferrableKeys.childNodes] || []).length) {
       // A limited number of cases when the number of childNodes doesn't match is allowable.
       if (allTextNodes(node.childNodes)) {
-        if (skeleton.textContent) {
+        if (skeleton[TransferrableKeys.textContent]) {
           // Node with textContent but represented in SSR as Node.childNodes = [Text]
-          node.textContent = skeleton.textContent;
-          this.nodesInstance_.storeNode(node as RenderableElement, skeleton._index_);
-        } else if (allTextNodes(skeleton.childNodes)) {
+          node.textContent = skeleton[TransferrableKeys.textContent];
+          this.nodesInstance_.storeNode(node as RenderableElement, skeleton[TransferrableKeys._index_]);
+        } else if (allTextNodes(skeleton[TransferrableKeys.childNodes])) {
           // Node with single textContent represented by multiple Text siblings.
           // Some frameworks will create multiple Text nodes for a string, since it means they can update specific segments by direct reference.
           // Hello, {name} => [Text('Hello, '), Text('user')]... Node.childNodes[1].textContent = 'another user';
           node.removeChild(node.childNodes[0]);
-          skeleton.childNodes.forEach(skeletonChild => {
-            const skeletonText = document.createTextNode((skeletonChild as TransferableNode).textContent);
+          skeleton[TransferrableKeys.childNodes].forEach(skeletonChild => {
+            const skeletonText = document.createTextNode((skeletonChild as TransferrableNode)[TransferrableKeys.textContent]);
             node.appendChild(skeletonText);
-            this.nodesInstance_.storeNode(skeletonText as RenderableElement, skeleton._index_);
+            this.nodesInstance_.storeNode(skeletonText as RenderableElement, skeleton[TransferrableKeys._index_]);
           });
         }
         return;
       }
 
-      const validSkeletonChildren: TransferableNode[] = (skeleton.childNodes as TransferableNode[]).filter(
-        childNode => !(childNode.nodeType === NodeType.TEXT_NODE && childNode.textContent === ''),
+      const validSkeletonChildren: TransferrableNode[] = (skeleton[TransferrableKeys.childNodes] as TransferrableNode[]).filter(
+        childNode => !(childNode[TransferrableKeys.nodeType] === NodeType.TEXT_NODE && childNode[TransferrableKeys.textContent] === ''),
       );
       if (validSkeletonChildren.length === node.childNodes.length) {
         this.hydrateElement_(node as RenderableElement, skeleton);
