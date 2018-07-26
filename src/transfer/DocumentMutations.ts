@@ -71,7 +71,6 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
   });
 
   if (SUPPORTS_POST_MESSAGE) {
-    console.log(mutations);
     const mutationFromWorker: MutationFromWorker = {
       type: hydrated ? MessageType.MUTATE : MessageType.HYDRATE,
       mutations,

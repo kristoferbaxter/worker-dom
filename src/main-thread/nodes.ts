@@ -20,15 +20,14 @@ import { NumericBoolean } from '../utils';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
 export class Nodes {
-  private NODES_: Map<number, RenderableElement> = new Map();
+  private NODES_: Map<number, RenderableElement>;
   private baseElement_: HTMLElement;
 
   constructor(baseElement: Element) {
     // The document element is constructed before the worker MutationObserver is attached.
     // As a result, we must manually store the reference node for the main thread.
     // The first entry is the "document", the second entry is "document.body".
-    this.NODES_.set(1, baseElement as RenderableElement);
-    this.NODES_.set(2, baseElement as RenderableElement);
+    this.NODES_ = new Map([[1, baseElement as RenderableElement], [2, baseElement as RenderableElement]]);
     this.baseElement_ = baseElement as HTMLElement;
   }
 
