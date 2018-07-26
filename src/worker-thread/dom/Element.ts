@@ -25,6 +25,7 @@ import { Text } from './Text';
 import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
 import { matchChildrenElements } from './matchElements';
 import { reflectProperties } from './enhanceElement';
+import { stringPosition } from '../../transfer/StringPool';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
@@ -360,9 +361,15 @@ export class Element extends Node {
       _index_: this._index_,
       transferred: NumericBoolean.FALSE,
       nodeType: this.nodeType,
-      nodeName: this.nodeName,
-      attributes: this.attributes,
-      namespaceName: this.namespaceURI,
+      nodeName: stringPosition(this.nodeName),
+      attributes: this.attributes.map(attribute => {
+        return {
+          namespaceURI: stringPosition(attribute.namespaceURI || 'null'),
+          name: stringPosition(attribute.name),
+          value: stringPosition(attribute.value),
+        };
+      }),
+      namespaceName: stringPosition(this.namespaceURI || 'null'),
       properties: [], // TODO(KB): Properties!
       childNodes: this.childNodes.map(childNode => childNode.serialize()),
     };

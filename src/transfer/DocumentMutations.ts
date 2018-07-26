@@ -20,10 +20,11 @@ import { MutationRecord } from '../worker-thread/MutationRecord';
 import { TransferableMutationRecord } from './TransferableRecord';
 import { TransferableNode, TransferredNode } from './TransferableNodes';
 import { MutationFromWorker, MessageType } from './Messages';
+import { stringPosition, transfer as transferStringPool } from './StringPool';
 
 const SUPPORTS_POST_MESSAGE = typeof postMessage !== 'undefined';
-const sanitizeNodes = (nodes: Node[] | undefined): Array<TransferableNode | TransferredNode> | null =>
-  (nodes && nodes.map(node => node.serialize())) || null;
+const serializeNodes = (nodes: Node[] | undefined): Array<TransferableNode | TransferredNode> | undefined =>
+  (nodes && nodes.map(node => node.serialize())) || undefined;
 let observing = false;
 let hydrated = false;
 
@@ -31,28 +32,51 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
   const mutations: TransferableMutationRecord[] = [];
 
   incomingMutations.forEach(mutation => {
-    mutations.push({
-      target: mutation.target.serialize(),
-      addedNodes: sanitizeNodes(mutation.addedNodes),
-      removedNodes: sanitizeNodes(mutation.removedNodes),
-      previousSibling: (mutation.previousSibling && mutation.previousSibling.serialize()) || null,
-      nextSibling: (mutation.nextSibling && mutation.nextSibling.serialize()) || null,
-      attributeName: mutation.attributeName || null,
-      attributeNamespace: mutation.attributeNamespace || null,
-      oldValue: mutation.oldValue === '' ? '' : mutation.oldValue || null,
+    debugger;
+    let transferableMutation: TransferableMutationRecord = {
       type: mutation.type,
-      propertyName: mutation.propertyName || null,
-      value: mutation.value === '' ? '' : mutation.value || null,
-      addedEvents: mutation.addedEvents || null,
-      removedEvents: mutation.removedEvents || null,
-      measure: null,
-    });
+      target: mutation.target.serialize(),
+    };
+    if (mutation.addedNodes) {
+      transferableMutation.addedNodes = serializeNodes(mutation.addedNodes);
+    }
+    if (mutation.removedNodes) {
+      transferableMutation.removedNodes = serializeNodes(mutation.removedNodes);
+    }
+    if (mutation.nextSibling) {
+      transferableMutation.nextSibling = mutation.nextSibling.serialize();
+    }
+    if (mutation.attributeName != null) {
+      transferableMutation.attributeName = stringPosition(mutation.attributeName);
+    }
+    if (mutation.attributeNamespace) {
+      transferableMutation.attributeNamespace = stringPosition(mutation.attributeNamespace);
+    }
+    if (mutation.oldValue) {
+      transferableMutation.oldValue = stringPosition(mutation.oldValue);
+    }
+    if (mutation.propertyName) {
+      transferableMutation.propertyName = stringPosition(mutation.propertyName);
+    }
+    if (mutation.value) {
+      transferableMutation.value = stringPosition(mutation.value);
+    }
+    if (mutation.addedEvents) {
+      transferableMutation.addedEvents = mutation.addedEvents;
+    }
+    if (mutation.removedEvents) {
+      transferableMutation.removedEvents = mutation.removedEvents;
+    }
+
+    mutations.push(transferableMutation);
   });
 
+  debugger;
   if (SUPPORTS_POST_MESSAGE) {
     const mutationFromWorker: MutationFromWorker = {
       type: hydrated ? MessageType.MUTATE : MessageType.HYDRATE,
       mutations,
+      strings: transferStringPool(),
     };
     hydrated = true;
 

@@ -16,6 +16,18 @@
 
 import { Node } from './dom/Node';
 
+export type MutationRecordMutableKey =
+  | 'addedNodes'
+  | 'removedNodes'
+  | 'previousSibling'
+  | 'nextSibling'
+  | 'attributeName'
+  | 'attributeNamespace'
+  | 'propertyName'
+  | 'value'
+  | 'addedEvents'
+  | 'removedEvents';
+
 // MutationRecord interface is modification and extension of the spec version.
 // It supports capturing property changes.
 // @see https://developer.mozilla.org/en-US/docs/Web/API/MutationRecord

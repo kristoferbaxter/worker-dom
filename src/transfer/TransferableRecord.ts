@@ -24,36 +24,18 @@ import { TransferableEventSubscriptionChange } from './TransferableEvent';
 
 // For more info on MutationRecords: https://developer.mozilla.org/en-US/docs/Web/API/MutationRecord
 export interface TransferableMutationRecord {
-  readonly target: TransferableNode | TransferredNode;
-  readonly addedNodes: Array<TransferableNode | TransferredNode> | null;
-  readonly removedNodes: Array<TransferableNode | TransferredNode> | null;
-  readonly previousSibling: TransferableNode | TransferredNode | null;
-  readonly nextSibling: TransferableNode | TransferredNode | null;
-  readonly attributeName: string | null;
-  readonly attributeNamespace: string | null;
-  readonly oldValue: string | null;
-
   readonly type: MutationRecordType;
-  readonly propertyName: string | null;
-  readonly value: string | null;
-  readonly addedEvents: TransferableEventSubscriptionChange[] | null;
-  readonly removedEvents: TransferableEventSubscriptionChange[] | null;
-  readonly measure: TransferredNode[] | null;
+  readonly target: TransferableNode | TransferredNode;
+
+  addedNodes?: Array<TransferableNode | TransferredNode>;
+  removedNodes?: Array<TransferableNode | TransferredNode>;
+  previousSibling?: TransferableNode | TransferredNode;
+  nextSibling?: TransferableNode | TransferredNode;
+  attributeName?: number;
+  attributeNamespace?: number;
+  propertyName?: number;
+  value?: number;
+  oldValue?: number;
+  addedEvents?: TransferableEventSubscriptionChange[];
+  removedEvents?: TransferableEventSubscriptionChange[];
 }
-
-// TODO(KB): Hydrations are not allowed to contain TransferredNodes.
-// Perhaps we should create a TransferableHydrationRecord.
-// export interface TransferableHydrationRecord {
-//   readonly target: TransferableNode;
-//   readonly addedNodes: Array<TransferableNode> | null;
-//   readonly removedNodes: Array<TransferableNode> | null;
-//   readonly previousSibling: TransferableNode | null;
-//   readonly nextSibling: TransferableNode | null;
-//   readonly attributeName: string | null;
-//   readonly attributeNamespace: string | null;
-//   readonly oldValue: string | null;
-
-//   readonly type: MutationRecordType;
-//   readonly propertyName: string | null;
-//   readonly value: string | null;
-// }

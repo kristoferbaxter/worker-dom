@@ -15,86 +15,85 @@
  */
 
 // import {getNode, createNode} from './nodes.js';
-import { Nodes } from './nodes';
+// import { Nodes } from './nodes';
 import { TransferableMutationRecord } from '../transfer/TransferableRecord';
-import { TransferableNode } from '../transfer/TransferableNodes';
-import { MutationRecordType } from '../worker-thread/MutationRecord';
-import { process } from './command';
+// import { TransferableNode } from '../transfer/TransferableNodes';
+// import { MutationRecordType } from '../worker-thread/MutationRecord';
+// import { process } from './command';
 
 // TODO(KB): Restore mutation threshold timeout.
 // const GESTURE_TO_MUTATION_THRESHOLD = 5000;
 
-const mutators: {
-  [key: number]: (nodesInstance: Nodes, worker: Worker, mutation: TransferableMutationRecord) => void;
-} = {
-  [MutationRecordType.CHILD_LIST]: (
-    nodesInstance: Nodes,
-    worker: Worker,
-    { target, removedNodes, addedNodes, nextSibling }: TransferableMutationRecord,
-  ) => {
-    const parent = nodesInstance.getNode(target._index_);
+// const mutators: {
+//   [key: number]: (nodesInstance: Nodes, worker: Worker, mutation: TransferableMutationRecord) => void;
+// } = {
+//   [MutationRecordType.CHILD_LIST]: (
+//     nodesInstance: Nodes,
+//     worker: Worker,
+//     { target, removedNodes, addedNodes, nextSibling }: TransferableMutationRecord,
+//   ) => {
+//     const parent = nodesInstance.getNode(target._index_);
 
-    if (removedNodes) {
-      removedNodes.forEach(node => parent.removeChild(nodesInstance.getNode(node._index_)));
-    }
+//     if (removedNodes) {
+//       removedNodes.forEach(node => parent.removeChild(nodesInstance.getNode(node._index_)));
+//     }
 
-    if (addedNodes) {
-      addedNodes.forEach(node => {
-        parent.insertBefore(
-          nodesInstance.getNode(node._index_) || nodesInstance.createNode(node as TransferableNode),
-          (nextSibling && nodesInstance.getNode(nextSibling._index_)) || null,
-        );
-      });
-    }
-  },
-  [MutationRecordType.ATTRIBUTES]: (nodesInstance: Nodes, worker: Worker, { target, attributeName, value }: TransferableMutationRecord) => {
-    if (attributeName !== null && value !== null) {
-      nodesInstance.getNode(target._index_).setAttribute(attributeName, value);
-    }
-  },
-  [MutationRecordType.CHARACTER_DATA]: (nodesInstance: Nodes, worker: Worker, { target, value }: TransferableMutationRecord) => {
-    if (value !== null) {
-      nodesInstance.getNode(target._index_).textContent = value;
-    }
-  },
-  [MutationRecordType.PROPERTIES]: (nodesInstance: Nodes, worker: Worker, { target, propertyName, value }: TransferableMutationRecord) => {
-    if (propertyName !== null && value !== null) {
-      nodesInstance.getNode(target._index_)[propertyName] = value;
-    }
-  },
-  [MutationRecordType.COMMAND]: (nodesInstance: Nodes, worker: Worker, mutation: TransferableMutationRecord) =>
-    process(nodesInstance, worker, mutation),
-};
+//     if (addedNodes) {
+//       addedNodes.forEach(node => {
+//         parent.insertBefore(
+//           nodesInstance.getNode(node._index_) || nodesInstance.createNode(node as TransferableNode),
+//           (nextSibling && nodesInstance.getNode(nextSibling._index_)) || null,
+//         );
+//       });
+//     }
+//   },
+//   [MutationRecordType.ATTRIBUTES]: (nodesInstance: Nodes, worker: Worker, { target, attributeName, value }: TransferableMutationRecord) => {
+//     if (attributeName !== null && value !== null) {
+//       nodesInstance.getNode(target._index_).setAttribute(attributeName, value);
+//     }
+//   },
+//   [MutationRecordType.CHARACTER_DATA]: (nodesInstance: Nodes, worker: Worker, { target, value }: TransferableMutationRecord) => {
+//     if (value !== undefined) {
+//       nodesInstance.getNode(target._index_).textContent = value;
+//     }
+//   },
+//   [MutationRecordType.PROPERTIES]: (nodesInstance: Nodes, worker: Worker, { target, propertyName, value }: TransferableMutationRecord) => {
+//     if (propertyName !== undefined && value !== undefined) {
+//       nodesInstance.getNode(target._index_)[propertyName] = value;
+//     }
+//   },
+//   [MutationRecordType.COMMAND]: (nodesInstance: Nodes, worker: Worker, mutation: TransferableMutationRecord) =>
+//     process(nodesInstance, worker, mutation),
+// };
 
 export class Mutation {
-  private MUTATION_QUEUE_: TransferableMutationRecord[] = [];
-  private pendingMutations_: boolean = false;
-  // private lastGestureTime: number;
-  private nodesInstance_: Nodes;
-  private worker_: Worker;
+  // private MUTATION_QUEUE_: TransferableMutationRecord[] = [];
+  // private pendingMutations_: boolean = false;
+  // // private lastGestureTime: number;
+  // private nodesInstance_: Nodes;
+  // private worker_: Worker;
 
-  constructor(nodesInstance: Nodes, worker: Worker) {
-    this.nodesInstance_ = nodesInstance;
-    this.worker_ = worker;
-  }
+  // constructor(nodesInstance: Nodes, worker: Worker) {
+  //   this.nodesInstance_ = nodesInstance;
+  //   this.worker_ = worker;
+  // }
 
   /**
    * Process MutationRecord from worker thread applying changes to the existing DOM.
    * @param hydrationFromWorker contains mutations to apply
    */
   public process = (mutations: TransferableMutationRecord[]): void => {
-    //mutations: TransferableMutationRecord[]): void {
-    // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferableMutationRecord[])
-    // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {
-    //   return;
+    // //mutations: TransferableMutationRecord[]): void {
+    // // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferableMutationRecord[])
+    // // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {
+    // //   return;
+    // // }
+    // // this.lastGestureTime = lastGestureTime;
+    // this.MUTATION_QUEUE_ = this.MUTATION_QUEUE_.concat(mutations);
+    // if (!this.pendingMutations_) {
+    //   this.pendingMutations_ = true;
+    //   requestAnimationFrame(this.syncFlush_);
     // }
-
-    // this.lastGestureTime = lastGestureTime;
-    this.MUTATION_QUEUE_ = this.MUTATION_QUEUE_.concat(mutations);
-    if (!this.pendingMutations_) {
-      this.pendingMutations_ = true;
-      requestAnimationFrame(this.syncFlush_);
-    }
   };
 
   /**
@@ -103,13 +102,13 @@ export class Mutation {
    *
    * Investigations in using asyncFlush to resolve are worth considering.
    */
-  private syncFlush_ = (): void => {
-    const length = this.MUTATION_QUEUE_.length;
-    this.MUTATION_QUEUE_.forEach(mutation => mutators[mutation.type](this.nodesInstance_, this.worker_, mutation));
+  // private syncFlush_ = (): void => {
+  //   const length = this.MUTATION_QUEUE_.length;
+  //   this.MUTATION_QUEUE_.forEach(mutation => mutators[mutation.type](this.nodesInstance_, this.worker_, mutation));
 
-    this.MUTATION_QUEUE_.splice(0, length);
-    this.pendingMutations_ = false;
-  };
+  //   this.MUTATION_QUEUE_.splice(0, length);
+  //   this.pendingMutations_ = false;
+  // };
 
   /**
    * Alternative flushing method using rIC.

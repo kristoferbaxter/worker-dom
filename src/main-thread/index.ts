@@ -15,8 +15,8 @@
  */
 
 import { Nodes } from './nodes';
-import { Hydration } from './hydrate';
-import { Mutation } from './mutate';
+// import { Hydration } from './hydrate';
+// import { Mutation } from './mutate';
 import { createWorker } from './worker';
 import { MessageFromWorker, MessageType } from '../transfer/Messages';
 
@@ -39,18 +39,18 @@ export function upgradeElement(baseElement: Element): void {
       return;
     }
 
-    const hydrationInstance = new Hydration(baseElement, nodesInstance, worker);
-    const mutationInstance = new Mutation(nodesInstance, worker);
+    // const hydrationInstance = new Hydration(baseElement, nodesInstance, worker);
+    // const mutationInstance = new Mutation(nodesInstance, worker);
 
     worker.onmessage = ({ data }: MessageFromWorker) => {
       switch (data.type) {
         case MessageType.HYDRATE:
-          // console.info(`hydration from worker: ${data.type}`, data.mutations);
-          hydrationInstance.process(data.mutations);
+          console.info(`hydration from worker: ${data.type}`, data.mutations, data.strings);
+          // hydrationInstance.process(data.mutations);
           break;
         case MessageType.MUTATE:
-          // console.info(`mutation from worker: ${data.type}`, data.mutations);
-          mutationInstance.process(data.mutations);
+          console.info(`mutation from worker: ${data.type}`, data.mutations, data.strings);
+          // mutationInstance.process(data.mutations);
           break;
       }
     };

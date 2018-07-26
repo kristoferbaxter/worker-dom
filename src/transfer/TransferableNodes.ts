@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-import { NodeType, NodeName } from '../worker-thread/dom/Node';
+import { NodeType } from '../worker-thread/dom/Node';
 import { NumericBoolean } from '../utils';
 
 export interface TransferableNode extends TransferredNode {
   readonly nodeType: NodeType;
-  readonly nodeName: NodeName;
+  readonly nodeName: number;
   readonly attributes: Array<{
-    [index: string]: string;
+    [index: string]: number;
   }>;
   readonly properties: Array<{
-    [index: string]: any;
+    [index: string]: number;
   }>;
   readonly childNodes: Array<TransferableNode | TransferredNode>;
-  readonly textContent: string;
-  readonly namespaceName: string;
+  readonly textContent: number;
+  readonly namespaceName: number;
 }
 
 // If a Node has been transferred once already to main thread then we need only pass its index.

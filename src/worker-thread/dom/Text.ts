@@ -18,6 +18,7 @@ import { NodeType } from './Node';
 import { CharacterData } from './CharacterData';
 import { TransferableNode, TransferredNode } from '../../transfer/TransferableNodes';
 import { NumericBoolean } from '../../utils';
+import { stringPosition } from '../../transfer/StringPool';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Text
 export class Text extends CharacterData {
@@ -87,11 +88,11 @@ export class Text extends CharacterData {
       _index_: this._index_,
       transferred: NumericBoolean.FALSE,
       nodeType: this.nodeType,
-      nodeName: this.nodeName,
+      nodeName: stringPosition(this.nodeName),
       attributes: null,
       properties: [],
       childNodes: [], // Text cannot have childNodes.
-      textContent: this.nodeValue,
+      textContent: stringPosition(this.nodeValue),
     };
   }
 }

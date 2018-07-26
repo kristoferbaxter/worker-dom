@@ -16,7 +16,7 @@
 
 import { TransferableNode } from '../transfer/TransferableNodes';
 import { RenderableElement } from './RenderableElement';
-import { NumericBoolean } from '../utils';
+// import { NumericBoolean } from '../utils';
 
 export class Nodes {
   private NODES_: Map<number, RenderableElement> = new Map();
@@ -34,37 +34,40 @@ export class Nodes {
    *   createNode({ nodeType:1, nodeName:'div', attributes:[{ name:'a', value:'b' }], childNodes:[ ... ] })
    */
   public createNode(skeleton: TransferableNode): RenderableElement {
-    if (skeleton.nodeType === Node.TEXT_NODE) {
-      const node = document.createTextNode(skeleton.textContent);
-      this.storeNode(node, skeleton._index_);
-      return node as RenderableElement;
-    }
+    // if (skeleton.nodeType === Node.TEXT_NODE) {
+    //   const node = document.createTextNode(skeleton.textContent);
+    //   this.storeNode(node, skeleton._index_);
+    //   return node as RenderableElement;
+    // }
 
-    let node: HTMLElement | SVGElement;
-    if (skeleton.namespaceName) {
-      node = document.createElementNS(skeleton.namespaceName, skeleton.nodeName) as SVGElement;
-    } else {
-      node = document.createElement(skeleton.nodeName);
-    }
-    skeleton.attributes.forEach(attribute => {
-      if (attribute.namespaceURI) {
-        node.setAttributeNS(attribute.namespaceURI, attribute.name, attribute.value);
-      } else {
-        node.setAttribute(attribute.name, attribute.value);
-      }
-    });
-    // TODO(KB): Restore Properties
-    // skeleton.properties.forEach(property => {
-    //   node[`${property.name}`] = property.value;
+    // let node: HTMLElement | SVGElement;
+    // if (skeleton.namespaceName) {
+    //   node = document.createElementNS(skeleton.namespaceName, skeleton.nodeName) as SVGElement;
+    // } else {
+    //   node = document.createElement(skeleton.nodeName);
+    // }
+    // skeleton.attributes.forEach(attribute => {
+    //   if (attribute.namespaceURI) {
+    //     node.setAttributeNS(attribute.namespaceURI, attribute.name, attribute.value);
+    //   } else {
+    //     node.setAttribute(attribute.name, attribute.value);
+    //   }
     // });
-    skeleton.childNodes.forEach(childNode => {
-      if (childNode.transferred === NumericBoolean.FALSE) {
-        node.appendChild(this.createNode(childNode as TransferableNode));
-      }
-    });
+    // // TODO(KB): Restore Properties
+    // // skeleton.properties.forEach(property => {
+    // //   node[`${property.name}`] = property.value;
+    // // });
+    // skeleton.childNodes.forEach(childNode => {
+    //   if (childNode.transferred === NumericBoolean.FALSE) {
+    //     node.appendChild(this.createNode(childNode as TransferableNode));
+    //   }
+    // });
 
-    this.storeNode(node, skeleton._index_);
-    return node as RenderableElement;
+    // this.storeNode(node, skeleton._index_);
+    // return node as RenderableElement;
+    const div = document.createElement('div') as HTMLElement;
+    this.storeNode(div, 1);
+    return div as RenderableElement;
   }
 
   /**
