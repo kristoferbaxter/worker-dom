@@ -24,7 +24,7 @@
     "bundle": "MINIFY_BUNDLE=true COMPRESS_BUNDLE=true yarn ~rollup"
   },
   "devDependencies": {
-    "@ampproject/rollup-plugin-closure-compiler": "0.5.0-alpha.2",
+    "@ampproject/rollup-plugin-closure-compiler": "0.5.0-alpha.5",
     "@babel/cli": "v7.0.0-beta.54",
     "@babel/core": "v7.0.0-beta.54",
     "@babel/plugin-proposal-class-properties": "v7.0.0-beta.54",
