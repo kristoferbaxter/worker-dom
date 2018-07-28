@@ -19,7 +19,8 @@ import { NamespaceURI } from './Node';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
 
-export class DOMTokenList extends Array {
+export class DOMTokenList {
+  private array_: Array<string> = [];
   private element_: Element;
   private attributeName_: string;
   private storeAttributeMethod_: (namespaceURI: NamespaceURI, name: string, value: string) => void;
@@ -35,28 +36,23 @@ export class DOMTokenList extends Array {
    * @param propertyName Key used to access DOMTokenList as string getter/setter.
    */
   constructor(defineOn: typeof Element, element: Element, attributeName: string, accessorKey: string | null, propertyName: string | null) {
-    super();
     this.element_ = element;
     this.attributeName_ = attributeName;
 
-    if (element && element.propertyBackedAttributes_) {
-      // When an array is spliced, the method modifies the exisiting array and creates a new array of the same class to return.
-      // This constructor can be called without the additional context of an element to modify, since it's just the array of values to return.
-      this.storeAttributeMethod_ = element.storeAttributeNS_.bind(element);
-      element.propertyBackedAttributes_[attributeName] = [(): string | null => this.value, (value: string) => (this.value = value)];
+    this.storeAttributeMethod_ = element.storeAttributeNS_.bind(element);
+    element.propertyBackedAttributes_[attributeName] = [(): string | null => this.value, (value: string) => (this.value = value)];
 
-      if (accessorKey && propertyName) {
-        Object.defineProperty(defineOn.prototype, propertyName, {
-          enumerable: true,
-          configurable: true,
-          get(): string {
-            return (this as Element)[accessorKey].value;
-          },
-          set(value: string) {
-            (this as Element)[accessorKey].value = value;
-          },
-        });
-      }
+    if (accessorKey && propertyName) {
+      Object.defineProperty(defineOn.prototype, propertyName, {
+        enumerable: true,
+        configurable: true,
+        get(): string {
+          return (this as Element)[accessorKey].value;
+        },
+        set(value: string) {
+          (this as Element)[accessorKey].value = value;
+        },
+      });
     }
   }
 
@@ -65,7 +61,15 @@ export class DOMTokenList extends Array {
    * @return string representation of tokens (space delimitted).
    */
   get value(): string {
-    return this.join(' ');
+    return this.array_.join(' ');
+  }
+
+  /**
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/length
+   * @return integer representing the number of objects stored in the object.
+   */
+  get length(): number {
+    return this.array_.length;
   }
 
   /**
@@ -77,7 +81,7 @@ export class DOMTokenList extends Array {
     const newValue = collection.trim();
 
     // Replace current tokens with new tokens.
-    this.splice(0, this.length, ...(newValue !== '' ? newValue.split(/\s+/) : ''));
+    this.array_.splice(0, this.array_.length, ...(newValue !== '' ? newValue.split(/\s+/) : ''));
     this.mutationCompleteHandler_(oldValue, newValue);
   }
 
@@ -87,7 +91,7 @@ export class DOMTokenList extends Array {
    * @return value stored at the index requested, or undefined if beyond known range.
    */
   public item(index: number): string | undefined {
-    return this[index];
+    return this.array_[index];
   }
 
   /**
@@ -96,7 +100,7 @@ export class DOMTokenList extends Array {
    * @return boolean indicating if the token is contained by the DOMTokenList.
    */
   public contains(token: string): boolean {
-    return this.includes(token);
+    return this.array_.includes(token);
   }
 
   /**
@@ -108,7 +112,7 @@ export class DOMTokenList extends Array {
    */
   public add(...tokens: string[]): void {
     const oldValue = this.value;
-    this.splice(0, this.length, ...new Set(this.concat(tokens)));
+    this.array_.splice(0, this.array_.length, ...new Set(this.array_.concat(tokens)));
     this.mutationCompleteHandler_(oldValue, this.value);
   }
 
@@ -121,7 +125,7 @@ export class DOMTokenList extends Array {
    */
   public remove(...tokens: string[]): void {
     const oldValue = this.value;
-    this.splice(0, this.length, ...new Set(this.filter(token => !tokens.includes(token))));
+    this.array_.splice(0, this.array_.length, ...new Set(this.array_.filter(token => !tokens.includes(token))));
     this.mutationCompleteHandler_(oldValue, this.value);
   }
 
@@ -131,19 +135,19 @@ export class DOMTokenList extends Array {
    * @param newToken
    */
   public replace(token: string, newToken: string): void {
-    if (!this.includes(token)) {
+    if (!this.array_.includes(token)) {
       return;
     }
 
     const oldValue = this.value;
-    const set = new Set(this);
+    const set = new Set(this.array_);
     if (token !== newToken) {
       set.delete(token);
       if (newToken !== '') {
         set.add(newToken);
       }
     }
-    this.splice(0, this.length, ...set);
+    this.array_.splice(0, this.array_.length, ...set);
     this.mutationCompleteHandler_(oldValue, this.value);
   }
 
@@ -156,7 +160,7 @@ export class DOMTokenList extends Array {
    * @return true if the token is in the list following mutation, false if not.
    */
   public toggle(token: string, force?: boolean): boolean {
-    if (!this.includes(token)) {
+    if (!this.array_.includes(token)) {
       if (force !== false) {
         // Note, this will add the token if force is undefined (not passed into the method), or true.
         this.add(token);
@@ -183,7 +187,6 @@ export class DOMTokenList extends Array {
       type: MutationRecordType.ATTRIBUTES,
       target: this.element_,
       attributeName: this.attributeName_,
-      attributeNamespace: null,
       value,
       oldValue,
     });

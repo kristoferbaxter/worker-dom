@@ -15,13 +15,14 @@
  */
 
 import { MessageType } from '../transfer/Messages';
-import { Nodes } from './nodes';
 import { messageToWorker } from './worker';
 import { RenderableElement } from './RenderableElement';
 import { NumericBoolean } from '../utils';
-import { TransferableMutationRecord } from '../transfer/TransferableRecord';
+import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
+import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { getNode } from './nodes';
 
-const knownListeners: Array<(event: Event) => any> = [];
+const KNOWN_LISTENERS: Array<(event: Event) => any> = [];
 
 /**
  * Instead of a whitelist of elements that need their value tracked, use the existence
@@ -42,6 +43,21 @@ export const applyDefaultChangeListener = (worker: Worker, node: RenderableEleme
 };
 
 /**
+ * Tell the worker DOM what the value is for a Node.
+ * @param worker whom to dispatch value toward.
+ * @param node where to get the value from.
+ */
+const fireValueChange = (worker: Worker, node: RenderableElement): void => {
+  messageToWorker(worker, {
+    [TransferrableKeys.type]: MessageType.SYNC,
+    [TransferrableKeys.sync]: {
+      [TransferrableKeys._index_]: node._index_,
+      [TransferrableKeys.value]: node.value,
+    },
+  });
+};
+
+/**
  * Register an event handler for dispatching events to worker thread
  * @param worker whom to dispatch events toward
  * @param _index_ node index the event comes from (used to dispatchEvent in worker thread).
@@ -52,42 +68,27 @@ const eventHandler = (worker: Worker, _index_: number) => (event: Event): void =
     fireValueChange(worker, event.currentTarget as RenderableElement);
   }
   messageToWorker(worker, {
-    type: MessageType.EVENT,
-    event: {
-      _index_,
-      bubbles: event.bubbles,
-      cancelable: event.cancelable,
-      cancelBubble: event.cancelBubble,
-      currentTarget: {
-        _index_: (event.currentTarget as RenderableElement)._index_,
-        transferred: NumericBoolean.TRUE,
+    [TransferrableKeys.type]: MessageType.EVENT,
+    [TransferrableKeys.event]: {
+      [TransferrableKeys._index_]: _index_,
+      [TransferrableKeys.bubbles]: event.bubbles,
+      [TransferrableKeys.cancelable]: event.cancelable,
+      [TransferrableKeys.cancelBubble]: event.cancelBubble,
+      [TransferrableKeys.currentTarget]: {
+        [TransferrableKeys._index_]: (event.currentTarget as RenderableElement)._index_,
+        [TransferrableKeys.transferred]: NumericBoolean.TRUE,
       },
-      defaultPrevented: event.defaultPrevented,
-      eventPhase: event.eventPhase,
-      isTrusted: event.isTrusted,
-      returnValue: event.returnValue,
-      target: {
-        _index_: (event.target as RenderableElement)._index_,
-        transferred: NumericBoolean.TRUE,
+      [TransferrableKeys.defaultPrevented]: event.defaultPrevented,
+      [TransferrableKeys.eventPhase]: event.eventPhase,
+      [TransferrableKeys.isTrusted]: event.isTrusted,
+      [TransferrableKeys.returnValue]: event.returnValue,
+      [TransferrableKeys.target]: {
+        [TransferrableKeys._index_]: (event.target as RenderableElement)._index_,
+        [TransferrableKeys.transferred]: NumericBoolean.TRUE,
       },
-      timeStamp: event.timeStamp,
-      type: event.type,
-      scoped: event.scoped,
-    },
-  });
-};
-
-/**
- * Tell the worker DOM what the value is for a Node.
- * @param worker whom to dispatch value toward.
- * @param node where to get the value from.
- */
-const fireValueChange = (worker: Worker, node: RenderableElement): void => {
-  messageToWorker(worker, {
-    type: MessageType.SYNC,
-    sync: {
-      _index_: node._index_,
-      value: node.value,
+      [TransferrableKeys.timeStamp]: event.timeStamp,
+      [TransferrableKeys.type]: event.type,
+      [TransferrableKeys.scoped]: event.scoped,
     },
   });
 };
@@ -98,24 +99,24 @@ const fireValueChange = (worker: Worker, node: RenderableElement): void => {
  * @param worker whom to dispatch events toward.
  * @param mutation mutation record containing commands to execute.
  */
-export function process(nodesInstance: Nodes, worker: Worker, mutation: TransferableMutationRecord): void {
-  const index: number = mutation.target._index_;
-  const target = nodesInstance.getNode(index) as HTMLElement;
+export function process(worker: Worker, mutation: TransferrableMutationRecord): void {
+  const index: number = mutation[TransferrableKeys.target][TransferrableKeys._index_];
+  const target = getNode(index) as HTMLElement;
   const shouldTrack: boolean = shouldTrackChanges(target);
   let changeEventSubscribed: boolean = target.onchange !== null;
 
-  (mutation.removedEvents || []).forEach(eventSub => {
-    if (eventSub.type === 'change') {
+  (mutation[TransferrableKeys.removedEvents] || []).forEach(eventSub => {
+    if (eventSub[TransferrableKeys.type] === 'change') {
       changeEventSubscribed = false;
     }
-    target.removeEventListener(eventSub.type, knownListeners[eventSub.index]);
+    target.removeEventListener(eventSub[TransferrableKeys.type], KNOWN_LISTENERS[eventSub[TransferrableKeys.index]]);
   });
-  (mutation.addedEvents || []).forEach(eventSub => {
-    if (eventSub.type === 'change') {
+  (mutation[TransferrableKeys.addedEvents] || []).forEach(eventSub => {
+    if (eventSub[TransferrableKeys.type] === 'change') {
       changeEventSubscribed = true;
       target.onchange = null;
     }
-    target.addEventListener(eventSub.type, (knownListeners[eventSub.index] = eventHandler(worker, index)));
+    target.addEventListener(eventSub[TransferrableKeys.type], (KNOWN_LISTENERS[eventSub[TransferrableKeys.index]] = eventHandler(worker, index)));
   });
   if (shouldTrack && !changeEventSubscribed) {
     applyDefaultChangeListener(worker, target as RenderableElement);

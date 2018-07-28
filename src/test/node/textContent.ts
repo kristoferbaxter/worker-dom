@@ -15,26 +15,27 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../worker-thread/dom/Node';
+import { NodeType } from '../../worker-thread/dom/Node';
 import { Text } from '../../worker-thread/dom/Text';
+import { Element } from '../../worker-thread/dom/Element';
 
 test.beforeEach(t => {
   t.context = {
-    node: new Node(NodeType.ELEMENT_NODE, 'div'),
-    child: new Node(NodeType.ELEMENT_NODE, 'p'),
+    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    child: new Element(NodeType.ELEMENT_NODE, 'p', null),
     nodeText: new Text('text in node'),
     childText: new Text(' text in child'),
   };
 });
 
 test('textContent getter returns empty string when there are no text childNodes.', t => {
-  const { node } = t.context as { node: Node };
+  const { node } = t.context as { node: Element };
 
   t.is(node.textContent, '');
 });
 
 test('textContent getter returns the value of direct childNodes when there are no children', t => {
-  const { node, nodeText } = t.context as { node: Node; nodeText: Text };
+  const { node, nodeText } = t.context as { node: Element; nodeText: Text };
 
   node.appendChild(nodeText);
   t.is(node.textContent, nodeText.textContent);
@@ -42,7 +43,7 @@ test('textContent getter returns the value of direct childNodes when there are n
 });
 
 test('textContent getter returns the value of all depths childNodes even when there are children with no textContent', t => {
-  const { node, child, nodeText } = t.context as { node: Node; child: Node; nodeText: Text };
+  const { node, child, nodeText } = t.context as { node: Element; child: Element; nodeText: Text };
 
   node.appendChild(nodeText);
   node.appendChild(child);
@@ -51,7 +52,7 @@ test('textContent getter returns the value of all depths childNodes even when th
 });
 
 test('textContent returns the value of all depths childNodes when there are children', t => {
-  const { node, child, nodeText, childText } = t.context as { node: Node; child: Node; nodeText: Text; childText: Text };
+  const { node, child, nodeText, childText } = t.context as { node: Element; child: Element; nodeText: Text; childText: Text };
 
   child.appendChild(childText);
   node.appendChild(nodeText);

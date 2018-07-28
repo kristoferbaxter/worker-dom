@@ -19,12 +19,13 @@ import { DOMTokenList } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate } from './Attr';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { TransferableNode, TransferredNode } from '../../transfer/TransferableNodes';
+import { TransferredNode, TransferrableElement } from '../../transfer/TransferrableNodes';
 import { NumericBoolean } from '../../utils';
 import { Text } from './Text';
 import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
 import { matchChildrenElements } from './matchElements';
 import { reflectProperties } from './enhanceElement';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
@@ -232,7 +233,7 @@ export class Element extends Node {
    * @param value attribute value
    */
   public setAttributeNS(namespaceURI: NamespaceURI, name: string, value: string): void {
-    if (Object.keys(this.propertyBackedAttributes_).includes(name)) {
+    if (this.propertyBackedAttributes_[name] !== undefined) {
       if (!this.attributes.find(matchAttrPredicate(namespaceURI, name))) {
         this.attributes.push({
           namespaceURI,
@@ -282,7 +283,7 @@ export class Element extends Node {
   public getAttributeNS(namespaceURI: NamespaceURI, name: string): string | null {
     const attr = this.attributes.find(matchAttrPredicate(namespaceURI, name));
     if (attr) {
-      return Object.keys(this.propertyBackedAttributes_).includes(name) ? this.propertyBackedAttributes_[name][0]() : attr.value;
+      return this.propertyBackedAttributes_[name] !== undefined ? this.propertyBackedAttributes_[name][0]() : attr.value;
     }
     return null;
   }
@@ -344,7 +345,7 @@ export class Element extends Node {
     return matchChildrenElements(this, tagName === '*' ? _ => true : element => element.tagName === tagName);
   }
 
-  public serialize(): TransferableNode | TransferredNode {
+  public serialize(): TransferrableElement | TransferredNode {
     if (this._transferred_ !== null) {
       return this._transferred_;
     }
@@ -352,19 +353,18 @@ export class Element extends Node {
     Promise.resolve().then(_ => {
       // After transmission of the current unsanitized form across a message, we can start to send the more compressed format.
       this._transferred_ = {
-        _index_: this._index_,
-        transferred: NumericBoolean.TRUE,
+        [TransferrableKeys._index_]: this._index_,
+        [TransferrableKeys.transferred]: NumericBoolean.TRUE,
       };
     });
     return {
-      _index_: this._index_,
-      transferred: NumericBoolean.FALSE,
-      nodeType: this.nodeType,
-      nodeName: this.nodeName,
-      attributes: this.attributes,
-      namespaceName: this.namespaceURI,
-      properties: [], // TODO(KB): Properties!
-      childNodes: this.childNodes.map(childNode => childNode.serialize()),
+      [TransferrableKeys._index_]: this._index_,
+      [TransferrableKeys.transferred]: NumericBoolean.FALSE,
+      [TransferrableKeys.nodeType]: this.nodeType,
+      [TransferrableKeys.nodeName]: this.nodeName,
+      [TransferrableKeys.attributes]: this.attributes,
+      [TransferrableKeys.namespaceURI]: this.namespaceURI,
+      [TransferrableKeys.childNodes]: this.childNodes.map(childNode => childNode.serialize()),
     };
   }
 }

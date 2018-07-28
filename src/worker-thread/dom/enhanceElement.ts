@@ -22,7 +22,7 @@ export interface PropertyPair {
 }
 export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typeof Element): void => {
   properties.forEach(pair => {
-    Object.keys(pair).forEach(key => {
+    for (let key in pair) {
       const defaultValue = pair[key][0];
       const propertyIsNumber = typeof defaultValue === 'number';
       const propertyIsBoolean = typeof defaultValue === 'boolean';
@@ -41,6 +41,6 @@ export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typ
           (this as Element).setAttribute(attributeKey, String(value));
         },
       });
-    });
+    }
   });
 };

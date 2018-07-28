@@ -15,11 +15,12 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../worker-thread/dom/Node';
+import { NodeType } from '../../worker-thread/dom/Node';
 import { Event } from '../../worker-thread/Event';
+import { Element } from '../../worker-thread/dom/Element';
 
 test.beforeEach(t => {
-  const node = new Node(NodeType.ELEMENT_NODE, 'div');
+  const node = new Element(NodeType.ELEMENT_NODE, 'div', null);
   const event = new Event('click', {});
   event.target = node;
 

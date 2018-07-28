@@ -15,19 +15,20 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../worker-thread/dom/Node';
+import { NodeType } from '../../worker-thread/dom/Node';
+import { Element } from '../../worker-thread/dom/Element';
 
 test.beforeEach(t => {
   t.context = {
-    node: new Node(NodeType.ELEMENT_NODE, 'div'),
-    child: new Node(NodeType.ELEMENT_NODE, 'div'),
-    childTwo: new Node(NodeType.ELEMENT_NODE, 'p'),
-    childThree: new Node(NodeType.ELEMENT_NODE, 'section'),
+    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    child: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    childTwo: new Element(NodeType.ELEMENT_NODE, 'p', null),
+    childThree: new Element(NodeType.ELEMENT_NODE, 'section', null),
   };
 });
 
 test('replacing the same child results in no changes', t => {
-  const { node, child } = t.context as { node: Node; child: Node };
+  const { node, child } = t.context as { node: Element; child: Element };
 
   node.appendChild(child);
   var previousNodes = node.childNodes;
@@ -36,7 +37,7 @@ test('replacing the same child results in no changes', t => {
 });
 
 test('replacing a child with another when there is only a single child', t => {
-  const { node, child, childTwo } = t.context as { node: Node; child: Node; childTwo: Node };
+  const { node, child, childTwo } = t.context as { node: Element; child: Element; childTwo: Element };
 
   node.appendChild(child);
   t.deepEqual(node.replaceChild(childTwo, child), child, 'replacing a child returns the removed child');
@@ -45,7 +46,7 @@ test('replacing a child with another when there is only a single child', t => {
 });
 
 test('replacing a child with another when there are multiple children', t => {
-  const { node, child, childTwo, childThree } = t.context as { node: Node; child: Node; childTwo: Node; childThree: Node };
+  const { node, child, childTwo, childThree } = t.context as { node: Element; child: Element; childTwo: Element; childThree: Element };
 
   node.appendChild(child);
   node.appendChild(childTwo);
