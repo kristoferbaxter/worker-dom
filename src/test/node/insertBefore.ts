@@ -16,13 +16,14 @@
 
 import test from 'ava';
 import { Node, NodeType } from '../../worker-thread/dom/Node';
+import { Element } from '../../worker-thread/dom/Element';
 
 test.beforeEach(t => {
   t.context = {
-    node: new Node(NodeType.ELEMENT_NODE, 'div'),
-    child: new Node(NodeType.ELEMENT_NODE, 'div'),
-    childTwo: new Node(NodeType.ELEMENT_NODE, 'div'),
-    childThree: new Node(NodeType.ELEMENT_NODE, 'div'),
+    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    child: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    childTwo: new Element(NodeType.ELEMENT_NODE, 'div', null),
+    childThree: new Element(NodeType.ELEMENT_NODE, 'div', null),
   };
 });
 

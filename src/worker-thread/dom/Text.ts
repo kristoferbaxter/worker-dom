@@ -16,7 +16,7 @@
 
 import { NodeType } from './Node';
 import { CharacterData } from './CharacterData';
-import { TransferrableNode, TransferredNode } from '../../transfer/TransferrableNodes';
+import { TransferredNode, TransferrableText } from '../../transfer/TransferrableNodes';
 import { NumericBoolean } from '../../utils';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
@@ -72,7 +72,7 @@ export class Text extends CharacterData {
     return remainderTextNode;
   }
 
-  public serialize(): TransferrableNode | TransferredNode {
+  public serialize(): TransferrableText | TransferredNode {
     if (this._transferred_ !== null) {
       return this._transferred_;
     }

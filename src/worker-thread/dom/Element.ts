@@ -19,7 +19,7 @@ import { DOMTokenList } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate } from './Attr';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { TransferrableNode, TransferredNode } from '../../transfer/TransferrableNodes';
+import { TransferredNode, TransferrableElement } from '../../transfer/TransferrableNodes';
 import { NumericBoolean } from '../../utils';
 import { Text } from './Text';
 import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
@@ -345,7 +345,7 @@ export class Element extends Node {
     return matchChildrenElements(this, tagName === '*' ? _ => true : element => element.tagName === tagName);
   }
 
-  public serialize(): TransferrableNode | TransferredNode {
+  public serialize(): TransferrableElement | TransferredNode {
     if (this._transferred_ !== null) {
       return this._transferred_;
     }

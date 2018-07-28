@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { TransferrableNode } from '../transfer/TransferrableNodes';
+import { TransferrableNode, TransferrableText, TransferrableElement } from '../transfer/TransferrableNodes';
 import { RenderableElement } from './RenderableElement';
 import { NumericBoolean } from '../utils';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
@@ -36,18 +36,16 @@ export function prepare(baseElement: Element): void {
  */
 export function createNode(skeleton: TransferrableNode): RenderableElement {
   if (skeleton[TransferrableKeys.nodeType] === Node.TEXT_NODE) {
-    const node = document.createTextNode(skeleton[TransferrableKeys.textContent]);
+    const node = document.createTextNode((skeleton as TransferrableText)[TransferrableKeys.textContent]);
     storeNode(node, skeleton[TransferrableKeys._index_]);
     return node as RenderableElement;
   }
 
-  let node: HTMLElement | SVGElement;
-  if (skeleton[TransferrableKeys.namespaceURI]) {
-    node = document.createElementNS(skeleton[TransferrableKeys.namespaceURI], skeleton[TransferrableKeys.nodeName]) as SVGElement;
-  } else {
-    node = document.createElement(skeleton[TransferrableKeys.nodeName]);
-  }
-  skeleton[TransferrableKeys.attributes].forEach(attribute => {
+  const namespace: string | undefined = (skeleton as TransferrableElement)[TransferrableKeys.namespaceURI];
+  const node: HTMLElement | SVGElement = namespace
+    ? (document.createElementNS(namespace, (skeleton as TransferrableElement)[TransferrableKeys.nodeName]) as SVGElement)
+    : document.createElement(skeleton[TransferrableKeys.nodeName]);
+  ((skeleton as TransferrableElement)[TransferrableKeys.attributes] || []).forEach(attribute => {
     if (attribute.namespaceURI) {
       node.setAttributeNS(attribute.namespaceURI, attribute.name, attribute.value);
     } else {
@@ -58,7 +56,7 @@ export function createNode(skeleton: TransferrableNode): RenderableElement {
   // skeleton.properties.forEach(property => {
   //   node[`${property.name}`] = property.value;
   // });
-  (skeleton[TransferrableKeys.childNodes] || []).forEach(childNode => {
+  ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).forEach(childNode => {
     if (childNode[TransferrableKeys.transferred] === NumericBoolean.FALSE) {
       node.appendChild(createNode(childNode as TransferrableNode));
     }

@@ -18,18 +18,25 @@ import { NodeType, NodeName } from '../worker-thread/dom/Node';
 import { NumericBoolean } from '../utils';
 import { TransferrableKeys } from './TransferrableKeys';
 
-export interface TransferrableNode extends TransferredNode {
+export type TransferrableNode = TransferrableElement | TransferrableText;
+
+export interface TransferrableElement extends TransferredNode {
   readonly [TransferrableKeys.nodeType]: NodeType;
   readonly [TransferrableKeys.nodeName]: NodeName;
-  readonly [TransferrableKeys.attributes]: Array<{
+  readonly [TransferrableKeys.attributes]?: Array<{
     [index: string]: string;
   }>;
-  readonly [TransferrableKeys.properties]: Array<{
+  readonly [TransferrableKeys.properties]?: Array<{
     [index: string]: string;
   }>;
-  readonly [TransferrableKeys.childNodes]: Array<TransferrableNode | TransferredNode>;
+  readonly [TransferrableKeys.childNodes]?: Array<TransferrableElement>;
+  readonly [TransferrableKeys.namespaceURI]?: string;
+}
+
+export interface TransferrableText extends TransferredNode {
+  readonly [TransferrableKeys.nodeType]: NodeType;
+  readonly [TransferrableKeys.nodeName]: NodeName;
   readonly [TransferrableKeys.textContent]: string;
-  readonly [TransferrableKeys.namespaceURI]: string;
 }
 
 // If a Node has been transferred once already to main thread then we need only pass its index.

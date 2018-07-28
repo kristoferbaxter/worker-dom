@@ -15,7 +15,7 @@
  */
 
 import { getNode, storeNode } from './nodes';
-import { TransferrableNode, TransferredNode } from '../transfer/TransferrableNodes';
+import { TransferrableElement, TransferrableText, TransferrableNode } from '../transfer/TransferrableNodes';
 import { NodeType } from '../worker-thread/dom/Node';
 import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { RenderableElement } from './RenderableElement';
@@ -24,12 +24,11 @@ import { process, applyDefaultChangeListener } from './command';
 import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
-const allTextNodes = (nodes: NodeList | Array<TransferrableNode | TransferredNode>): boolean =>
+const allTextNodes = (nodes: NodeList | Array<TransferrableElement>): boolean =>
   nodes.length > 0 &&
   [].every.call(
     nodes,
-    (node: Node | TransferrableNode): boolean =>
-      ('nodeType' in node ? node.nodeType : (node as TransferrableNode)[TransferrableKeys.nodeType]) === NodeType.TEXT_NODE,
+    (node: Node | TransferrableElement): boolean => ('nodeType' in node ? node.nodeType : node[TransferrableKeys.nodeType]) === NodeType.TEXT_NODE,
   );
 
 /**
@@ -65,8 +64,8 @@ export function hydrate(mutations: TransferrableMutationRecord[], baseElement: E
  * @param skeleton Skeleton Node representation created by WorkerDOM and transmitted across threads.
  */
 function hydrateElement(node: RenderableElement, skeleton: TransferrableNode, baseElement: Element, worker: Worker): void {
-  if (skeleton[TransferrableKeys.textContent]) {
-    node.textContent = skeleton[TransferrableKeys.textContent];
+  if ((skeleton as TransferrableText)[TransferrableKeys.textContent]) {
+    node.textContent = (skeleton as TransferrableText)[TransferrableKeys.textContent];
   }
 
   storeNode(node, skeleton[TransferrableKeys._index_]);
@@ -76,9 +75,8 @@ function hydrateElement(node: RenderableElement, skeleton: TransferrableNode, ba
   // Primary Case: `<form><input><button onClick={function(){console.log(input.value)}} /></form>`
   applyDefaultChangeListener(worker, node);
 
-  (skeleton[TransferrableKeys.childNodes] || []).forEach(
-    (childNode: TransferrableNode | TransferredNode, index: number): void =>
-      hydrateNode(node.childNodes[index], childNode as TransferrableNode, baseElement, worker),
+  ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).forEach(
+    (childNode: TransferrableNode, index: number): void => hydrateNode(node.childNodes[index], childNode, baseElement, worker),
   );
 }
 
@@ -89,20 +87,20 @@ function hydrateElement(node: RenderableElement, skeleton: TransferrableNode, ba
  * @param skeleton Skeleton Node representation created by WorkerDOM and transmitted across threads.
  */
 function hydrateNode(node: Node, skeleton: TransferrableNode, baseElement: Element, worker: Worker): void {
-  if (node.childNodes.length !== (skeleton[TransferrableKeys.childNodes] || []).length) {
+  if (node.childNodes.length !== ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).length) {
     // A limited number of cases when the number of childNodes doesn't match is allowable.
     if (allTextNodes(node.childNodes)) {
-      if (skeleton[TransferrableKeys.textContent]) {
+      if ((skeleton as TransferrableText)[TransferrableKeys.textContent]) {
         // Node with textContent but represented in SSR as Node.childNodes = [Text]
-        node.textContent = skeleton[TransferrableKeys.textContent];
+        node.textContent = (skeleton as TransferrableText)[TransferrableKeys.textContent];
         storeNode(node as RenderableElement, skeleton[TransferrableKeys._index_]);
-      } else if (allTextNodes(skeleton[TransferrableKeys.childNodes])) {
+      } else if (allTextNodes((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || [])) {
         // Node with single textContent represented by multiple Text siblings.
         // Some frameworks will create multiple Text nodes for a string, since it means they can update specific segments by direct reference.
         // Hello, {name} => [Text('Hello, '), Text('user')]... Node.childNodes[1].textContent = 'another user';
         node.removeChild(node.childNodes[0]);
-        skeleton[TransferrableKeys.childNodes].forEach(skeletonChild => {
-          const skeletonText = document.createTextNode((skeletonChild as TransferrableNode)[TransferrableKeys.textContent]);
+        ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).forEach(skeletonChild => {
+          const skeletonText = document.createTextNode((skeletonChild as TransferrableText)[TransferrableKeys.textContent]);
           node.appendChild(skeletonText);
           storeNode(skeletonText as RenderableElement, skeleton[TransferrableKeys._index_]);
         });
@@ -110,8 +108,12 @@ function hydrateNode(node: Node, skeleton: TransferrableNode, baseElement: Eleme
       return;
     }
 
-    const validSkeletonChildren: TransferrableNode[] = (skeleton[TransferrableKeys.childNodes] as TransferrableNode[]).filter(
-      childNode => !(childNode[TransferrableKeys.nodeType] === NodeType.TEXT_NODE && childNode[TransferrableKeys.textContent] === ''),
+    const validSkeletonChildren: Array<TransferrableNode> = ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).filter(
+      childNode =>
+        !(
+          (childNode as TransferrableText)[TransferrableKeys.nodeType] === NodeType.TEXT_NODE &&
+          (childNode as TransferrableText)[TransferrableKeys.textContent] === ''
+        ),
     );
     if (validSkeletonChildren.length === node.childNodes.length) {
       hydrateElement(node as RenderableElement, skeleton, baseElement, worker);

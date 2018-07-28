@@ -17,7 +17,7 @@
 import test from 'ava';
 import { Element } from '../../worker-thread/dom/Element';
 import { NodeType } from '../../worker-thread/dom/Node';
-import { TransferrableNode } from '../../transfer/TransferrableNodes';
+import { TransferrableElement } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 const RANDOM_TEXT_CONTENT = `TEXT_CONTENT-${Math.random()}`;
@@ -52,14 +52,15 @@ test('Element should serialize to a TransferrableNode', t => {
 test('Element should serialize namespace', t => {
   const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
   const svg = new Element(NodeType.ELEMENT_NODE, 'svg', SVG_NAMESPACE);
-  t.is((svg.serialize() as TransferrableNode)[TransferrableKeys.namespaceURI], SVG_NAMESPACE);
+  t.is((svg.serialize() as TransferrableElement)[TransferrableKeys.namespaceURI], SVG_NAMESPACE);
 });
 
 test('Element should serialize child node as well', t => {
   const div = new Element(NodeType.ELEMENT_NODE, 'div', null);
   const childDiv = new Element(NodeType.ELEMENT_NODE, 'div', null);
   div.appendChild(childDiv);
-  const serializedDiv = div.serialize() as TransferrableNode;
-  t.is(serializedDiv[TransferrableKeys.childNodes].length, 1);
-  t.deepEqual(serializedDiv[TransferrableKeys.childNodes][0], childDiv.serialize());
+  const serializedDiv = div.serialize() as TransferrableElement;
+  const childNodes = serializedDiv[TransferrableKeys.childNodes] || [];
+  t.is(childNodes.length, 1);
+  t.deepEqual(childNodes[0], childDiv.serialize());
 });
