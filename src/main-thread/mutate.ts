@@ -48,10 +48,12 @@ const mutators: {
     const nextSibling = mutation[TransferrableKeys.nextSibling];
     if (addedNodes) {
       addedNodes.forEach(node => {
-        parent.insertBefore(
-          getNode(node[TransferrableKeys._index_]) || createNode(node as TransferrableNode),
-          (nextSibling && getNode(nextSibling[TransferrableKeys._index_])) || null,
-        );
+        let newChild = getNode(node[TransferrableKeys._index_]);
+        if (!newChild) {
+          newChild = createNode(node as TransferrableNode);
+          sanitize(newChild); // TODO(choumx): Inform worker?
+        }
+        parent.insertBefore(newChild, (nextSibling && getNode(nextSibling[TransferrableKeys._index_])) || null);
       });
     }
   },
@@ -59,12 +61,19 @@ const mutators: {
     const attributeName = mutation[TransferrableKeys.attributeName];
     const value = mutation[TransferrableKeys.value];
     if (attributeName != null && value != null) {
-      getNode(mutation[TransferrableKeys.target][TransferrableKeys._index_]).setAttribute(attributeName, value);
+      const node = getNode(mutation[TransferrableKeys.target][TransferrableKeys._index_]);
+      if (validAttribute(node.nodeName, attributeName, value)) {
+        node.setAttribute(attributeName, value);
+      } else {
+        // TODO(choumx): Inform worker?
+      }
+      node.setAttribute(attributeName, value);
     }
   },
   [MutationRecordType.CHARACTER_DATA](mutation: TransferrableMutationRecord) {
     const value = mutation[TransferrableKeys.value];
     if (value) {
+      // Sanitization not necessary for textContent.
       getNode(mutation[TransferrableKeys.target][TransferrableKeys._index_]).textContent = value;
     }
   },
@@ -72,7 +81,13 @@ const mutators: {
     const propertyName = mutation[TransferrableKeys.propertyName];
     const value = mutation[TransferrableKeys.value];
     if (propertyName && value) {
-      getNode(mutation[TransferrableKeys.target][TransferrableKeys._index_])[propertyName] = value;
+      const node = getNode(mutation[TransferrableKeys.target][TransferrableKeys._index_]);
+      if (validProperty(node.nodeName, propertyName, value)) {
+        node[propertyName] = value;
+      } else {
+        // TODO(choumx): Inform worker?
+      }
+      node[propertyName] = value;
     }
   },
   [MutationRecordType.COMMAND](mutation: TransferrableMutationRecord) {
