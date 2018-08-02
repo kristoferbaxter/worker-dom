@@ -16,17 +16,17 @@
 
 import purify from 'dompurify';
 
-const propertyToAttribute: { [key: string]: string } = {}; // TODO
+const enabled = true; // TODO(choumx): Make this a compilation option.
+
+const propertyToAttribute: { [key: string]: string } = {}; // TODO(choumx): Fill this in.
 
 /**
  * @param node
  */
 export function sanitize(node: Node): void {
-  debugger;
-  const start = performance.now();
-  purify.sanitize(node, { IN_PLACE: true });
-  const latency = performance.now() - start;
-  console.log({ latency });
+  if (enabled) {
+    purify.sanitize(node, { IN_PLACE: true });
+  }
 }
 
 /**
@@ -35,7 +35,7 @@ export function sanitize(node: Node): void {
  * @param value
  */
 export function validAttribute(tag: string, attr: string, value: string): boolean {
-  return purify.isValidAttribute(tag, attr, value);
+  return enabled ? purify.isValidAttribute(tag, attr, value) : true;
 }
 
 /**
@@ -44,6 +44,9 @@ export function validAttribute(tag: string, attr: string, value: string): boolea
  * @param value
  */
 export function validProperty(tag: string, prop: string, value: string): boolean {
+  if (!enabled) {
+    return false;
+  }
   const attr = propertyToAttribute[prop];
   if (attr) {
     return validAttribute(tag, attr, value);
