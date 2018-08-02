@@ -26,7 +26,6 @@ const config = ({ esmodules, forMainThread }) => {
         file: path(esmodules, forMainThread, 'index.module.js'),
         format: 'es',
         sourcemap: true,
-        outro: forMainThread ? 'window.MainThread = {upgradeElement: upgradeElement};' : '',
       },
       {
         file: path(esmodules, forMainThread, 'index.js'),
@@ -45,9 +44,9 @@ const config = ({ esmodules, forMainThread }) => {
     plugins: [
       resolve(),
       babelPlugin(esmodules),
-      MINIFY_BUNDLE_VALUE ? minifyPlugin() : null,
-      COMPRESS_BUNDLE_VALUE ? brotliPlugin() : null,
-      COMPRESS_BUNDLE_VALUE ? gzipPlugin() : null,
+      MINIFY_BUNDLE_VALUE ? minifyPlugin() : null, 
+      COMPRESS_BUNDLE_VALUE ? brotliPlugin() : null, 
+      // COMPRESS_BUNDLE_VALUE ? gzipPlugin() : null,
     ].filter(Boolean),
   };
 };

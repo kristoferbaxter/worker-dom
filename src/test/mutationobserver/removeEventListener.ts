@@ -18,6 +18,7 @@ import test from 'ava';
 import { document } from '../../worker-thread/dom/Document';
 import { Element } from '../../worker-thread/dom/Element';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 test.beforeEach(t => {
   t.context = {
@@ -31,17 +32,24 @@ test.afterEach(t => {
 
 test.cb.serial('Element.removeEventListener mutation observed when node is connected.', t => {
   const { el, callback } = t.context as { el: Element; callback: () => undefined };
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.COMMAND,
-        target: el,
-        removedEvents: [{ type: 'mouseenter', index: 0 }],
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.COMMAND,
+          target: el,
+          removedEvents: [
+            {
+              [TransferrableKeys.type]: 'mouseenter',
+              [TransferrableKeys.index]: 0,
+            },
+          ],
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   document.body.appendChild(el);
   el.addEventListener('mouseenter', callback);
@@ -51,17 +59,24 @@ test.cb.serial('Element.removeEventListener mutation observed when node is conne
 
 test.cb.serial('Element.removeEventListener mutation observed when node is not yet connected.', t => {
   const { el, callback } = t.context as { el: Element; callback: () => undefined };
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.COMMAND,
-        target: el,
-        removedEvents: [{ type: 'mouseenter', index: 0 }],
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.COMMAND,
+          target: el,
+          removedEvents: [
+            {
+              [TransferrableKeys.type]: 'mouseenter',
+              [TransferrableKeys.index]: 0,
+            },
+          ],
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   el.addEventListener('mouseenter', callback);
   observer.observe(document.body);

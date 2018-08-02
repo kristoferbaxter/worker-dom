@@ -15,16 +15,17 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../worker-thread/dom/Node';
+import { NodeType } from '../../worker-thread/dom/Node';
 import { Element } from '../../worker-thread/dom/Element';
 import { HTMLDataListElement } from '../../worker-thread/dom/HTMLDataListElement';
+import { Text } from '../../worker-thread/dom/Text';
 
 test.beforeEach(t => {
   t.context = {
     node: new HTMLDataListElement(NodeType.ELEMENT_NODE, 'datalist', null),
     option: new Element(NodeType.ELEMENT_NODE, 'option', null),
     optionTwo: new Element(NodeType.ELEMENT_NODE, 'option', null),
-    text: new Node(NodeType.TEXT_NODE, '#text'),
+    text: new Text(''),
     invalidElement: new Element(NodeType.ELEMENT_NODE, 'div', null),
   };
 });
@@ -50,8 +51,8 @@ test('options should contain only childNodes of the correct node name', t => {
   const { node, option, optionTwo, text, invalidElement } = t.context as {
     node: HTMLDataListElement;
     option: Element;
-    optionTwo: Node;
-    text: Node;
+    optionTwo: Element;
+    text: Text;
     invalidElement: Element;
   };
 
@@ -67,7 +68,7 @@ test('options should contain only childNodes of the correct node name', t => {
 });
 
 test('options should be an empty array when there are no childNodes of correct node names', t => {
-  const { node, invalidElement } = t.context as { node: Element; invalidElement: Node };
+  const { node, invalidElement } = t.context as { node: Element; invalidElement: Element };
 
   node.appendChild(invalidElement);
   t.is(node.options.length, 0);

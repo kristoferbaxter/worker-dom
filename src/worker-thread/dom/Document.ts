@@ -51,7 +51,8 @@ import { Event } from '../Event';
 import { Text } from './Text';
 import { MutationObserver } from '../MutationObserver';
 import { observe as observeMutations } from '../../transfer/DocumentMutations';
-import { propagate as propagateEvents } from '../../transfer/TransferableEvent';
+import { propagate as propagateEvents } from '../../transfer/TransferrableEvent';
+import { propagate as propagateSyncValues } from '../../transfer/TransferrableSyncValue';
 
 export class Document extends Element {
   public defaultView: {
@@ -104,6 +105,7 @@ export const document = (() => {
   document.appendChild((document.body = document.createElement('body')));
   observeMutations(document);
   propagateEvents();
+  propagateSyncValues();
 
   return document;
 })();

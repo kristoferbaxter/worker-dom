@@ -16,8 +16,9 @@
 
 import { NodeType } from './Node';
 import { CharacterData } from './CharacterData';
-import { TransferableNode, TransferredNode } from '../../transfer/TransferableNodes';
+import { TransferredNode, TransferrableText } from '../../transfer/TransferrableNodes';
 import { NumericBoolean } from '../../utils';
+import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Text
 export class Text extends CharacterData {
@@ -71,7 +72,7 @@ export class Text extends CharacterData {
     return remainderTextNode;
   }
 
-  public _sanitize_(): TransferableNode | TransferredNode {
+  public serialize(): TransferrableText | TransferredNode {
     if (this._transferred_ !== null) {
       return this._transferred_;
     }
@@ -79,19 +80,16 @@ export class Text extends CharacterData {
     Promise.resolve().then(_ => {
       // After transmission of the current unsanitized form across a message, we can start to send the more compressed format.
       this._transferred_ = {
-        _index_: this._index_,
-        transferred: NumericBoolean.TRUE,
+        [TransferrableKeys._index_]: this._index_,
+        [TransferrableKeys.transferred]: NumericBoolean.TRUE,
       };
     });
     return {
-      _index_: this._index_,
-      transferred: NumericBoolean.FALSE,
-      nodeType: this.nodeType,
-      nodeName: this.nodeName,
-      attributes: null,
-      properties: [],
-      childNodes: [], // Text cannot have childNodes.
-      textContent: this.nodeValue,
+      [TransferrableKeys._index_]: this._index_,
+      [TransferrableKeys.transferred]: NumericBoolean.FALSE,
+      [TransferrableKeys.nodeType]: this.nodeType,
+      [TransferrableKeys.nodeName]: this.nodeName,
+      [TransferrableKeys.textContent]: this.nodeValue,
     };
   }
 }

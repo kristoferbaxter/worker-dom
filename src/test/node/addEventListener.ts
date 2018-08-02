@@ -15,11 +15,12 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../worker-thread/dom/Node';
+import { NodeType } from '../../worker-thread/dom/Node';
+import { Element } from '../../worker-thread/dom/Element';
 
 test.beforeEach(t => {
   t.context = {
-    node: new Node(NodeType.ELEMENT_NODE, 'div'),
+    node: new Element(NodeType.ELEMENT_NODE, 'div', null),
     callback: () => undefined,
     callbackTwo: () => false,
   };
@@ -32,8 +33,7 @@ test('event handlers are undefined by default', t => {
 });
 
 test('adding an event listener increases total registered events from 0 to 1 on a Node', t => {
-  const { node } = t.context;
-  const callback = () => undefined;
+  const { node, callback } = t.context;
 
   node.addEventListener('click', callback);
   t.is(node._handlers_['click'].length, 1);

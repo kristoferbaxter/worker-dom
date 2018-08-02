@@ -20,10 +20,15 @@ import { MessageToWorker } from '../transfer/Messages';
 // See: config/rollup.config.js
 declare var __WORKER_DOM_URL__: string;
 
+// TODO(KB): Fetch Polyfill for IE11.
 export function createWorker(authorScriptURL: string): Promise<Worker | null> {
   return Promise.all([fetch(__WORKER_DOM_URL__).then(response => response.text()), fetch(authorScriptURL).then(response => response.text())])
     .then(([workerScript, authorScript]) => {
       // TODO(KB): Minify this output during build process.
+      const keys: Array<string> = [];
+      for (let key in document.body.style) {
+        keys.push(`'${key}'`);
+      }
       const code = `
         'use strict';
         ${workerScript}
@@ -47,7 +52,7 @@ export function createWorker(authorScriptURL: string): Promise<Worker | null> {
           function removeEventListener(type, handler) {
             return document.removeEventListener(type, handler);
           }
-          this.appendKeys([${Object.keys(document.body.style).map(key => `'${key}'`)}]);
+          this.appendKeys([${keys}]);
           ${authorScript}
         }).call(WorkerThread.monkey);`;
       return new Worker(URL.createObjectURL(new Blob([code])));

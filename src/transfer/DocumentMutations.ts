@@ -17,36 +17,57 @@
 import { Node } from '../worker-thread/dom/Node';
 import { Document } from '../worker-thread/dom/Document';
 import { MutationRecord } from '../worker-thread/MutationRecord';
-import { TransferableMutationRecord } from './TransferableRecord';
-import { TransferableNode, TransferredNode } from './TransferableNodes';
+import { TransferrableMutationRecord } from './TransferrableRecord';
+import { TransferrableNode, TransferredNode } from './TransferrableNodes';
 import { MutationFromWorker, MessageType } from './Messages';
+import { TransferrableKeys } from './TransferrableKeys';
 
 const SUPPORTS_POST_MESSAGE = typeof postMessage !== 'undefined';
-const sanitizeNodes = (nodes: Node[] | undefined): Array<TransferableNode | TransferredNode> | null =>
-  (nodes && nodes.map(node => node._sanitize_())) || null;
+const serializeNodes = (nodes: Node[] | undefined): Array<TransferrableNode | TransferredNode> | undefined =>
+  (nodes && nodes.map(node => node.serialize())) || undefined;
 let observing = false;
 let hydrated = false;
 
 function handleMutations(incomingMutations: MutationRecord[]): void {
-  const mutations: TransferableMutationRecord[] = [];
+  const mutations: TransferrableMutationRecord[] = [];
 
   incomingMutations.forEach(mutation => {
-    mutations.push({
-      target: mutation.target._sanitize_(),
-      addedNodes: sanitizeNodes(mutation.addedNodes),
-      removedNodes: sanitizeNodes(mutation.removedNodes),
-      previousSibling: (mutation.previousSibling && mutation.previousSibling._sanitize_()) || null,
-      nextSibling: (mutation.nextSibling && mutation.nextSibling._sanitize_()) || null,
-      attributeName: mutation.attributeName || null,
-      attributeNamespace: mutation.attributeNamespace || null,
-      oldValue: mutation.oldValue === '' ? '' : mutation.oldValue || null,
-      type: mutation.type,
-      propertyName: mutation.propertyName || null,
-      value: mutation.value === '' ? '' : mutation.value || null,
-      addedEvents: mutation.addedEvents || null,
-      removedEvents: mutation.removedEvents || null,
-      measure: null,
-    });
+    let transferableMutation: TransferrableMutationRecord = {
+      [TransferrableKeys.type]: mutation.type,
+      [TransferrableKeys.target]: mutation.target.serialize(),
+    };
+    if (mutation.addedNodes) {
+      transferableMutation[TransferrableKeys.addedNodes] = serializeNodes(mutation.addedNodes);
+    }
+    if (mutation.removedNodes) {
+      transferableMutation[TransferrableKeys.removedNodes] = serializeNodes(mutation.removedNodes);
+    }
+    if (mutation.nextSibling) {
+      transferableMutation[TransferrableKeys.nextSibling] = mutation.nextSibling.serialize();
+    }
+    if (mutation.attributeName != null) {
+      transferableMutation[TransferrableKeys.attributeName] = mutation.attributeName;
+    }
+    if (mutation.attributeNamespace != null) {
+      transferableMutation[TransferrableKeys.attributeNamespace] = mutation.attributeNamespace;
+    }
+    if (mutation.oldValue != null) {
+      transferableMutation[TransferrableKeys.oldValue] = mutation.oldValue;
+    }
+    if (mutation.propertyName) {
+      transferableMutation[TransferrableKeys.propertyName] = mutation.propertyName;
+    }
+    if (mutation.value != null) {
+      transferableMutation[TransferrableKeys.value] = mutation.value;
+    }
+    if (mutation.addedEvents) {
+      transferableMutation[TransferrableKeys.addedEvents] = mutation.addedEvents;
+    }
+    if (mutation.removedEvents) {
+      transferableMutation[TransferrableKeys.removedEvents] = mutation.removedEvents;
+    }
+
+    mutations.push(transferableMutation);
   });
 
   if (SUPPORTS_POST_MESSAGE) {
