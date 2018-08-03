@@ -69,7 +69,7 @@ export const babelPlugin = (esmodules, withSanitizer) => {
               identifierName: '__WORKER_DOM_URL__',
               replacement: {
                 type: 'stringLiteral',
-                value: path(esmodules, false, 'index.js'),
+                value: path(esmodules, false, withSanitizer, 'index'),
               },
             },
             {
