@@ -67,7 +67,6 @@ const mutators: {
       } else {
         // TODO(choumx): Inform worker?
       }
-      node.setAttribute(attributeName, value);
     }
   },
   [MutationRecordType.CHARACTER_DATA](mutation: TransferrableMutationRecord) {
@@ -87,7 +86,6 @@ const mutators: {
       } else {
         // TODO(choumx): Inform worker?
       }
-      node[propertyName] = value;
     }
   },
   [MutationRecordType.COMMAND](mutation: TransferrableMutationRecord) {

@@ -16,7 +16,9 @@
 
 import purify from 'dompurify';
 
-const enabled = true; // TODO(choumx): Make this a compilation option.
+// Supplied by Babel Transpilation
+// See: config/rollup.config.js
+declare var __SANITIZE_MUTATIONS__: boolean;
 
 const propertyToAttribute: { [key: string]: string } = {}; // TODO(choumx): Fill this in.
 
@@ -24,9 +26,10 @@ const propertyToAttribute: { [key: string]: string } = {}; // TODO(choumx): Fill
  * @param node
  */
 export function sanitize(node: Node): void {
-  if (enabled) {
-    purify.sanitize(node, { IN_PLACE: true });
+  if (!__SANITIZE_MUTATIONS__) {
+    return;
   }
+  purify.sanitize(node, { IN_PLACE: true });
 }
 
 /**
@@ -35,7 +38,10 @@ export function sanitize(node: Node): void {
  * @param value
  */
 export function validAttribute(tag: string, attr: string, value: string): boolean {
-  return enabled ? purify.isValidAttribute(tag, attr, value) : true;
+  if (!__SANITIZE_MUTATIONS__) {
+    return true;
+  }
+  return purify.isValidAttribute(tag, attr, value);
 }
 
 /**
@@ -44,8 +50,8 @@ export function validAttribute(tag: string, attr: string, value: string): boolea
  * @param value
  */
 export function validProperty(tag: string, prop: string, value: string): boolean {
-  if (!enabled) {
-    return false;
+  if (!__SANITIZE_MUTATIONS__) {
+    return true;
   }
   const attr = propertyToAttribute[prop];
   if (attr) {
