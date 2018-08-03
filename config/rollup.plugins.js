@@ -76,7 +76,7 @@ export const babelPlugin = (esmodules, withSanitizer) => {
               identifierName: '__SANITIZE_MUTATIONS__',
               replacement: {
                 type: 'booleanLiteral',
-                value: true,
+                value: withSanitizer,
               },
             },
           ],
