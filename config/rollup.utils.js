@@ -27,15 +27,17 @@ export let COMPRESS_BUNDLE_VALUE = COMPRESS_BUNDLE === 'true';
 /**
  * @param {boolean} esmodules
  * @param {boolean} forMainThread
+ * @param {boolean} sanitizer
  * @param {string} filename
+ * @param {string=} extension
  * @return {string} path to filename including filename.
  */
-export function path(esmodules, forMainThread, filename) {
+export function path(esmodules, forMainThread, sanitizer, filename, extension = 'js') {
   return [
     DEBUG_BUNDLE_VALUE ? 'demo' : null,
     'build',
     esmodules === true ? 'esmodules' : null,
     forMainThread === true ? 'main-thread' : null,
-    filename,
+    `${filename}${sanitizer ? '.sanitizer' : ''}.${extension}`,
   ].filter(Boolean).join('/');
 }

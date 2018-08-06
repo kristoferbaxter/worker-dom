@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-import { install } from './install';
+declare module 'dompurify' {
+  var purify: {
+    sanitize(dirty: string | Node, cfg: Object): string | Node;
+    isValidAttribute(tag: string, attr: string, value: string): boolean;
+  };
+  export default purify;
+}
 
-export function upgradeElement(baseElement: Element): void {
-  install(baseElement);
+declare interface Sanitizer {
+  sanitize(node: Node): void;
+  validAttribute(tag: string, attr: string, value: string): boolean;
+  validProperty(tag: string, prop: string, value: string): boolean;
 }

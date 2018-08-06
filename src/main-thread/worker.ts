@@ -30,6 +30,7 @@ export function createWorker(authorScriptURL: string): Promise<Worker | null> {
         keys.push(`'${key}'`);
       }
       const code = `
+        'use strict';
         ${workerScript}
         (function() {
           var self = this;

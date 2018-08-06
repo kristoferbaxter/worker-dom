@@ -41,7 +41,7 @@ const GZIP_CONFIG = {
   },
 };
 
-export const babelPlugin = esmodules => {
+export const babelPlugin = (esmodules, withSanitizer) => {
   const targets = esmodules ? { esmodules: true } : { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] };
   const exclude = DEBUG_BUNDLE_VALUE ? ['error', 'warn', 'info', 'log', 'time', 'timeEnd'] : [];
 
@@ -69,7 +69,7 @@ export const babelPlugin = esmodules => {
               identifierName: '__WORKER_DOM_URL__',
               replacement: {
                 type: 'stringLiteral',
-                value: path(esmodules, false, 'index.js'),
+                value: path(esmodules, false, withSanitizer, 'index'),
               },
             },
           ],

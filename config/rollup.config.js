@@ -16,24 +16,25 @@
 
 import { babelPlugin, minifyPlugin, brotliPlugin, gzipPlugin } from './rollup.plugins.js';
 import { path, MINIFY_BUNDLE_VALUE, DEBUG_BUNDLE_VALUE, COMPRESS_BUNDLE_VALUE } from './rollup.utils.js';
+import resolve from 'rollup-plugin-node-resolve';
 
-const config = ({ esmodules, forMainThread }) => {
+const rollupConfig = ({ esmodules, forMainThread, withSanitizer }) => {
   return {
-    input: `src/output/${forMainThread ? 'main-thread' : 'worker-thread'}/index.js`,
+    input: `src/output/${forMainThread ? 'main-thread' : 'worker-thread'}/index${withSanitizer ? '.sanitizer' : ''}.js`,
     output: [
       {
-        file: path(esmodules, forMainThread, 'index.module.js'),
+        file: path(esmodules, forMainThread, withSanitizer, 'index.module'),
         format: 'es',
         sourcemap: true,
       },
       {
-        file: path(esmodules, forMainThread, 'index.js'),
+        file: path(esmodules, forMainThread, withSanitizer, 'index'),
         format: 'iife',
         sourcemap: true,
         name: forMainThread ? 'MainThread' : 'WorkerThread',
       },
       {
-        file: path(esmodules, forMainThread, 'debug.js'),
+        file: path(esmodules, forMainThread, withSanitizer, 'debug'),
         format: 'iife',
         sourcemap: true,
         name: forMainThread ? 'MainThread' : 'WorkerThread',
@@ -41,17 +42,30 @@ const config = ({ esmodules, forMainThread }) => {
       },
     ],
     plugins: [
-      babelPlugin(esmodules), 
-      MINIFY_BUNDLE_VALUE ? minifyPlugin() : null, 
-      COMPRESS_BUNDLE_VALUE ? brotliPlugin() : null, 
+      resolve(),
+      babelPlugin(esmodules, withSanitizer),
+      MINIFY_BUNDLE_VALUE ? minifyPlugin() : null,
+      COMPRESS_BUNDLE_VALUE ? brotliPlugin() : null,
       // COMPRESS_BUNDLE_VALUE ? gzipPlugin() : null,
     ].filter(Boolean),
   };
 };
 
-export default [
-  config({ esmodules: false, forMainThread: false }),
-  config({ esmodules: true, forMainThread: false }),
-  config({ esmodules: false, forMainThread: true }),
-  config({ esmodules: true, forMainThread: true }),
-];
+/**
+ * Returns array of objects containing all boolean combinations of keys in `params`.
+ * @param {!Array<string>} params
+ */
+function allCombinationsOf(params) {
+  let configs = [{}];
+  params.forEach(p => {
+    const next = [];
+    configs.forEach(c => {
+      next.push(Object.assign({}, c, {[p]: true}));
+      next.push(Object.assign({}, c, {[p]: false}));
+    });
+    configs = next;
+  });
+  return configs;
+}
+
+export default allCombinationsOf(['esmodules', 'forMainThread', 'withSanitizer']).map(c => rollupConfig(c));

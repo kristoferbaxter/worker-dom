@@ -44,6 +44,7 @@
     "rollup-plugin-babel": "4.0.0-beta.7",
     "rollup-plugin-brotli": "1.1.0",
     "rollup-plugin-gzip": "2.0.0",
+    "rollup-plugin-node-resolve": "3.3.0",
     "serve-static": "1.13.2",
     "tslint": "5.11.0",
     "typescript": "3.0.1"
@@ -67,9 +68,22 @@
       "maxSize": "6 kB"
     },
     {
+      "path": "./build/esmodules/index.module.sanitizer.js",
+      "compression": "brotli",
+      "maxSize": "6 kB"
+    },
+    {
       "path": "./build/esmodules/main-thread/index.module.js",
       "compression": "brotli",
       "maxSize": "2 kB"
+    },
+    {
+      "path": "./build/esmodules/main-thread/index.module.sanitizer.js",
+      "compression": "brotli",
+      "maxSize": "7 kB"
     }
-  ]
+  ],
+  "dependencies": {
+    "dompurify": "1.0.7"
+  }
 }
