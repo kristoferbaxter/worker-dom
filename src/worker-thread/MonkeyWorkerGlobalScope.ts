@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-import { install } from './install';
+import { Document } from './dom/Document';
 
-export function upgradeElement(baseElement: Element): void {
-  install(baseElement);
+export interface MonkeyWorkerGlobalScope {
+  document: Document;
+  localStorage: object;
+  location: object;
+  url: string;
+  appendKeys: (keys: Array<string>) => void;
 }
