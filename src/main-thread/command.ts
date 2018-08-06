@@ -72,7 +72,6 @@ const eventHandler = (worker: Worker, _index_: number) => (event: Event): void =
       },
       timeStamp: event.timeStamp,
       type: event.type,
-      scoped: event.scoped,
     },
   });
 };
