@@ -16,7 +16,7 @@
 
 import { Document } from './dom/Document';
 
-export interface MonkeyWorkerGlobalScope {
+export interface WorkerDOMGlobalScope {
   document: Document;
   localStorage: object;
   location: object;

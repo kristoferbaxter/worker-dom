@@ -14,15 +14,122 @@
  * limitations under the License.
  */
 
-import { MonkeyWorkerGlobalScope } from './MonkeyWorkerGlobalScope';
+import { createDocument } from './dom/Document';
+import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 import { appendKeys } from './css/CSSStyleDeclaration';
-import { document } from './dom/Document';
 
-// TODO(choumx): Implement worker sandbox. This is currently the same as index.ts.
-export const monkey: MonkeyWorkerGlobalScope = {
-  document,
+const WHITELISTED_GLOBALS = [
+  'Array',
+  'ArrayBuffer',
+  'Blob',
+  'BigInt',
+  'BigInt64Array',
+  'BigUint64Array',
+  'Boolean',
+  'Cache',
+  'CustomEvent',
+  'DataView',
+  'Date',
+  'Error',
+  'EvalError',
+  'Event',
+  'EventTarget',
+  'Float32Array',
+  'Float64Array',
+  'Function',
+  'Infinity',
+  'Int16Array',
+  'Int32Array',
+  'Int8Array',
+  'Intl',
+  'JSON',
+  'Map',
+  'Math',
+  'NaN',
+  'Number',
+  'Object',
+  'Promise',
+  'Proxy',
+  'RangeError',
+  'ReferenceError',
+  'Reflect',
+  'RegExp',
+  'Set',
+  'String',
+  'Symbol',
+  'SyntaxError',
+  'TextDecoder',
+  'TextEncoder',
+  'TypeError',
+  'URIError',
+  'URL',
+  'Uint16Array',
+  'Uint32Array',
+  'Uint8Array',
+  'Uint8ClampedArray',
+  'WeakMap',
+  'WeakSet',
+  'atob',
+  'btoa',
+  'caches',
+  'clearInterval',
+  'clearTimeout',
+  'console',
+  'decodeURI',
+  'decodeURIComponent',
+  'encodeURI',
+  'encodeURIComponent',
+  'escape',
+  'eval',
+  'fetch', // TODO(choumx): Wrap this for origin whitelisting.
+  'indexedDB',
+  'isFinite',
+  'isNaN',
+  'onerror',
+  'onrejectionhandled',
+  'onunhandledrejection',
+  'parseFloat',
+  'parseInt',
+  'performance',
+  'setTimeout',
+  'setInterval',
+  'undefined',
+  'unescape',
+];
+
+export const workerDOM: WorkerDOMGlobalScope = {
+  document: createDocument(),
+  // TODO(choumx): Make these useful.
   localStorage: {},
   location: {},
   url: '/',
   appendKeys,
 };
+
+/**
+ * Walks up a global's prototype chain and dereferences non-whitelisted properties
+ * until EventTarget is reached.
+ * @param global
+ */
+export function dereferenceGlobals(global: DedicatedWorkerGlobalScope) {
+  function deleteUnsafe(object: any, property: string) {
+    if (WHITELISTED_GLOBALS.indexOf(property) >= 0) {
+      return;
+    }
+    try {
+      console.info(`  Deleting ${property}...`);
+      delete object[property];
+    } catch (e) {
+      console.warn(e);
+    }
+  }
+
+  let current = global;
+  while (current && current.constructor !== EventTarget) {
+    console.info('Removing references from:', current);
+    Object.getOwnPropertyNames(current).forEach(prop => {
+      deleteUnsafe(current, prop);
+    });
+    current = Object.getPrototypeOf(current);
+  }
+}

@@ -22,13 +22,13 @@ import { TransferrableNode, TransferredNode } from './TransferrableNodes';
 import { MutationFromWorker, MessageType } from './Messages';
 import { TransferrableKeys } from './TransferrableKeys';
 
-const SUPPORTS_POST_MESSAGE = typeof postMessage !== 'undefined';
 const serializeNodes = (nodes: Node[] | undefined): Array<TransferrableNode | TransferredNode> | undefined =>
   (nodes && nodes.map(node => node.serialize())) || undefined;
+
 let observing = false;
 let hydrated = false;
 
-function handleMutations(incomingMutations: MutationRecord[]): void {
+function handleMutations(incomingMutations: MutationRecord[], postMessage: Function): void {
   const mutations: TransferrableMutationRecord[] = [];
 
   incomingMutations.forEach(mutation => {
@@ -70,7 +70,7 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
     mutations.push(transferableMutation);
   });
 
-  if (SUPPORTS_POST_MESSAGE) {
+  if (postMessage) {
     const mutationFromWorker: MutationFromWorker = {
       type: hydrated ? MessageType.MUTATE : MessageType.HYDRATE,
       mutations,
@@ -81,9 +81,9 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
   }
 }
 
-export function observe(document: Document): void {
+export function observe(document: Document, postMessage: Function): void {
   if (!observing) {
-    new document.defaultView.MutationObserver(handleMutations).observe(document.body);
+    new document.defaultView.MutationObserver(incomingMutations => handleMutations(incomingMutations, postMessage)).observe(document.body);
     observing = true;
   }
 }

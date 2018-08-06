@@ -31,7 +31,9 @@ export function createWorker(authorScriptURL: string): Promise<Worker | null> {
       }
       const code = `
         'use strict';
+        debugger;
         ${workerScript}
+        WorkerThread.dereferenceGlobals(self);
         (function() {
           var self = this;
           var document = this.document;
@@ -53,8 +55,9 @@ export function createWorker(authorScriptURL: string): Promise<Worker | null> {
             return document.removeEventListener(type, handler);
           }
           this.appendKeys([${keys}]);
+          debugger;
           ${authorScript}
-        }).call(WorkerThread.monkey);`;
+        }).call(WorkerThread.workerDOM);`;
       return new Worker(URL.createObjectURL(new Blob([code])));
     })
     .catch(error => {
