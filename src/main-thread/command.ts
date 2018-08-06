@@ -88,7 +88,6 @@ const eventHandler = (worker: Worker, _index_: number) => (event: Event): void =
       },
       [TransferrableKeys.timeStamp]: event.timeStamp,
       [TransferrableKeys.type]: event.type,
-      [TransferrableKeys.scoped]: event.scoped,
     },
   });
 };
