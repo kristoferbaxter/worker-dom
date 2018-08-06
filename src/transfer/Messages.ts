@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { TransferableEvent } from './TransferableEvent';
-import { TransferableMutationRecord } from './TransferableRecord';
-import { TransferableSyncValue } from './TransferableSyncValue';
+import { TransferrableEvent } from './TransferrableEvent';
+import { TransferrableMutationRecord } from './TransferrableRecord';
+import { TransferrableSyncValue } from './TransferrableSyncValue';
+import { TransferrableKeys } from './TransferrableKeys';
 
 export const enum MessageType {
   // INIT = 0,
@@ -32,18 +33,20 @@ export const enum MessageType {
 
 export interface MutationFromWorker {
   type: MessageType.HYDRATE | MessageType.MUTATE;
-  mutations: TransferableMutationRecord[];
+  mutations: TransferrableMutationRecord[];
 }
 export interface MessageFromWorker {
   data: MutationFromWorker;
 }
 
-interface EventToWorker {
-  type: MessageType.EVENT;
-  event: TransferableEvent;
+export interface EventToWorker {
+  [key: number]: MessageType.EVENT | TransferrableEvent;
+  [TransferrableKeys.type]: MessageType.EVENT;
+  [TransferrableKeys.event]: TransferrableEvent;
 }
-interface ValueSyncToWorker {
-  type: MessageType.SYNC;
-  sync: TransferableSyncValue;
+export interface ValueSyncToWorker {
+  [key: number]: MessageType.SYNC | TransferrableSyncValue;
+  [TransferrableKeys.type]: MessageType.SYNC;
+  [TransferrableKeys.sync]: TransferrableSyncValue;
 }
 export type MessageToWorker = EventToWorker | ValueSyncToWorker;

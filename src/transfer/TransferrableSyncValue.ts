@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import { MessageToWorker, MessageType } from './Messages';
+import { MessageToWorker, MessageType, ValueSyncToWorker } from './Messages';
 import { get } from '../worker-thread/NodeMapping';
+import { TransferrableKeys } from './TransferrableKeys';
 
-export interface TransferableSyncValue {
-  readonly _index_: number;
-  readonly value: string | number;
+export interface TransferrableSyncValue {
+  readonly [TransferrableKeys._index_]: number;
+  readonly [TransferrableKeys.value]: string | number;
 }
 
 /**
@@ -30,13 +31,14 @@ export interface TransferableSyncValue {
 export function propagate(): void {
   if (typeof addEventListener !== 'undefined') {
     addEventListener('message', ({ data }: { data: MessageToWorker }) => {
-      if (data.type !== MessageType.SYNC) {
+      if (data[TransferrableKeys.type] !== MessageType.SYNC) {
         return;
       }
 
-      const node = get(data.sync._index_);
+      const sync = (data as ValueSyncToWorker)[TransferrableKeys.sync];
+      const node = get(sync[TransferrableKeys._index_]);
       if (node) {
-        node.value = data.sync.value;
+        node.value = sync[TransferrableKeys.value];
       }
     });
   }

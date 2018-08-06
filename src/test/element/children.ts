@@ -15,14 +15,15 @@
  */
 
 import test from 'ava';
-import { Node, NodeType } from '../../worker-thread/dom/Node';
+import { NodeType } from '../../worker-thread/dom/Node';
 import { Element } from '../../worker-thread/dom/Element';
+import { Text } from '../../worker-thread/dom/Text';
 
 test.beforeEach(t => {
   t.context = {
     node: new Element(NodeType.ELEMENT_NODE, 'div', null),
     child: new Element(NodeType.ELEMENT_NODE, 'div', null),
-    childTwo: new Node(NodeType.TEXT_NODE, '#text'),
+    childTwo: new Text(''),
   };
 });
 
@@ -42,7 +43,7 @@ test('children should contain all childNodes when all are the correct NodeType',
 });
 
 test('children should contain only childNodes of NodeType.ELEMENT_NODE', t => {
-  const { node, child, childTwo } = t.context as { node: Element; child: Element; childTwo: Node };
+  const { node, child, childTwo } = t.context as { node: Element; child: Element; childTwo: Text };
 
   node.appendChild(child);
   node.appendChild(childTwo);
@@ -51,7 +52,7 @@ test('children should contain only childNodes of NodeType.ELEMENT_NODE', t => {
 });
 
 test('children should be an empty array when there are no childNodes of NodeType.ELEMENT_NODE', t => {
-  const { node, childTwo } = t.context as { node: Element; childTwo: Node };
+  const { node, childTwo } = t.context as { node: Element; childTwo: Text };
 
   node.appendChild(childTwo);
   t.is(node.children.length, 0);

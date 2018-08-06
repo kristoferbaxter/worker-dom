@@ -15,7 +15,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "pretest": "rimraf src/output && tsc -p config/tsconfig.test.worker-thread.json & tsc -p config/tsconfig.test.json & tsc -p config/tsconfig.test.main-thread.json & wait",
-    "test": "ava src/output/test/**/*.js",
+    "test": "ava -v src/output/test/**/*.js",
     "pre~rollup": "rimraf src/output build && tsc -p config/tsconfig.build.worker-thread.json & tsc -p config/tsconfig.build.main-thread.json",
     "~rollup": "rollup --config config/rollup.config.js",
     "lint": "tslint -c config/tslint.json -p src/worker-thread/ & tslint -c config/tslint.json -p src/main-thread/",
