@@ -68,7 +68,17 @@
       "maxSize": "6 kB"
     },
     {
+      "path": "./build/esmodules/index.module.sanitizer.js",
+      "compression": "brotli",
+      "maxSize": "6 kB"
+    },
+    {
       "path": "./build/esmodules/main-thread/index.module.js",
+      "compression": "brotli",
+      "maxSize": "2 kB"
+    },
+    {
+      "path": "./build/esmodules/main-thread/index.module.sanitizer.js",
       "compression": "brotli",
       "maxSize": "7 kB"
     }
