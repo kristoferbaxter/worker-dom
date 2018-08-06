@@ -20,7 +20,7 @@ import resolve from 'rollup-plugin-node-resolve';
 
 const rollupConfig = ({ esmodules, forMainThread, withSanitizer }) => {
   return {
-    input: `src/output/${forMainThread ? 'main-thread' : 'worker-thread'}/index.js`,
+    input: `src/output/${forMainThread ? 'main-thread' : 'worker-thread'}/index${withSanitizer ? '.sanitizer' : ''}.js`,
     output: [
       {
         file: path(esmodules, forMainThread, withSanitizer, 'index.module'),

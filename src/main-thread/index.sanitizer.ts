@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-declare module 'dompurify' {
-  var purify: {
-    sanitize(dirty: string | Node, cfg: Object): string | Node;
-    isValidAttribute(tag: string, attr: string, value: string): boolean;
-  };
-  export default purify;
+import { DOMPurifySanitizer } from './DOMPurifySanitizer';
+import { install } from './install';
+
+export function upgradeElement(baseElement: Element): void {
+  install(baseElement, new DOMPurifySanitizer());
 }

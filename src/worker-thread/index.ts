@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-import { Document, document } from './dom/Document';
+import { MonkeyWorkerGlobalScope } from './MonkeyWorkerGlobalScope';
 import { appendKeys } from './css/CSSStyleDeclaration';
+import { document } from './dom/Document';
 
-interface MonkeyWorkerGlobalScope {
-  document: Document;
-  localStorage: object;
-  location: object;
-  url: string;
-  appendKeys: (keys: Array<string>) => void;
-}
 export const monkey: MonkeyWorkerGlobalScope = {
   document,
   localStorage: {},

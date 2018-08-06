@@ -18,7 +18,7 @@ import babel from 'rollup-plugin-babel';
 import minify from '@ampproject/rollup-plugin-closure-compiler';
 import brotli from 'rollup-plugin-brotli';
 import gzip from 'rollup-plugin-gzip';
-import { path, DEBUG_BUNDLE_VALUE, SANITIZE_MUTATIONS_VALUE } from './rollup.utils.js';
+import { path, DEBUG_BUNDLE_VALUE } from './rollup.utils.js';
 
 const BROTLI_CONFIG = {
   options: {
@@ -70,13 +70,6 @@ export const babelPlugin = (esmodules, withSanitizer) => {
               replacement: {
                 type: 'stringLiteral',
                 value: path(esmodules, false, withSanitizer, 'index'),
-              },
-            },
-            {
-              identifierName: '__SANITIZE_MUTATIONS__',
-              replacement: {
-                type: 'booleanLiteral',
-                value: withSanitizer,
               },
             },
           ],

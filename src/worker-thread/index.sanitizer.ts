@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
-import { install } from './install';
+import { MonkeyWorkerGlobalScope } from './MonkeyWorkerGlobalScope';
+import { appendKeys } from './css/CSSStyleDeclaration';
+import { document } from './dom/Document';
 
-export function upgradeElement(baseElement: Element): void {
-  install(baseElement);
-}
+// TODO(choumx): Implement worker sandbox. This is currently the same as index.ts.
+export const monkey: MonkeyWorkerGlobalScope = {
+  document,
+  localStorage: {},
+  location: {},
+  url: '/',
+  appendKeys,
+};
