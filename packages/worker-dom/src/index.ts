@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { MonkeyWorkerGlobalScope } from 'MonkeyWorkerGlobalScope';
-import { appendKeys } from 'css/CSSStyleDeclaration';
-import { document } from 'dom/Document';
-import { get as getNode } from 'NodeMapping';
+import { MonkeyWorkerGlobalScope } from './MonkeyWorkerGlobalScope';
+import { appendKeys } from './css/CSSStyleDeclaration';
+import { document } from './dom/Document';
+import { get as getNode } from './NodeMapping';
 import { TransferrableKeys } from '@ampproject/worker-dom-transport/TransferrableKeys';
-import { MessageToWorker, MessageType, ValueSyncToWorker } from '@ampproject/worker-dom-transport//Messages';
+import { MessageToWorker, MessageType, ValueSyncToWorker } from '@ampproject/worker-dom-transport/Messages';
 
 export const monkey: MonkeyWorkerGlobalScope = {
   document,

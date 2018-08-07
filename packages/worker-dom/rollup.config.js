@@ -15,6 +15,7 @@
  */
 
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
+import babel from 'rollup-plugin-babel';
 const MINIFY_BUNDLE_VALUE = process.env.MINIFY_BUNDLE !== 'undefined' ? process.env.MINIFY_BUNDLE === 'true' : false;
 
 function babelPlugin(esmodules = true, removeConsole = true) {
@@ -41,9 +42,9 @@ function babelPlugin(esmodules = true, removeConsole = true) {
   });
 };
 
-return [
+export default [
   {
-    input: 'src/output/index.js',
+    input: 'output/worker-dom/src/index.js',
     output: {
       file: 'dist/index.mjs',
       format: 'es',
@@ -55,7 +56,7 @@ return [
     ].filter(Boolean),
   },
   {
-    input: 'src/output/index.js',
+    input: 'output/worker-dom/src/index.js',
     output: {
       file: 'dist/index.js',
       format: 'iife',
@@ -68,16 +69,16 @@ return [
     ].filter(Boolean),
   },
   {
-    input: 'src/output/index.js',
+    input: 'output/worker-dom/src/index.js',
     output: {
       file: 'dist/debug.js',
       format: 'iife',
       sourcemap: true,
+      name: 'WorkerThread',
       outro: 'window.workerDocument = monkey.document;',
     },
     plugins: [
       babelPlugin(false, true),
-      MINIFY_BUNDLE_VALUE ? compiler() : null,
-    ].filter(Boolean),
+    ],
   },
 ];
