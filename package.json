@@ -22,6 +22,9 @@
     "debug": "DEBUG_BUNDLE=true yarn ~rollup && node -r esm demo/server.mjs",
     "build": "MINIFY_BUNDLE=true yarn ~rollup"
   },
+  "dependencies": {
+    "dompurify": "1.0.7"
+  },
   "devDependencies": {
     "@ampproject/rollup-plugin-closure-compiler": "0.6.1",
     "@babel/cli": "v7.0.0-beta.56",
@@ -59,27 +62,19 @@
   },
   "bundlesize": [
     {
-      "path": "./build/esmodules/index.module.js",
+      "path": "./dist/worker.mjs",
       "compression": "brotli",
       "maxSize": "6 kB"
     },
     {
-      "path": "./build/esmodules/index.module.sanitizer.js",
-      "compression": "brotli",
-      "maxSize": "6 kB"
-    },
-    {
-      "path": "./build/esmodules/main-thread/index.module.js",
+      "path": "./dist/index.mjs",
       "compression": "brotli",
       "maxSize": "2 kB"
     },
     {
-      "path": "./build/esmodules/main-thread/index.module.sanitizer.js",
+      "path": "./dist/index.sanitize.mjs",
       "compression": "brotli",
       "maxSize": "7 kB"
     }
-  ],
-  "dependencies": {
-    "dompurify": "1.0.7"
-  }
+  ]
 }
