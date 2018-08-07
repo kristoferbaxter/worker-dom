@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Document } from 'dom/Document
+import { Document } from './dom/Document';
 
 export interface MonkeyWorkerGlobalScope {
   document: Document;

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { mutate } from 'MutationObserver
-import { MutationRecordType } from 'MutationRecord
-import { Element } from 'dom/Element
-import { NamespaceURI } from 'dom/Node
-import { toLower } from '../../utils';
+import { mutate } from '../MutationObserver';
+import { MutationRecordType } from '@ampproject/worker-dom-transport/src/TransferrableRecord';
+import { Element } from '../dom/Element';
+import { NamespaceURI } from '../dom/Node';
+import { toLower } from '../utils';
 
 interface StyleProperties {
   [key: string]: string | null;
@@ -140,7 +140,7 @@ export class CSSStyleDeclaration implements StyleDeclaration {
   get cssText(): string {
     let value: string;
     let returnValue: string = '';
-    for (let key in this.properties_) {
+    for (const key in this.properties_) {
       if ((value = this.getPropertyValue(key)) !== '') {
         returnValue += `${key}: ${value}; `;
       }

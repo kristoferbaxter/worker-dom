@@ -15,8 +15,9 @@
  */
 
 import test from 'ava';
-import { document } from '../../worker-thread/dom/Document';
-import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
+import { document } from '../../src/dom/Document';
+import { MutationRecord } from '../../src/MutationRecord';
+import { MutationRecordType } from '@ampproject/worker-dom-transport/src/TransferrableRecord';
 
 test.cb.serial('Element.classList.add mutation observed, single value', t => {
   const el = document.createElement('div');

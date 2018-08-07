@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { hydrate } from 'hydrate
-import { prepareMutate, mutate } from 'mutate
-import { createWorker } from 'worker
-import { MessageFromWorker, MessageType } from '../transfer/Messages';
-import { prepare as prepareNodes } from 'nodes
+import { hydrate } from './hydrate';
+import { prepareMutate, mutate } from './mutate';
+import { createWorker } from './worker';
+import { prepare as prepareNodes } from './nodes';
+import { MessageFromWorker, MessageType } from '@ampproject/worker-dom-transport/Messages';
 
 export function install(baseElement: Element, sanitizer?: any): void {
   const authorURL = baseElement.getAttribute('src');

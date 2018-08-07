@@ -15,9 +15,9 @@
  */
 
 import test from 'ava';
-import { CSSStyleDeclaration, appendKeys } from '../../worker-thread/css/CSSStyleDeclaration';
-import { Element } from '../../worker-thread/dom/Element';
-import { NodeType } from '../../worker-thread/dom/Node';
+import { CSSStyleDeclaration, appendKeys } from '../../src/css/CSSStyleDeclaration';
+import { Element } from '../../src/dom/Element';
+import { NodeType } from '../../src/dom/Node';
 
 test.beforeEach(t => {
   t.context = {

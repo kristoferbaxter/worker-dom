@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-import { getNode, storeNode } from 'nodes
-import { TransferrableElement, TransferrableText, TransferrableNode } from '../transfer/TransferrableNodes';
-import { NodeType } from '../worker-thread/dom/Node';
-import { MutationRecordType } from '../worker-thread/MutationRecord';
-import { RenderableElement } from 'RenderableElement
-import { NumericBoolean } from '../utils';
-import { process, applyDefaultChangeListener } from 'command
-import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { getNode, storeNode } from './nodes';
+import { RenderableElement } from './RenderableElement';
+import { process, applyDefaultChangeListener } from './command';
+import { NodeType } from '@ampproject/worker-dom/dom/Node';
+import { NumericBoolean } from '@ampproject/worker-dom-transport/NumericBoolean';
+import { TransferrableElement, TransferrableText, TransferrableNode } from '@ampproject/worker-dom-transport/TransferrableNodes';
+import { MutationRecordType, TransferrableMutationRecord } from '@ampproject/worker-dom-transport/TransferrableRecord';
+import { TransferrableKeys } from '@ampproject/worker-dom-transport/TransferrableKeys';
 
 const allTextNodes = (nodes: NodeList | Array<TransferrableElement>): boolean =>
   nodes.length > 0 &&

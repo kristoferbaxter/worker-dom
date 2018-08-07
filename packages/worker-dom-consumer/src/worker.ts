@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { MessageToWorker } from '../transfer/Messages';
+import { MessageToWorker } from '@ampproject/worker-dom-transport/Messages';
 
 // Supplied by Babel Transpilation
 // See: config/rollup.config.js

@@ -15,10 +15,10 @@
  */
 
 import test from 'ava';
-import { Element } from '../../worker-thread/dom/Element';
-import { NodeType } from '../../worker-thread/dom/Node';
-import { TransferrableElement } from '../../transfer/TransferrableNodes';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { Element } from '../../src/dom/Element';
+import { NodeType } from '../../src/dom/Node';
+import { TransferrableElement } from '@ampproject/worker-dom-transport/src/TransferrableNodes';
+import { TransferrableKeys } from '@ampproject/worker-dom-transport/src/TransferrableKeys';
 
 const RANDOM_TEXT_CONTENT = `TEXT_CONTENT-${Math.random()}`;
 const DIV_ID = 'DIV_ID';

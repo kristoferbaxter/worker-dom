@@ -15,10 +15,11 @@
  */
 
 import test from 'ava';
-import { document } from '../../worker-thread/dom/Document';
-import { Element } from '../../worker-thread/dom/Element';
-import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { document } from '../../src/dom/Document';
+import { Element } from '../../src/dom/Element';
+import { MutationRecord } from '../../src/MutationRecord';
+import { TransferrableKeys } from '@ampproject/worker-dom-transport/src/TransferrableKeys';
+import { MutationRecordType } from '@ampproject/worker-dom-transport/src/TransferrableRecord';
 
 test.beforeEach(t => {
   t.context = {

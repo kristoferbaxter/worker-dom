@@ -15,25 +15,28 @@
  */
 
 import test from 'ava';
-import { document } from '../../worker-thread/dom/Document';
-import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
+import { document } from '../../src/dom/Document';
+import { MutationRecord } from '../../src/MutationRecord';
+import { MutationRecordType } from '@ampproject/worker-dom-transport/src/TransferrableRecord';
 
 test.cb.serial('Element.setAttribute mutation observed, new attribute', t => {
   const el = document.createElement('div');
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.ATTRIBUTES,
-        attributeName: 'data-foo',
-        attributeNamespace: null,
-        target: el,
-        value: 'bar',
-        oldValue: '',
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.ATTRIBUTES,
+          attributeName: 'data-foo',
+          attributeNamespace: null,
+          target: el,
+          value: 'bar',
+          oldValue: '',
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   document.body.appendChild(el);
   observer.observe(document.body);
@@ -42,20 +45,22 @@ test.cb.serial('Element.setAttribute mutation observed, new attribute', t => {
 
 test.cb.serial('Element.setAttribute mutation observed, overwrite attribute', t => {
   const el = document.createElement('div');
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.ATTRIBUTES,
-        attributeName: 'data-foo',
-        attributeNamespace: null,
-        target: el,
-        value: 'baz',
-        oldValue: 'bar',
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.ATTRIBUTES,
+          attributeName: 'data-foo',
+          attributeNamespace: null,
+          target: el,
+          value: 'baz',
+          oldValue: 'bar',
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   el.setAttribute('data-foo', 'bar');
   document.body.appendChild(el);
@@ -65,20 +70,22 @@ test.cb.serial('Element.setAttribute mutation observed, overwrite attribute', t 
 
 test.cb.serial('Element.setAttribute mutation observed, new attribute with namespace', t => {
   const el = document.createElement('div');
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.ATTRIBUTES,
-        attributeName: 'data-foo',
-        attributeNamespace: 'namespace',
-        target: el,
-        value: 'bar',
-        oldValue: '',
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.ATTRIBUTES,
+          attributeName: 'data-foo',
+          attributeNamespace: 'namespace',
+          target: el,
+          value: 'bar',
+          oldValue: '',
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   document.body.appendChild(el);
   observer.observe(document.body);
@@ -87,20 +94,22 @@ test.cb.serial('Element.setAttribute mutation observed, new attribute with names
 
 test.cb.serial('Element.setAttribute mutation observed, overwrite attribute with namespace', t => {
   const el = document.createElement('div');
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.ATTRIBUTES,
-        attributeName: 'data-foo',
-        attributeNamespace: 'namespace',
-        target: el,
-        value: 'baz',
-        oldValue: 'bar',
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.ATTRIBUTES,
+          attributeName: 'data-foo',
+          attributeNamespace: 'namespace',
+          target: el,
+          value: 'baz',
+          oldValue: 'bar',
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   el.setAttributeNS('namespace', 'data-foo', 'bar');
   document.body.appendChild(el);

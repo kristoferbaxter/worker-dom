@@ -1,0 +1,67 @@
+{
+  "name": "@ampproject/worker-dom-consumer",
+  "version": "0.0.1",
+  "description": "Consumer and Event Producer for Worker driven DOM implementation.",
+  "main": "index.js",
+  "engines": {
+    "yarn": ">=1.7.0",
+    "node": ">=8.10.0"
+  },
+  "author": "Kristofer Baxter",
+  "license": "Apache-2.0",
+  "scripts": {
+    "lint": "tslint -c ../../config/tslint.json --project tsconfig.json",
+
+    "pretest": "rimraf src/output && tsc -p tsconfig.test.json & wait",
+    "test": "ava -v src/output/test/**/*.js",
+
+    "pre~rollup": "rimraf src/output build && tsc -p tsconfig.json",
+    "~rollup": "rollup --config rollup.config.js",
+    "build": "MINIFY_BUNDLE=true yarn ~rollup"
+  },
+  "devDependencies": {
+    "@ampproject/rollup-plugin-closure-compiler": "0.6.1",
+    "@babel/cli": "v7.0.0-beta.56",
+    "@babel/core": "v7.0.0-beta.56",
+    "@babel/plugin-proposal-class-properties": "v7.0.0-beta.56",
+    "@babel/plugin-proposal-object-rest-spread": "v7.0.0-beta.56",
+    "@babel/preset-env": "v7.0.0-beta.56",
+    "ava": "0.25.0",
+    "babel-plugin-minify-replace": "0.4.3",
+    "babel-plugin-transform-remove-console": "6.9.4",
+    "bundlesize": "0.17.0",
+    "husky": "1.0.0-rc.13",
+    "lint-staged": "7.2.0",
+    "prettier": "1.14.0",
+    "rimraf": "2.6.2",
+    "rollup": "0.63.5",
+    "rollup-plugin-babel": "4.0.0-beta.7",
+    "rollup-plugin-node-resolve": "3.3.0",
+    "tslint": "5.11.0",
+    "typescript": "3.0.1"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "yarn prettier --config ../../config/.prettierrc --write",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "yarn test; yarn build; yarn bundlesize"
+    }
+  },
+  "bundlesize": [
+    {
+      "path": "./build/index.mjs",
+      "compression": "brotli",
+      "maxSize": "6 kB"
+    },
+    {
+      "path": "./build/index.js",
+      "compression": "gzip",
+      "maxSize": "10 kB"
+    }
+  ]
+}

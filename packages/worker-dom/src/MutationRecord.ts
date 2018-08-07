@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-import { Node } from 'dom/Node
-import { TransferrableEventSubscriptionChange } from '../transfer/TransferrableEvent';
-
-export type MutationRecordMutableKey =
-  | 'addedNodes'
-  | 'removedNodes'
-  | 'previousSibling'
-  | 'nextSibling'
-  | 'attributeName'
-  | 'attributeNamespace'
-  | 'propertyName'
-  | 'value'
-  | 'addedEvents'
-  | 'removedEvents';
+import { Node } from './dom/Node';
+import { TransferrableEventSubscriptionChange } from '@ampproject/worker-dom-transport/src/TransferrableEvent';
+import { MutationRecordType } from '@ampproject/worker-dom-transport/src/TransferrableRecord';
 
 // MutationRecord interface is modification and extension of the spec version.
 // It supports capturing property changes.
@@ -53,11 +42,3 @@ export interface MutationRecord {
   readonly removedEvents?: TransferrableEventSubscriptionChange[];
 }
 
-// Add a new type of MutationRecord 'properties' to enable MutationRecords to capture properties changes on Nodes.
-export const enum MutationRecordType {
-  ATTRIBUTES = 0,
-  CHARACTER_DATA = 1,
-  CHILD_LIST = 2,
-  PROPERTIES = 3,
-  COMMAND = 4,
-}

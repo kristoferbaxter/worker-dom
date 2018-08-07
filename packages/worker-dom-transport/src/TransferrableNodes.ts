@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-import { NodeType, NodeName } from '../worker-thread/dom/Node';
-import { NumericBoolean } from '../utils';
-import { TransferrableKeys } from 'TransferrableKeys
+import { NumericBoolean } from './NumericBoolean';
+import { TransferrableKeys } from './TransferrableKeys';
 
 export type TransferrableNode = TransferrableElement | TransferrableText;
 
 export interface TransferrableElement extends TransferredNode {
-  readonly [TransferrableKeys.nodeType]: NodeType;
-  readonly [TransferrableKeys.nodeName]: NodeName;
+  readonly [TransferrableKeys.nodeType]: number;
+  readonly [TransferrableKeys.nodeName]: string;
   readonly [TransferrableKeys.attributes]?: Array<{
     [index: string]: string;
   }>;
@@ -34,8 +33,8 @@ export interface TransferrableElement extends TransferredNode {
 }
 
 export interface TransferrableText extends TransferredNode {
-  readonly [TransferrableKeys.nodeType]: NodeType;
-  readonly [TransferrableKeys.nodeName]: NodeName;
+  readonly [TransferrableKeys.nodeType]: number;
+  readonly [TransferrableKeys.nodeName]: string;
   readonly [TransferrableKeys.textContent]: string;
 }
 

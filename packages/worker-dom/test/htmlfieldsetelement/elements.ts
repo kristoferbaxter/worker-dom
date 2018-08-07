@@ -15,9 +15,9 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../worker-thread/dom/Node';
-import { HTMLFieldSetElement } from '../../worker-thread/dom/HTMLFieldSetElement';
-import { Element } from '../../worker-thread/dom/Element';
+import { NodeType } from '../../src/dom/Node';
+import { HTMLFieldSetElement } from '../../src/dom/HTMLFieldSetElement';
+import { Element } from '../../src/dom/Element';
 
 // button fieldset input object output select textarea
 

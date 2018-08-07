@@ -16,9 +16,9 @@
 
 import { NodeType } from './Node';
 import { CharacterData } from './CharacterData';
-import { TransferredNode, TransferrableText } from '../../transfer/TransferrableNodes';
-import { NumericBoolean } from '../../utils';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { NumericBoolean } from '@ampproject/worker-dom-transport/src/NumericBoolean';
+import { TransferredNode, TransferrableText } from '@ampproject/worker-dom-transport/src/TransferrableNodes';
+import { TransferrableKeys } from '@ampproject/worker-dom-transport/src/TransferrableKeys';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Text
 export class Text extends CharacterData {

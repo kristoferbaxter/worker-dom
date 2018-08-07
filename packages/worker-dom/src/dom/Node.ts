@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { store as mappingStoreNode } from 'NodeMapping
-import { Event, EventHandler } from 'Event
-import { toLower } from '../../utils';
-import { mutate } from 'MutationObserver
-import { MutationRecordType } from 'MutationRecord
-import { TransferredNode, TransferrableNode } from '../../transfer/TransferrableNodes';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { store as mappingStoreNode } from '../NodeMapping';
+import { Event, EventHandler } from '../Event';
+import { toLower } from '../utils';
+import { mutate } from '../MutationObserver';
+import { MutationRecordType } from '@ampproject/worker-dom-transport/src/TransferrableRecord';
+import { TransferredNode, TransferrableNode } from '@ampproject/worker-dom-transport/src/TransferrableNodes';
+import { TransferrableKeys } from '@ampproject/worker-dom-transport/src/TransferrableKeys';
 
 export const enum NodeType {
   ELEMENT_NODE = 1,

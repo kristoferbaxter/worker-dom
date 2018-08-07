@@ -17,15 +17,15 @@
 import { Node, NodeType, NodeName, NamespaceURI } from './Node';
 import { DOMTokenList } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate } from './Attr';
-import { mutate } from 'MutationObserver
-import { MutationRecordType } from 'MutationRecord
-import { TransferredNode, TransferrableElement } from '../../transfer/TransferrableNodes';
-import { NumericBoolean } from '../../utils';
 import { Text } from './Text';
-import { CSSStyleDeclaration } from 'css/CSSStyleDeclaration
 import { matchChildrenElements } from './matchElements';
 import { reflectProperties } from './enhanceElement';
-import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
+import { mutate } from '../MutationObserver';
+import { NumericBoolean } from '@ampproject/worker-dom-transport/src/NumericBoolean';
+import { MutationRecordType } from '@ampproject/worker-dom-transport/src/TransferrableRecord';
+import { TransferredNode, TransferrableElement } from '@ampproject/worker-dom-transport/src/TransferrableNodes';
+import { TransferrableKeys } from '@ampproject/worker-dom-transport/src/TransferrableKeys';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 

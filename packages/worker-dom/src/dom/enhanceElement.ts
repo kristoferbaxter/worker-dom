@@ -15,14 +15,14 @@
  */
 
 import { Element } from './Element';
-import { toLower } from '../../utils';
+import { toLower } from '../utils';
 
 export interface PropertyPair {
   [key: string]: [string | boolean | number, string] | [string | boolean | number];
 }
-export const reflectProperties = (properties: Array<PropertyPair>, defineOn: typeof Element): void => {
+export function reflectProperties(properties: Array<PropertyPair>, defineOn: typeof Element): void {
   properties.forEach(pair => {
-    for (let key in pair) {
+    for (const key in pair) {
       const defaultValue = pair[key][0];
       const propertyIsNumber = typeof defaultValue === 'number';
       const propertyIsBoolean = typeof defaultValue === 'boolean';

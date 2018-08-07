@@ -16,8 +16,8 @@
 
 import { Element } from './Element';
 import { NamespaceURI } from './Node';
-import { mutate } from 'MutationObserver
-import { MutationRecordType } from 'MutationRecord
+import { mutate } from '../MutationObserver';
+import { MutationRecordType } from '@ampproject/worker-dom-transport/src/TransferrableRecord';
 
 export class DOMTokenList {
   private array_: Array<string> = [];

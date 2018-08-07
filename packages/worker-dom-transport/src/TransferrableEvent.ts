@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-import { TransferredNode } from 'TransferrableNodes
-import { TransferrableKeys } from 'TransferrableKeys
-import { MessageToWorker, MessageType } from 'Messages
-import { get } from '../worker-thread/NodeMapping';
-import { Event } from '../worker-thread/Event';
+import { TransferredNode } from './TransferrableNodes';
+import { TransferrableKeys } from './TransferrableKeys';
 
 type TransferrableTarget = TransferredNode;
 
@@ -42,40 +39,4 @@ export interface TransferrableEvent {
 export interface TransferrableEventSubscriptionChange {
   readonly [TransferrableKeys.type]: string;
   readonly [TransferrableKeys.index]: number;
-}
-
-/**
- * When an event is dispatched from the main thread, it needs to be propagated in the worker thread.
- * Propagate adds an event listener to the worker global scope and uses the WorkerDOM Node.dispatchEvent
- * method to dispatch the transfered event in the worker thread.
- */
-export function propagate(): void {
-  if (typeof addEventListener !== 'undefined') {
-    addEventListener('message', ({ data }: { data: MessageToWorker }) => {
-      if (data[TransferrableKeys.type] !== MessageType.EVENT) {
-        return;
-      }
-
-      const event = data[TransferrableKeys.event] as TransferrableEvent;
-      const node = get(event[TransferrableKeys._index_]);
-      if (node !== null) {
-        const target = event[TransferrableKeys.target];
-        node.dispatchEvent(
-          Object.assign(
-            new Event(event[TransferrableKeys.type], { bubbles: event[TransferrableKeys.bubbles], cancelable: event[TransferrableKeys.cancelable] }),
-            {
-              cancelBubble: event[TransferrableKeys.cancelBubble],
-              defaultPrevented: event[TransferrableKeys.defaultPrevented],
-              eventPhase: event[TransferrableKeys.eventPhase],
-              isTrusted: event[TransferrableKeys.isTrusted],
-              returnValue: event[TransferrableKeys.returnValue],
-              target: get(target ? target[TransferrableKeys._index_] : null),
-              timeStamp: event[TransferrableKeys.timeStamp],
-              scoped: event[TransferrableKeys.scoped],
-            },
-          ),
-        );
-      }
-    });
-  }
 }

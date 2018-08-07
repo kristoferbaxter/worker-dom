@@ -15,8 +15,8 @@
  */
 
 import { Node, NodeName, NodeType } from './Node';
-import { mutate } from 'MutationObserver
-import { MutationRecordType } from 'MutationRecord
+import { mutate } from '../MutationObserver';
+import { MutationRecordType } from '@ampproject/worker-dom-transport/src/TransferrableRecord';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/CharacterData
 export abstract class CharacterData extends Node {

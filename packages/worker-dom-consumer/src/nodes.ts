@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { TransferrableNode, TransferrableText, TransferrableElement } from '../transfer/TransferrableNodes';
-import { RenderableElement } from 'RenderableElement
-import { NumericBoolean } from '../utils';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { RenderableElement } from './RenderableElement';
+import { NumericBoolean } from '@ampproject/worker-dom-transport/NumericBoolean';
+import { TransferrableNode, TransferrableText, TransferrableElement } from '@ampproject/worker-dom-transport/TransferrableNodes';
+import { TransferrableKeys } from '@ampproject/worker-dom-transport/TransferrableKeys';
 
 let NODES: Map<number, RenderableElement>;
 let BASE_ELEMENT: HTMLElement;

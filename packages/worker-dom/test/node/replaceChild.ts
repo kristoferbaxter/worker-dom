@@ -15,8 +15,8 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../worker-thread/dom/Node';
-import { Element } from '../../worker-thread/dom/Element';
+import { NodeType } from '../../src/dom/Node';
+import { Element } from '../../src/dom/Element';
 
 test.beforeEach(t => {
   t.context = {
@@ -31,7 +31,7 @@ test('replacing the same child results in no changes', t => {
   const { node, child } = t.context as { node: Element; child: Element };
 
   node.appendChild(child);
-  var previousNodes = node.childNodes;
+  const previousNodes = node.childNodes;
   t.deepEqual(node.replaceChild(child, child), child, 'replaceChild returns node replaced even when NOOP');
   t.deepEqual(node.childNodes, previousNodes, 'child list remains the same after replacing one child with itself');
 });

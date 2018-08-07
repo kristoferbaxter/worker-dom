@@ -15,9 +15,9 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../worker-thread/dom/Node';
-import { Element } from '../../worker-thread/dom/Element';
-import { DOMTokenList } from '../../worker-thread/dom/DOMTokenList';
+import { NodeType } from '../../src/dom/Node';
+import { Element } from '../../src/dom/Element';
+import { DOMTokenList } from '../../src/dom/DOMTokenList';
 
 test.beforeEach(t => {
   t.context = {

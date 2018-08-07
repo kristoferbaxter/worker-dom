@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-import { Node } from 'dom/Node
-import { MutationRecord, MutationRecordType } from 'MutationRecord
+import { Node } from './dom/Node';
+import { MutationRecord } from './MutationRecord';
+import '@ampproject/worker-dom-transport/'
+import { MutationRecordType } from '@ampproject/worker-dom-transport/src/TransferrableRecord';
 
 const observers: MutationObserver[] = [];
 let pendingMutations = false;
 
-const match = (observerTarget: Node | null, target: Node): boolean => observerTarget !== null && target._index_ === observerTarget._index_;
+const match = (observerTarget: Node | null, target: Node | null): boolean => observerTarget !== null && target !== null && target._index_ === observerTarget._index_;
 const pushMutation = (observer: MutationObserver, record: MutationRecord): void => {
   observer.pushRecord(record);
   if (!pendingMutations) {
@@ -51,7 +53,7 @@ export function mutate(record: MutationRecord): void {
         if ((matched = match(observer.target, target))) {
           break;
         }
-      } while ((target = target.parentNode));
+      } while ((target = target && target.parentNode));
     }
 
     if (matched) {

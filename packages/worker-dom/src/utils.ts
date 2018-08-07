@@ -14,15 +14,5 @@
  * limitations under the License.
  */
 
-import { MonkeyWorkerGlobalScope } from 'MonkeyWorkerGlobalScope
-import { appendKeys } from 'css/CSSStyleDeclaration
-import { document } from 'dom/Document
-
-// TODO(choumx): Implement worker sandbox. This is currently the same as index.ts.
-export const monkey: MonkeyWorkerGlobalScope = {
-  document,
-  localStorage: {},
-  location: {},
-  url: '/',
-  appendKeys,
-};
+export const toLower = (value: string): string => value.toLowerCase();
+export const keyValueString = (key: string, value: string): string => `${key}="${value}"`;

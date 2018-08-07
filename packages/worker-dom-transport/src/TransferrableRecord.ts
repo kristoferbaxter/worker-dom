@@ -14,10 +14,18 @@
  * limitations under the License.
  */
 
-import { MutationRecordType } from '../worker-thread/MutationRecord';
-import { TransferrableNode, TransferredNode } from 'TransferrableNodes
-import { TransferrableEventSubscriptionChange } from 'TransferrableEvent
-import { TransferrableKeys } from 'TransferrableKeys
+import { TransferrableNode, TransferredNode } from './TransferrableNodes';
+import { TransferrableEventSubscriptionChange } from './TransferrableEvent';
+import { TransferrableKeys } from './TransferrableKeys';
+
+// Add a new type of MutationRecord 'properties' to enable MutationRecords to capture properties changes on Nodes.
+export const enum MutationRecordType {
+  ATTRIBUTES = 0,
+  CHARACTER_DATA = 1,
+  CHILD_LIST = 2,
+  PROPERTIES = 3,
+  COMMAND = 4,
+}
 
 // The TransferrableMutationRecord interface is modification and extension of
 // the real MutationRecord, with changes to support the transferring of

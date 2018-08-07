@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { MutationRecordType } from '../worker-thread/MutationRecord';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
-import { TransferrableNode } from '../transfer/TransferrableNodes';
-import { getNode, createNode } from 'nodes
-import { process } from 'command
+import { MutationRecordType } from '@ampproject/worker-dom-transport/TransferrableRecord';
+import { TransferrableKeys } from '@ampproject/worker-dom-transport/TransferrableKeys';
+import { TransferrableMutationRecord } from '@ampproject/worker-dom-transport/TransferrableRecord';
+import { TransferrableNode } from '@ampproject/worker-dom-transport/TransferrableNodes';
+import { getNode, createNode } from './nodes';
+import { process } from './command';
 
 // TODO(KB): Restore mutation threshold timeout.
 // const GESTURE_TO_MUTATION_THRESHOLD = 5000;

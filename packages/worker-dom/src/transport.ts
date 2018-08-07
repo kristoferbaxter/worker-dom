@@ -14,19 +14,62 @@
  * limitations under the License.
  */
 
-import { Node } from '../worker-thread/dom/Node';
-import { Document } from '../worker-thread/dom/Document';
-import { MutationRecord } from '../worker-thread/MutationRecord';
-import { TransferrableMutationRecord } from 'TransferrableRecord
-import { TransferrableNode, TransferredNode } from 'TransferrableNodes
-import { MutationFromWorker, MessageType } from 'Messages
-import { TransferrableKeys } from 'TransferrableKeys
+import { get as getNode } from './NodeMapping';
+import { Event } from './Event';
+import { MutationRecord } from './MutationRecord';
+import { Node } from './dom/Node';
+import { Document } from './dom/Document';
+import { MessageToWorker, MutationFromWorker, MessageType, ValueSyncToWorker } from '@ampproject/worker-dom-transport/src/Messages';
+import { TransferrableKeys } from '@ampproject/worker-dom-transport/src/TransferrableKeys';
+import { TransferrableEvent } from '@ampproject/worker-dom-transport/src/TransferrableEvent';
+import { TransferrableNode, TransferredNode } from '@ampproject/worker-dom-transport/src/TransferrableNodes';
+import { TransferrableMutationRecord } from '@ampproject/worker-dom-transport/src/TransferrableRecord';
 
 const SUPPORTS_POST_MESSAGE = typeof postMessage !== 'undefined';
 const serializeNodes = (nodes: Node[] | undefined): Array<TransferrableNode | TransferredNode> | undefined =>
   (nodes && nodes.map(node => node.serialize())) || undefined;
 let observing = false;
 let hydrated = false;
+
+function listen(): void {
+  if (SUPPORTS_POST_MESSAGE) {
+    /**
+     * When an event is dispatched from the main thread, it needs to be propagated in the worker thread.
+     * Propagate adds an event listener to the worker global scope and uses the WorkerDOM Node.dispatchEvent
+     * method to dispatch the transfered event in the worker thread.
+     */
+    addEventListener('message', ({ data }: { data: MessageToWorker }) => {
+      if (data[TransferrableKeys.type] === MessageType.SYNC) {
+        const sync = (data as ValueSyncToWorker)[TransferrableKeys.sync];
+        const node = getNode(sync[TransferrableKeys._index_]);
+        if (node) {
+          node.value = sync[TransferrableKeys.value];
+        }
+      } else if (data[TransferrableKeys.type] === MessageType.EVENT) {
+        const event = data[TransferrableKeys.event] as TransferrableEvent;
+        const node = getNode(event[TransferrableKeys._index_]);
+        if (node !== null) {
+          const target = event[TransferrableKeys.target];
+          node.dispatchEvent(
+            Object.assign(
+              new Event(event[TransferrableKeys.type], { bubbles: event[TransferrableKeys.bubbles], cancelable: event[TransferrableKeys.cancelable] }),
+              {
+                cancelBubble: event[TransferrableKeys.cancelBubble],
+                defaultPrevented: event[TransferrableKeys.defaultPrevented],
+                eventPhase: event[TransferrableKeys.eventPhase],
+                isTrusted: event[TransferrableKeys.isTrusted],
+                returnValue: event[TransferrableKeys.returnValue],
+                target: getNode(target ? target[TransferrableKeys._index_] : null),
+                timeStamp: event[TransferrableKeys.timeStamp],
+                scoped: event[TransferrableKeys.scoped],
+              },
+            ),
+          );
+        }
+      }
+    });
+  }
+}
 
 function handleMutations(incomingMutations: MutationRecord[]): void {
   const mutations: TransferrableMutationRecord[] = [];
@@ -81,9 +124,10 @@ function handleMutations(incomingMutations: MutationRecord[]): void {
   }
 }
 
-export function observe(document: Document): void {
-  if (!observing) {
+export function enableTransport(document: Document): void {
+  if (SUPPORTS_POST_MESSAGE && !observing) {
     new document.defaultView.MutationObserver(handleMutations).observe(document.body);
+    listen();
     observing = true;
   }
 }

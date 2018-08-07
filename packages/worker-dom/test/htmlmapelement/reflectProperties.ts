@@ -1,7 +1,7 @@
 import test from 'ava';
 import { testReflectedProperties } from '../reflectPropertiesHelper';
-import { NodeType } from '../../worker-thread/dom/Node';
-import { HTMLMapElement } from '../../worker-thread/dom/HTMLMapElement';
+import { NodeType } from '../../src/dom/Node';
+import { HTMLMapElement } from '../../src/dom/HTMLMapElement';
 
 test.beforeEach(t => {
   t.context = {

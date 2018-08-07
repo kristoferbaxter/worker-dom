@@ -1,0 +1,28 @@
+{
+  "name": "@ampproject/worker-dom-transport",
+  "private": true,
+  "version": "0.0.1",
+  "description": "A facsimile of a modern DOM implementation intended to run in a Web Worker.",
+  "main": "index.js",
+  "engines": {
+    "yarn": ">=1.7.0",
+    "node": ">=8.10.0"
+  },
+  "author": "Kristofer Baxter",
+  "license": "Apache-2.0",
+  "scripts": {
+    "lint": "tslint -c ../../config/tslint.json --project tsconfig.json",
+    "build": "rimraf dist && tsc -p tsconfig.json"
+  },
+  "devDependencies": {
+    "tslint": "5.11.0",
+    "typescript": "3.0.1",
+    "rimraf": "2.6.2"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "yarn prettier --config ../../config/.prettierrc --write",
+      "git add"
+    ]
+  }
+}

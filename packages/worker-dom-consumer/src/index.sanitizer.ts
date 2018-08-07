@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { DOMPurifySanitizer } from 'DOMPurifySanitizer
-import { install } from 'install
+import { DOMPurifySanitizer } from './DOMPurifySanitizer';
+import { install } from './install';
 
 export function upgradeElement(baseElement: Element): void {
   install(baseElement, new DOMPurifySanitizer());

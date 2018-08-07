@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-import { MonkeyWorkerGlobalScope } from 'MonkeyWorkerGlobalScope
-import { appendKeys } from 'css/CSSStyleDeclaration
-import { document } from 'dom/Document
+import { MonkeyWorkerGlobalScope } from 'MonkeyWorkerGlobalScope';
+import { appendKeys } from 'css/CSSStyleDeclaration';
+import { document } from 'dom/Document';
+import { get as getNode } from 'NodeMapping';
+import { TransferrableKeys } from '@ampproject/worker-dom-transport/TransferrableKeys';
+import { MessageToWorker, MessageType, ValueSyncToWorker } from '@ampproject/worker-dom-transport//Messages';
 
 export const monkey: MonkeyWorkerGlobalScope = {
   document,
@@ -25,3 +28,22 @@ export const monkey: MonkeyWorkerGlobalScope = {
   url: '/',
   appendKeys,
 };
+
+/**
+ * When an event is dispatched from the main thread, it needs to be propagated in the worker thread.
+ * Propagate adds an event listener to the worker global scope and uses the WorkerDOM Node.dispatchEvent
+ * method to dispatch the transfered event in the worker thread.
+ */
+if (typeof addEventListener !== 'undefined') {
+  addEventListener('message', ({ data }: { data: MessageToWorker }) => {
+    if (data[TransferrableKeys.type] !== MessageType.SYNC) {
+      return;
+    }
+
+    const sync = (data as ValueSyncToWorker)[TransferrableKeys.sync];
+    const node = getNode(sync[TransferrableKeys._index_]);
+    if (node) {
+      node.value = sync[TransferrableKeys.value];
+    }
+  });
+}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { PropertyPair } from '../worker-thread/dom/enhanceElement';
+import { PropertyPair } from '../src/dom/enhanceElement';
 import test from 'ava';
 
 export function testReflectedProperties(propertyPairs: Array<PropertyPair>) {

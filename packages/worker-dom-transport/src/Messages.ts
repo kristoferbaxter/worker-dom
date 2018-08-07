@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { TransferrableEvent } from 'TransferrableEvent
-import { TransferrableMutationRecord } from 'TransferrableRecord
-import { TransferrableSyncValue } from 'TransferrableSyncValue
-import { TransferrableKeys } from 'TransferrableKeys
+import { TransferrableEvent } from './TransferrableEvent';
+import { TransferrableMutationRecord } from './TransferrableRecord';
+import { TransferrableSyncValue } from './TransferrableSyncValue';
+import { TransferrableKeys } from './TransferrableKeys';
 
 export const enum MessageType {
   // INIT = 0,

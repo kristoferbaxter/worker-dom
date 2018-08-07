@@ -47,12 +47,10 @@ import './HTMLTableSectionElement';
 import './HTMLTimeElement';
 import { SVGElement } from './SVGElement';
 import { Node, NodeType, NamespaceURI } from './Node';
-import { Event } from 'Event
+import { Event } from '../Event';
 import { Text } from './Text';
-import { MutationObserver } from 'MutationObserver
-import { observe as observeMutations } from '../../transfer/DocumentMutations';
-import { propagate as propagateEvents } from '../../transfer/TransferrableEvent';
-import { propagate as propagateSyncValues } from '../../transfer/TransferrableSyncValue';
+import { MutationObserver } from '../MutationObserver';
+import { enableTransport } from '../transport';
 
 export class Document extends Element {
   public defaultView: {
@@ -103,9 +101,7 @@ export const document = (() => {
   const document = new Document();
   document.isConnected = true;
   document.appendChild((document.body = document.createElement('body')));
-  observeMutations(document);
-  propagateEvents();
-  propagateSyncValues();
+  enableTransport(document);
 
   return document;
 })();

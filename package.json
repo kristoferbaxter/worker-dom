@@ -1,89 +1,9 @@
 {
-  "name": "worker-dom",
-  "version": "0.0.1",
-  "description": "A facsimile of a modern DOM implementation intended to run in a Web Worker.",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ampproject/worker-dom.git"
-  },
-  "engines": {
-    "yarn": ">=1.7.0",
-    "node": ">=8.10.0"
-  },
-  "author": "Kristofer Baxter",
-  "license": "Apache-2.0",
-  "scripts": {
-    "pretest": "rimraf src/output && tsc -p config/tsconfig.test.worker-thread.json & tsc -p config/tsconfig.test.json & tsc -p config/tsconfig.test.main-thread.json & wait",
-    "test": "ava -v src/output/test/**/*.js",
-    "pre~rollup": "rimraf src/output build && tsc -p config/tsconfig.build.worker-thread.json & tsc -p config/tsconfig.build.main-thread.json",
-    "~rollup": "rollup --config config/rollup.config.js",
-    "lint": "tslint -c config/tslint.json -p src/worker-thread/ & tslint -c config/tslint.json -p src/main-thread/",
-    "debug": "DEBUG_BUNDLE=true yarn ~rollup && node -r esm demo/server.mjs",
-    "bundle:git-push": "MINIFY_BUNDLE=true yarn ~rollup",
-    "bundle": "MINIFY_BUNDLE=true COMPRESS_BUNDLE=true yarn ~rollup"
-  },
-  "devDependencies": {
-    "@ampproject/rollup-plugin-closure-compiler": "0.6.1",
-    "@babel/cli": "v7.0.0-beta.56",
-    "@babel/core": "v7.0.0-beta.56",
-    "@babel/plugin-proposal-class-properties": "v7.0.0-beta.56",
-    "@babel/plugin-proposal-object-rest-spread": "v7.0.0-beta.56",
-    "@babel/preset-env": "v7.0.0-beta.56",
-    "ava": "0.25.0",
-    "babel-plugin-minify-replace": "0.4.3",
-    "babel-plugin-transform-remove-console": "6.9.4",
-    "bundlesize": "0.17.0",
-    "esm": "3.0.74",
-    "husky": "1.0.0-rc.13",
-    "lint-staged": "7.2.0",
-    "polka": "0.4.0",
-    "prettier": "1.14.0",
-    "rimraf": "2.6.2",
-    "rollup": "0.63.5",
-    "rollup-plugin-babel": "4.0.0-beta.7",
-    "rollup-plugin-brotli": "1.1.0",
-    "rollup-plugin-gzip": "2.0.0",
-    "rollup-plugin-node-resolve": "3.3.0",
-    "serve-static": "1.13.2",
-    "tslint": "5.11.0",
-    "typescript": "3.0.1"
-  },
-  "lint-staged": {
-    "*.ts": [
-      "yarn prettier --config config/.prettierrc --write",
-      "git add"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "yarn test; yarn bundle:git-push; yarn bundlesize"
-    }
-  },
-  "bundlesize": [
-    {
-      "path": "./build/esmodules/index.module.js",
-      "compression": "brotli",
-      "maxSize": "6 kB"
-    },
-    {
-      "path": "./build/esmodules/index.module.sanitizer.js",
-      "compression": "brotli",
-      "maxSize": "6 kB"
-    },
-    {
-      "path": "./build/esmodules/main-thread/index.module.js",
-      "compression": "brotli",
-      "maxSize": "2 kB"
-    },
-    {
-      "path": "./build/esmodules/main-thread/index.module.sanitizer.js",
-      "compression": "brotli",
-      "maxSize": "7 kB"
-    }
+  "private": true,
+  "workspaces": [
+    "packages/*"
   ],
-  "dependencies": {
-    "dompurify": "1.0.7"
+  "devDependencies": {
+    "lerna": "3.0.0-rc.0"    
   }
 }

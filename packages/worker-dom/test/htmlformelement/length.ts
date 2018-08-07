@@ -15,9 +15,9 @@
  */
 
 import test from 'ava';
-import { NodeType } from '../../worker-thread/dom/Node';
-import { HTMLFormElement } from '../../worker-thread/dom/HTMLFormElement';
-import { Element } from '../../worker-thread/dom/Element';
+import { NodeType } from '../../src/dom/Node';
+import { HTMLFormElement } from '../../src/dom/HTMLFormElement';
+import { Element } from '../../src/dom/Element';
 
 test.beforeEach(t => {
   t.context = {

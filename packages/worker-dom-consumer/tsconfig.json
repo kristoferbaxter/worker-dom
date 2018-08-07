@@ -3,21 +3,25 @@
   "compilerOptions": {
     "lib": [
       "es2017",
-      "webworker"
+      "dom"
     ],
-    "outDir": "../output",
+    "outDir": "./output",
     "sourceMap": true,
     "moduleResolution": "node",
     "target": "esnext",
-    "baseUrl": ".",
+    "baseUrl": "../",
     "allowJs": false,
     "noUnusedLocals": true,
     "strictNullChecks": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "alwaysStrict": true
+    "alwaysStrict": true,
+    "paths": {
+      "@ampproject/worker-dom-transport/*": ["worker-dom-transport/src/*"],
+      "@ampproject/worker-dom/*": ["worker-dom/src/*"]
+    }
   },
   "include": [
-    "./*.ts"
+    "./**/*.ts"
   ]
 }

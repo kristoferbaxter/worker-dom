@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Node } from 'dom/Node
+import { Node } from './dom/Node';
 
 interface EventOptions {
   bubbles?: boolean;

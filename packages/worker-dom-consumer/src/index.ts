@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { install } from 'install
+import { install } from './install';
 
 export function upgradeElement(baseElement: Element): void {
   install(baseElement);

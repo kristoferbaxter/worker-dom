@@ -9,16 +9,18 @@
     "sourceMap": true,
     "moduleResolution": "node",
     "target": "esnext",
-    "baseUrl": ".",
+    "baseUrl": "../",
     "allowJs": false,
     "noUnusedLocals": true,
     "strictNullChecks": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "alwaysStrict": true
+    "alwaysStrict": true,
+    "paths": {
+      "@ampproject/worker-dom-transport/*": ["worker-dom-transport/src/*"],
+    }
   },
   "include": [
-    "./*.ts",
     "./**/*.ts"
   ]
 }

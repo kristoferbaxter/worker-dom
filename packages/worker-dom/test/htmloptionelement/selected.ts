@@ -15,8 +15,8 @@
  */
 
 import test from 'ava';
-import { HTMLOptionElement } from '../../worker-thread/dom/HTMLOptionElement';
-import { document } from '../../worker-thread/dom/Document';
+import { HTMLOptionElement } from '../../src/dom/HTMLOptionElement';
+import { document } from '../../src/dom/Document';
 
 test.beforeEach(t => {
   t.context = {

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { MessageType } from '../transfer/Messages';
-import { messageToWorker } from 'worker
-import { RenderableElement } from 'RenderableElement
-import { NumericBoolean } from '../utils';
-import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { getNode } from 'nodes
+import { messageToWorker } from './worker';
+import { getNode } from './nodes';
+import { RenderableElement } from './RenderableElement';
+import { NumericBoolean } from '@ampproject/worker-dom-transport/NumericBoolean';
+import { MessageType } from '@ampproject/worker-dom-transport/Messages';
+import { TransferrableMutationRecord } from '@ampproject/worker-dom-transport/TransferrableRecord';
+import { TransferrableKeys } from '@ampproject/worker-dom-transport/TransferrableKeys';
 
 const KNOWN_LISTENERS: Array<(event: Event) => any> = [];
 
