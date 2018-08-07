@@ -9,7 +9,7 @@
   <!-- <script src="./dist/index.js" defer></script> -->  
 </head>
 <body>
-  <div src="hello-world.js" dom="./build/esmodules/worker-thread/index.js" class="amp-script"><div class="root"><button>prompt</button></div></div>
+  <div src="hello-world.js" class="amp-script"><div class="root"><button>prompt</button></div></div>
   <script type="module">
     import {upgradeElement} from './dist/index.mjs';
     upgradeElement(document.getElementsByClassName('amp-script')[0], './dist/worker.mjs');

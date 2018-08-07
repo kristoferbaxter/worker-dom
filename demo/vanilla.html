@@ -16,7 +16,7 @@
   <script src="./dist/index.js" nomodule defer></script>
   <!-- <script src="./dist/index.js" defer></script> --></head>
 <body>
-  <div src="author-vanilla.js" dom="./build/esmodules/worker-thread/index.js" class="amp-script"><div>Hello World!<span>spaner</span><input /></div></div>
+  <div src="author-vanilla.js" class="amp-script"><div>Hello World!<span>spaner</span><input /></div></div>
   <script type="module">
     import {upgradeElement} from './dist/index.mjs';
     upgradeElement(document.getElementsByClassName('amp-script')[0], './dist/worker.mjs');

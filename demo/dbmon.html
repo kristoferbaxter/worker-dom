@@ -10,7 +10,7 @@
   <!-- <script src="./dist/index.js" defer></script> -->
 </head>
 <body>
-  <div src="author-dbmon.js" dom="./build/esmodules/worker-thread/index.js" class="amp-script"><div><div id="mutations"><label id="ratioval">mutations: 50%</label><input type="range"></input></div><table class="table table-striped latest-data"><tbody></tbody></table></div></div>
+  <div src="author-dbmon.js" class="amp-script"><div><div id="mutations"><label id="ratioval">mutations: 50%</label><input type="range"></input></div><table class="table table-striped latest-data"><tbody></tbody></table></div></div>
   <script type="module">
     import {upgradeElement} from './dist/index.mjs';
     upgradeElement(document.getElementsByClassName('amp-script')[0], './dist/worker.mjs');
