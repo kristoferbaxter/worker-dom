@@ -18,6 +18,7 @@ import { TransferrableNode, TransferrableText, TransferrableElement } from '../t
 import { RenderableElement } from './RenderableElement';
 import { NumericBoolean } from '../utils';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { NodeType } from '../worker-thread/dom/Node';
 
 let NODES: Map<number, RenderableElement>;
 let BASE_ELEMENT: HTMLElement;
@@ -35,7 +36,7 @@ export function prepare(baseElement: Element): void {
  *   createNode({ nodeType:1, nodeName:'div', attributes:[{ name:'a', value:'b' }], childNodes:[ ... ] })
  */
 export function createNode(skeleton: TransferrableNode): RenderableElement {
-  if (skeleton[TransferrableKeys.nodeType] === Node.TEXT_NODE) {
+  if (skeleton[TransferrableKeys.nodeType] === NodeType.TEXT_NODE) {
     const node = document.createTextNode((skeleton as TransferrableText)[TransferrableKeys.textContent]);
     storeNode(node, skeleton[TransferrableKeys._index_]);
     return node as RenderableElement;

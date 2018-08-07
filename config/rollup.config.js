@@ -14,58 +14,10 @@
  * limitations under the License.
  */
 
-import { babelPlugin, minifyPlugin, brotliPlugin, gzipPlugin } from './rollup.plugins.js';
-import { path, MINIFY_BUNDLE_VALUE, DEBUG_BUNDLE_VALUE, COMPRESS_BUNDLE_VALUE } from './rollup.utils.js';
-import resolve from 'rollup-plugin-node-resolve';
+import MainThreadBuilds from './rollup.main-thread.js';
+import WorkerThreadBuilds from './rollup.worker-thread.js';
 
-const rollupConfig = ({ esmodules, forMainThread, withSanitizer }) => {
-  return {
-    input: `src/output/${forMainThread ? 'main-thread' : 'worker-thread'}/index${withSanitizer ? '.sanitizer' : ''}.js`,
-    output: [
-      {
-        file: path(esmodules, forMainThread, withSanitizer, 'index.module'),
-        format: 'es',
-        sourcemap: true,
-      },
-      {
-        file: path(esmodules, forMainThread, withSanitizer, 'index'),
-        format: 'iife',
-        sourcemap: true,
-        name: forMainThread ? 'MainThread' : 'WorkerThread',
-      },
-      {
-        file: path(esmodules, forMainThread, withSanitizer, 'debug'),
-        format: 'iife',
-        sourcemap: true,
-        name: forMainThread ? 'MainThread' : 'WorkerThread',
-        outro: DEBUG_BUNDLE_VALUE && !forMainThread ? 'window.workerDocument = monkey.document;' : '',
-      },
-    ],
-    plugins: [
-      resolve(),
-      babelPlugin(esmodules, withSanitizer),
-      MINIFY_BUNDLE_VALUE ? minifyPlugin() : null,
-      COMPRESS_BUNDLE_VALUE ? brotliPlugin() : null,
-      // COMPRESS_BUNDLE_VALUE ? gzipPlugin() : null,
-    ].filter(Boolean),
-  };
-};
-
-/**
- * Returns array of objects containing all boolean combinations of keys in `params`.
- * @param {!Array<string>} params
- */
-function allCombinationsOf(params) {
-  let configs = [{}];
-  params.forEach(p => {
-    const next = [];
-    configs.forEach(c => {
-      next.push(Object.assign({}, c, {[p]: true}));
-      next.push(Object.assign({}, c, {[p]: false}));
-    });
-    configs = next;
-  });
-  return configs;
-}
-
-export default allCombinationsOf(['esmodules', 'forMainThread', 'withSanitizer']).map(c => rollupConfig(c));
+export default [
+  ...MainThreadBuilds,
+  ...WorkerThreadBuilds,
+];
