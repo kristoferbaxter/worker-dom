@@ -16,10 +16,10 @@
 
 import { MonkeyWorkerGlobalScope } from './MonkeyWorkerGlobalScope';
 import { appendKeys } from './css/CSSStyleDeclaration';
-import { document } from './dom/Document';
+import { singleton } from './dom/Document';
 
 export const monkey: MonkeyWorkerGlobalScope = {
-  document,
+  document: singleton,
   localStorage: {},
   location: {},
   url: '/',

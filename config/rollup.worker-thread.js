@@ -29,7 +29,9 @@ const ESModules = [
     },
     plugins: [
       babelPlugin(false, false),
-      MINIFY_BUNDLE_VALUE ? compiler() : null,
+      MINIFY_BUNDLE_VALUE ? compiler({
+        env: 'CUSTOM'
+      }) : null,
     ].filter(Boolean)
   }
 ];
@@ -45,7 +47,9 @@ const IIFEModules = [
     },
     plugins: [
       babelPlugin(true, false),
-      MINIFY_BUNDLE_VALUE ? compiler() : null,
+      MINIFY_BUNDLE_VALUE ? compiler({
+        env: 'CUSTOM'
+      }) : null,
     ].filter(Boolean)
   }
 ];
@@ -62,7 +66,9 @@ const debugModules = DEBUG_BUNDLE_VALUE ? [
     },
     plugins: [
       babelPlugin(false, true),
-      MINIFY_BUNDLE_VALUE ? compiler() : null,
+      MINIFY_BUNDLE_VALUE ? compiler({
+        env: 'CUSTOM'
+      }) : null,
     ].filter(Boolean)
   }
 ] : [];
