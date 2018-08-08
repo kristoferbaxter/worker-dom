@@ -28,7 +28,10 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      babelPlugin(false, false),
+      babelPlugin({
+        transpileToES5: false,
+        allowConsole: false,
+      }),
       MINIFY_BUNDLE_VALUE ? compiler({
         env: 'CUSTOM'
       }) : null,
@@ -46,7 +49,10 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
-      babelPlugin(true, false),
+      babelPlugin({
+        transpileToES5: true,
+        allowConsole: false,
+      }),
       MINIFY_BUNDLE_VALUE ? compiler({
         env: 'CUSTOM'
       }) : null,
@@ -65,7 +71,10 @@ const debugModules = DEBUG_BUNDLE_VALUE ? [
       outro: 'window.workerDocument = monkey.document;'
     },
     plugins: [
-      babelPlugin(false, true),
+      babelPlugin({
+        transpileToES5: false,
+        allowConsole: true,
+      }),
       MINIFY_BUNDLE_VALUE ? compiler({
         env: 'CUSTOM'
       }) : null,

@@ -18,10 +18,11 @@ import babel from 'rollup-plugin-babel';
 
 /**
  * Invoke Babel on source, with some configuration.
- * @param {boolean} transpileToES5 Should we transpile down to ES5 or features supported by `module` capable browsers?
- * @param {boolean} allowConsole Should we allow `console` methods in the output?
+ * @param {object} config, two keys transpileToES5, and allowConsole 
+ * - transpileToES5 Should we transpile down to ES5 or features supported by `module` capable browsers?
+ * - allowConsole Should we allow `console` methods in the output?
  */
-export function babelPlugin(transpileToES5, allowConsole = false) {
+export function babelPlugin({transpileToES5, allowConsole = false}) {
   const targets = transpileToES5 ? { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] } : { esmodules: true };
   const exclude = allowConsole ? ['error', 'warn', 'info', 'log', 'time', 'timeEnd'] : [];
 

@@ -28,7 +28,10 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
-      babelPlugin(false, false),
+      babelPlugin({
+        transpileToES5: false,
+        allowConsole: false,
+      }),
       MINIFY_BUNDLE_VALUE ? compiler() : null,
     ].filter(Boolean)
   },
@@ -41,7 +44,10 @@ const ESModules = [
     },
     plugins: [
       resolve(),
-      babelPlugin(false, false),
+      babelPlugin({
+        transpileToES5: false,
+        allowConsole: false,
+      }),
       MINIFY_BUNDLE_VALUE ? compiler() : null,
     ].filter(Boolean)
   }
@@ -57,7 +63,10 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
-      babelPlugin(true, false),
+      babelPlugin({
+        transpileToES5: true,
+        allowConsole: false,
+      }),
       MINIFY_BUNDLE_VALUE ? compiler() : null,
     ].filter(Boolean)
   },
@@ -71,7 +80,10 @@ const IIFEModules = [
     },
     plugins: [
       resolve(),
-      babelPlugin(true, false),
+      babelPlugin({
+        transpileToES5: true,
+        allowConsole: false,
+      }),
       MINIFY_BUNDLE_VALUE ? compiler() : null,
     ].filter(Boolean)
   }
@@ -87,7 +99,10 @@ const debugModules = DEBUG_BUNDLE_VALUE ? [
       sourcemap: true,
     },
     plugins: [
-      babelPlugin(false, true),
+      babelPlugin({
+        transpileToES5: false,
+        allowConsole: true,
+      }),
       MINIFY_BUNDLE_VALUE ? compiler() : null,
     ].filter(Boolean)
   }
