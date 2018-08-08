@@ -2,7 +2,7 @@
   "name": "worker-dom",
   "version": "0.0.1",
   "description": "A facsimile of a modern DOM implementation intended to run in a Web Worker.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/ampproject/worker-dom.git"
@@ -76,5 +76,13 @@
       "compression": "brotli",
       "maxSize": "7 kB"
     }
+  ],
+  "files": [
+    "index.mjs",
+    "index.sanitize.mjs",
+    "index.js",
+    "index.sanitize.js",
+    "worker.mjs",
+    "worker.js"
   ]
 }
