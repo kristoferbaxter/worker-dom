@@ -15,35 +15,16 @@
  */
 
 import babel from 'rollup-plugin-babel';
-import minify from '@ampproject/rollup-plugin-closure-compiler';
-import brotli from 'rollup-plugin-brotli';
-import gzip from 'rollup-plugin-gzip';
-import { path, DEBUG_BUNDLE_VALUE } from './rollup.utils.js';
 
-const BROTLI_CONFIG = {
-  options: {
-    mode: 0,
-    quality: 11,
-    lgwin: 22,
-    lgblock: 0,
-    disable_literal_context_modeling: false,
-    size_hint: 0,
-    large_window: false,
-    npostfix: 0,
-    ndirect: 0,
-  },
-  minSize: 0,
-};
-const GZIP_CONFIG = {
-  algorithm: 'zopfli',
-  options: {
-    numiterations: 1000,
-  },
-};
-
-export const babelPlugin = (esmodules, withSanitizer) => {
-  const targets = esmodules ? { esmodules: true } : { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] };
-  const exclude = DEBUG_BUNDLE_VALUE ? ['error', 'warn', 'info', 'log', 'time', 'timeEnd'] : [];
+/**
+ * Invoke Babel on source, with some configuration.
+ * @param {object} config, two keys transpileToES5, and allowConsole 
+ * - transpileToES5 Should we transpile down to ES5 or features supported by `module` capable browsers?
+ * - allowConsole Should we allow `console` methods in the output?
+ */
+export function babelPlugin({transpileToES5, allowConsole = false}) {
+  const targets = transpileToES5 ? { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] } : { esmodules: true };
+  const exclude = allowConsole ? ['error', 'warn', 'info', 'log', 'time', 'timeEnd'] : [];
 
   return babel({
     exclude: 'node_modules/**',
@@ -61,23 +42,6 @@ export const babelPlugin = (esmodules, withSanitizer) => {
       ['@babel/plugin-proposal-object-rest-spread'],
       ['@babel/proposal-class-properties'],
       ['babel-plugin-transform-remove-console', { exclude }],
-      [
-        'minify-replace',
-        {
-          replacements: [
-            {
-              identifierName: '__WORKER_DOM_URL__',
-              replacement: {
-                type: 'stringLiteral',
-                value: path(esmodules, false, withSanitizer, 'index'),
-              },
-            },
-          ],
-        },
-      ],
     ],
   });
 };
-export const minifyPlugin = _ => minify();
-export const brotliPlugin = _ => brotli(BROTLI_CONFIG);
-export const gzipPlugin = _ => gzip(GZIP_CONFIG);

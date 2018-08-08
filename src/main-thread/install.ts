@@ -20,14 +20,14 @@ import { createWorker } from './worker';
 import { MessageFromWorker, MessageType } from '../transfer/Messages';
 import { prepare as prepareNodes } from './nodes';
 
-export function install(baseElement: Element, sanitizer?: any): void {
+export function install(baseElement: Element, workerDOMUrl: string, sanitizer?: Sanitizer): void {
   const authorURL = baseElement.getAttribute('src');
   if (authorURL === null) {
     return;
   }
 
   // console.log(`creating worker, author code: ${authorURL}`);
-  createWorker(authorURL).then(worker => {
+  createWorker(workerDOMUrl, authorURL).then(worker => {
     if (worker === null) {
       return;
     }

@@ -16,13 +16,9 @@
 
 import { MessageToWorker } from '../transfer/Messages';
 
-// Supplied by Babel Transpilation
-// See: config/rollup.config.js
-declare var __WORKER_DOM_URL__: string;
-
 // TODO(KB): Fetch Polyfill for IE11.
-export function createWorker(authorScriptURL: string): Promise<Worker | null> {
-  return Promise.all([fetch(__WORKER_DOM_URL__).then(response => response.text()), fetch(authorScriptURL).then(response => response.text())])
+export function createWorker(workerDomURL: string, authorScriptURL: string): Promise<Worker | null> {
+  return Promise.all([fetch(workerDomURL).then(response => response.text()), fetch(authorScriptURL).then(response => response.text())])
     .then(([workerScript, authorScript]) => {
       // TODO(KB): Minify this output during build process.
       const keys: Array<string> = [];

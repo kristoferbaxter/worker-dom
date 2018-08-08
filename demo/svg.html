@@ -4,24 +4,28 @@
   <meta charset="utf-8" />
   <title>SVG</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="./build/esmodules/main-thread/index.module.js" type="module"></script>
-  <script src="./build/esmodules/main-thread/index.js" nomodule defer></script>
-  <!-- <script src="./build/esmodules/main-thread/index.js" defer></script> -->
+  <script src="./dist/index.mjs" type="module"></script>
+  <script src="./dist/index.js" nomodule defer></script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script src="./dist/index.js" defer></script> -->
 </head>
 <body>
   <div src="/svg/create.js" class="amp-script"><button>Add SVG</button></div>
   <script type="module">
-    import {upgradeElement} from './build/esmodules/main-thread/index.module.js';
-    upgradeElement(document.getElementsByClassName('amp-script')[0]);
+    import {upgradeElement} from './dist/index.mjs';
+    upgradeElement(document.getElementsByClassName('amp-script')[0], './dist/worker.mjs');
   </script>
   <script nomodule async=false defer>
     document.addEventListener('DOMContentLoaded', function() {
-      MainThread.upgradeElement(document.getElementsByClassName('amp-script')[0]);
+      MainThread.upgradeElement(document.getElementsByClassName('amp-script')[0], './dist/worker.js');
     }, false);
   </script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
   <!-- <script async=false defer>
     document.addEventListener('DOMContentLoaded', function() {
-      MainThread.upgradeElement(document.getElementsByClassName('amp-script')[0]);
+      MainThread.upgradeElement(document.getElementsByClassName('amp-script')[0], './dist/worker.js');
     }, false);
   </script> -->
 </body>

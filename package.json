@@ -14,14 +14,16 @@
   "author": "Kristofer Baxter",
   "license": "Apache-2.0",
   "scripts": {
-    "pretest": "rimraf src/output && tsc -p config/tsconfig.test.worker-thread.json & tsc -p config/tsconfig.test.json & tsc -p config/tsconfig.test.main-thread.json & wait",
-    "test": "ava -v src/output/test/**/*.js",
-    "pre~rollup": "rimraf src/output build && tsc -p config/tsconfig.build.worker-thread.json & tsc -p config/tsconfig.build.main-thread.json",
+    "pretest": "rimraf output && tsc -p config/tsconfig.test.worker-thread.json & tsc -p config/tsconfig.test.json & tsc -p config/tsconfig.test.main-thread.json & wait",
+    "test": "ava -v output/test/**/*.js",
+    "pre~rollup": "rimraf output dist && tsc -p config/tsconfig.build.worker-thread.json & tsc -p config/tsconfig.build.main-thread.json",
     "~rollup": "rollup --config config/rollup.config.js",
     "lint": "tslint -c config/tslint.json -p src/worker-thread/ & tslint -c config/tslint.json -p src/main-thread/",
     "debug": "DEBUG_BUNDLE=true yarn ~rollup && node -r esm demo/server.mjs",
-    "bundle:git-push": "MINIFY_BUNDLE=true yarn ~rollup",
-    "bundle": "MINIFY_BUNDLE=true COMPRESS_BUNDLE=true yarn ~rollup"
+    "build": "MINIFY_BUNDLE=true yarn ~rollup"
+  },
+  "dependencies": {
+    "dompurify": "1.0.7"
   },
   "devDependencies": {
     "@ampproject/rollup-plugin-closure-compiler": "0.6.1",
@@ -31,7 +33,6 @@
     "@babel/plugin-proposal-object-rest-spread": "v7.0.0-beta.56",
     "@babel/preset-env": "v7.0.0-beta.56",
     "ava": "0.25.0",
-    "babel-plugin-minify-replace": "0.4.3",
     "babel-plugin-transform-remove-console": "6.9.4",
     "bundlesize": "0.17.0",
     "esm": "3.0.74",
@@ -42,8 +43,6 @@
     "rimraf": "2.6.2",
     "rollup": "0.63.5",
     "rollup-plugin-babel": "4.0.0-beta.7",
-    "rollup-plugin-brotli": "1.1.0",
-    "rollup-plugin-gzip": "2.0.0",
     "rollup-plugin-node-resolve": "3.3.0",
     "serve-static": "1.13.2",
     "tslint": "5.11.0",
@@ -58,32 +57,24 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "pre-push": "yarn test; yarn bundle:git-push; yarn bundlesize"
+      "pre-push": "yarn test; yarn build; yarn bundlesize"
     }
   },
   "bundlesize": [
     {
-      "path": "./build/esmodules/index.module.js",
+      "path": "./dist/worker.mjs",
       "compression": "brotli",
       "maxSize": "6 kB"
     },
     {
-      "path": "./build/esmodules/index.module.sanitizer.js",
-      "compression": "brotli",
-      "maxSize": "6 kB"
-    },
-    {
-      "path": "./build/esmodules/main-thread/index.module.js",
+      "path": "./dist/index.mjs",
       "compression": "brotli",
       "maxSize": "2 kB"
     },
     {
-      "path": "./build/esmodules/main-thread/index.module.sanitizer.js",
+      "path": "./dist/index.sanitize.mjs",
       "compression": "brotli",
       "maxSize": "7 kB"
     }
-  ],
-  "dependencies": {
-    "dompurify": "1.0.7"
-  }
+  ]
 }

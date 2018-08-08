@@ -100,12 +100,12 @@ export class Document extends Element {
 }
 
 export const document = (() => {
-  const document = new Document();
-  document.isConnected = true;
-  document.appendChild((document.body = document.createElement('body')));
-  observeMutations(document);
+  const doc = new Document();
+  doc.isConnected = true;
+  doc.appendChild((doc.body = doc.createElement('body')));
+  observeMutations(doc);
   propagateEvents();
   propagateSyncValues();
 
-  return document;
+  return doc;
 })();
