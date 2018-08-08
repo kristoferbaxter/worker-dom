@@ -18,6 +18,9 @@ import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import {babelPlugin} from './rollup.plugins.js';
 import {MINIFY_BUNDLE_VALUE, DEBUG_BUNDLE_VALUE} from './rollup.utils.js';
 
+// Workers do not natively support ES Modules containing `import` or `export` statments.
+// So, here we continue to use the '.mjs' extension to indicate newer ECMASCRIPT support
+// but ensure the code can be run within a worker by putting it inside a named iife.
 const ESModules = [
   {
     input: 'output/worker-thread/index.js',
