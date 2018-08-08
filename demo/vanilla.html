@@ -14,7 +14,10 @@
   </style>
   <script src="./dist/index.mjs" type="module"></script>
   <script src="./dist/index.js" nomodule defer></script>
-  <!-- <script src="./dist/index.js" defer></script> --></head>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
+  <!-- <script src="./dist/index.js" defer></script> -->
+</head>
 <body>
   <div src="author-vanilla.js" class="amp-script"><div>Hello World!<span>spaner</span><input /></div></div>
   <script type="module">
@@ -26,6 +29,8 @@
       MainThread.upgradeElement(document.getElementsByClassName('amp-script')[0], './dist/worker.js');
     }, false);
   </script>
+  <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
+  <!-- Comment either block to enable module/nomodule or disable it. -->
   <!-- <script async=false defer>
     document.addEventListener('DOMContentLoaded', function() {
       MainThread.upgradeElement(document.getElementsByClassName('amp-script')[0], './dist/worker.js');
