@@ -99,7 +99,7 @@ export class Document extends Element {
   }
 }
 
-export const singleton = (() => {
+export const document = (() => {
   const doc = new Document();
   doc.isConnected = true;
   doc.appendChild((doc.body = doc.createElement('body')));
