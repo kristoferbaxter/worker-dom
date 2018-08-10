@@ -19,7 +19,7 @@ import { DOMTokenList } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate } from './Attr';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { TransferredNode, TransferrableElement } from '../../transfer/TransferrableNodes';
+import { TransferredNode, TransferrableElement, TransferrableHydrateableElement } from '../../transfer/TransferrableNodes';
 import { NumericBoolean } from '../../utils';
 import { Text } from './Text';
 import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
@@ -345,27 +345,37 @@ export class Element extends Node {
     return matchChildrenElements(this, tagName === '*' ? _ => true : element => element.tagName === tagName);
   }
 
-  public serialize(): TransferrableElement | TransferredNode {
-    if (this._transferred_ !== null) {
-      return this._transferred_;
-    }
-
-    Promise.resolve().then(_ => {
-      // After transmission of the current unsanitized form across a message, we can start to send the more compressed format.
-      this._transferred_ = {
-        [TransferrableKeys._index_]: this._index_,
-        [TransferrableKeys.transferred]: NumericBoolean.TRUE,
-      };
-    });
+  public hydrate(): TransferrableHydrateableElement {
     return {
       [TransferrableKeys._index_]: this._index_,
       [TransferrableKeys.transferred]: NumericBoolean.FALSE,
       [TransferrableKeys.nodeType]: this.nodeType,
       [TransferrableKeys.nodeName]: this.nodeName,
-      [TransferrableKeys.attributes]: this.attributes,
-      [TransferrableKeys.namespaceURI]: this.namespaceURI,
-      [TransferrableKeys.childNodes]: this.childNodes.map(childNode => childNode.serialize()),
+      [TransferrableKeys.attributes]: this.attributes.map(attribute => ({ [attribute.name]: attribute.value })),
+      [TransferrableKeys.namespaceURI]: this.namespaceURI === null ? undefined : this.namespaceURI,
+      [TransferrableKeys.childNodes]: this.childNodes.map(childNode => childNode.hydrate()),
     };
+  }
+
+  public serialize(): TransferrableElement | TransferredNode {
+    if (this._transferred_ !== null) {
+      return this._transferred_;
+    }
+
+    // After the first transmission of an element in a Mutation, we can refer to it by index alone.
+    this._transferred_ = {
+      [TransferrableKeys._index_]: this._index_,
+      [TransferrableKeys.transferred]: NumericBoolean.TRUE,
+    };
+    return {
+      [TransferrableKeys._index_]: this._index_,
+      [TransferrableKeys.transferred]: NumericBoolean.FALSE,
+      [TransferrableKeys.nodeType]: this.nodeType,
+      [TransferrableKeys.nodeName]: this.nodeName,
+      [TransferrableKeys.attributes]: this.attributes.map(attribute => ({ [attribute.name]: attribute.value })),
+      [TransferrableKeys.namespaceURI]: this.namespaceURI === null ? undefined : this.namespaceURI,
+      [TransferrableKeys.childNodes]: this.childNodes.map(childNode => childNode._index_),
+    } as TransferrableElement;
   }
 }
 reflectProperties([{ id: [''] }], Element);

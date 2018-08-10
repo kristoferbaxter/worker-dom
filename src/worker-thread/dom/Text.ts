@@ -72,18 +72,25 @@ export class Text extends CharacterData {
     return remainderTextNode;
   }
 
+  public hydrate(): TransferrableText {
+    return {
+      [TransferrableKeys._index_]: this._index_,
+      [TransferrableKeys.transferred]: NumericBoolean.FALSE,
+      [TransferrableKeys.nodeType]: this.nodeType,
+      [TransferrableKeys.nodeName]: this.nodeName,
+      [TransferrableKeys.textContent]: this.nodeValue,
+    };
+  }
+
   public serialize(): TransferrableText | TransferredNode {
     if (this._transferred_ !== null) {
       return this._transferred_;
     }
 
-    Promise.resolve().then(_ => {
-      // After transmission of the current unsanitized form across a message, we can start to send the more compressed format.
-      this._transferred_ = {
-        [TransferrableKeys._index_]: this._index_,
-        [TransferrableKeys.transferred]: NumericBoolean.TRUE,
-      };
-    });
+    this._transferred_ = {
+      [TransferrableKeys._index_]: this._index_,
+      [TransferrableKeys.transferred]: NumericBoolean.TRUE,
+    };
     return {
       [TransferrableKeys._index_]: this._index_,
       [TransferrableKeys.transferred]: NumericBoolean.FALSE,

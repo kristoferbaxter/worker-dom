@@ -19,7 +19,8 @@
     "pre~rollup": "rimraf output dist && tsc -p config/tsconfig.build.worker-thread.json & tsc -p config/tsconfig.build.main-thread.json",
     "~rollup": "rollup --config config/rollup.config.js",
     "lint": "tslint -c config/tslint.json -p src/worker-thread/ & tslint -c config/tslint.json -p src/main-thread/",
-    "debug": "DEBUG_BUNDLE=true yarn ~rollup && node -r esm demo/server.mjs",
+    "predebug": "DEBUG_BUNDLE=true yarn ~rollup",
+    "debug": "node -r esm demo/server.mjs",
     "build": "MINIFY_BUNDLE=true yarn ~rollup"
   },
   "dependencies": {

@@ -19,7 +19,7 @@ import { Event, EventHandler } from '../Event';
 import { toLower } from '../../utils';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { TransferredNode, TransferrableNode } from '../../transfer/TransferrableNodes';
+import { TransferredNode, TransferrableNode, TransferrableHydrateableNode } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 export const enum NodeType {
@@ -73,6 +73,7 @@ export abstract class Node {
     [index: string]: EventHandler[];
   } = {};
   public abstract serialize(): TransferrableNode | TransferredNode;
+  public abstract hydrate(): TransferrableHydrateableNode;
 
   constructor(nodeType: NodeType, nodeName: NodeName) {
     this.nodeType = nodeType;
@@ -268,6 +269,8 @@ export abstract class Node {
       child.parentNode = null;
       propagate(child, 'isConnected', false);
       this.childNodes.splice(index, 1);
+      this._transferred_ = null;
+
       mutate({
         removedNodes: [child],
         type: MutationRecordType.CHILD_LIST,
@@ -294,6 +297,8 @@ export abstract class Node {
         oldChild.parentNode = null;
         propagate(oldChild, 'isConnected', false);
         this.childNodes.splice(index, 1, newChild);
+        oldChild._transferred_ = null;
+
         mutate({
           addedNodes: [newChild],
           removedNodes: [oldChild],

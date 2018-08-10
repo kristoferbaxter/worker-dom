@@ -16,7 +16,7 @@
 
 import { TransferrableNode, TransferrableText, TransferrableElement } from '../transfer/TransferrableNodes';
 import { RenderableElement } from './RenderableElement';
-import { NumericBoolean } from '../utils';
+// import { NumericBoolean } from '../utils';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { NodeType } from '../worker-thread/dom/Node';
 
@@ -57,11 +57,11 @@ export function createNode(skeleton: TransferrableNode): RenderableElement {
   // skeleton.properties.forEach(property => {
   //   node[`${property.name}`] = property.value;
   // });
-  ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).forEach(childNode => {
-    if (childNode[TransferrableKeys.transferred] === NumericBoolean.FALSE) {
-      node.appendChild(createNode(childNode as TransferrableNode));
-    }
-  });
+  // ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).forEach(childNode => {
+  //   if (childNode[TransferrableKeys.transferred] === NumericBoolean.FALSE) {
+  //     node.appendChild(createNode(childNode as TransferrableNode));
+  //   }
+  // });
 
   storeNode(node, skeleton[TransferrableKeys._index_]);
   return node as RenderableElement;

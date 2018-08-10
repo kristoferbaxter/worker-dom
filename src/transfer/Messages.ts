@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { TransferrableEvent } from './TransferrableEvent';
-import { TransferrableMutationRecord } from './TransferrableRecord';
+import { TransferrableEvent, TransferrableEventSubscriptionChange } from './TransferrableEvent';
+import { TransferrableMutationRecord, TransferrableHydrationRecord } from './TransferrableRecord';
 import { TransferrableSyncValue } from './TransferrableSyncValue';
 import { TransferrableKeys } from './TransferrableKeys';
 
@@ -31,12 +31,17 @@ export const enum MessageType {
   // NAVIGATION_POP_STATE = 7,
 }
 
+export interface HydrationFromWorker {
+  type: MessageType.HYDRATE;
+  hydration: TransferrableHydrationRecord;
+  events: TransferrableEventSubscriptionChange[];
+}
 export interface MutationFromWorker {
-  type: MessageType.HYDRATE | MessageType.MUTATE;
+  type: MessageType.MUTATE;
   mutations: TransferrableMutationRecord[];
 }
 export interface MessageFromWorker {
-  data: MutationFromWorker;
+  data: HydrationFromWorker | MutationFromWorker;
 }
 
 export interface EventToWorker {

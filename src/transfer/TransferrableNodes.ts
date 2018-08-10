@@ -19,20 +19,25 @@ import { NumericBoolean } from '../utils';
 import { TransferrableKeys } from './TransferrableKeys';
 
 export type TransferrableNode = TransferrableElement | TransferrableText;
+export type TransferrableHydrateableNode = TransferrableHydrateableElement | TransferrableText;
 
+type TransferrableKeyValues = Array<{ [index: string]: string }>;
+export interface TransferrableHydrateableElement extends TransferredNode {
+  readonly [TransferrableKeys.nodeType]: NodeType;
+  readonly [TransferrableKeys.nodeName]: NodeName;
+  readonly [TransferrableKeys.attributes]?: TransferrableKeyValues;
+  readonly [TransferrableKeys.properties]?: TransferrableKeyValues;
+  readonly [TransferrableKeys.namespaceURI]?: string;
+  readonly [TransferrableKeys.childNodes]?: Array<TransferrableHydrateableElement | TransferrableText>;
+}
 export interface TransferrableElement extends TransferredNode {
   readonly [TransferrableKeys.nodeType]: NodeType;
   readonly [TransferrableKeys.nodeName]: NodeName;
-  readonly [TransferrableKeys.attributes]?: Array<{
-    [index: string]: string;
-  }>;
-  readonly [TransferrableKeys.properties]?: Array<{
-    [index: string]: string;
-  }>;
-  readonly [TransferrableKeys.childNodes]?: Array<TransferrableElement>;
+  readonly [TransferrableKeys.attributes]?: TransferrableKeyValues;
+  readonly [TransferrableKeys.properties]?: TransferrableKeyValues;
   readonly [TransferrableKeys.namespaceURI]?: string;
+  readonly [TransferrableKeys.childNodes]?: Array<number>;
 }
-
 export interface TransferrableText extends TransferredNode {
   readonly [TransferrableKeys.nodeType]: NodeType;
   readonly [TransferrableKeys.nodeName]: NodeName;

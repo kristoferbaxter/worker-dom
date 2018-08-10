@@ -89,9 +89,6 @@ const mutators: {
       }
     }
   },
-  [MutationRecordType.COMMAND](mutation: TransferrableMutationRecord) {
-    process(worker, mutation);
-  },
 };
 
 /**
@@ -122,7 +119,18 @@ export function mutate(mutations: TransferrableMutationRecord[], sanitizer?: San
  */
 function syncFlush(sanitizer?: Sanitizer): void {
   const length = MUTATION_QUEUE.length;
-  MUTATION_QUEUE.forEach(mutation => mutators[mutation[TransferrableKeys.type]](mutation, sanitizer));
+  const commands: TransferrableMutationRecord[] = [];
+  MUTATION_QUEUE.forEach(mutation => {
+    if (mutation[TransferrableKeys.type] === MutationRecordType.COMMAND) {
+      commands.push(mutation);
+    } else {
+      mutators[mutation[TransferrableKeys.type]](mutation, sanitizer);
+    }
+  });
+  // Processing order matters.
+  // For instance, Element.addEventListener requires the Element to exist first.
+  // Commands pass only the identifier for an element, and identifiers are stored in the main thread after the elements are created.
+  commands.forEach(command => process(worker, command));
 
   MUTATION_QUEUE.splice(0, length);
   PENDING_MUTATIONS = false;

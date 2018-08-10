@@ -63,7 +63,7 @@ const fireValueChange = (worker: Worker, node: RenderableElement): void => {
  * @param _index_ node index the event comes from (used to dispatchEvent in worker thread).
  * @return eventHandler function consuming event and dispatching to worker thread
  */
-const eventHandler = (worker: Worker, _index_: number) => (event: Event): void => {
+const eventHandler = (worker: Worker, _index_: number) => (event: Event | KeyboardEvent): void => {
   if (shouldTrackChanges(event.currentTarget as HTMLElement)) {
     fireValueChange(worker, event.currentTarget as RenderableElement);
   }
@@ -88,6 +88,7 @@ const eventHandler = (worker: Worker, _index_: number) => (event: Event): void =
       },
       [TransferrableKeys.timeStamp]: event.timeStamp,
       [TransferrableKeys.type]: event.type,
+      [TransferrableKeys.keyCode]: 'keyCode' in event ? event.keyCode : undefined,
     },
   });
 };

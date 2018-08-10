@@ -15,8 +15,8 @@
  */
 
 import { getNode, storeNode } from './nodes';
-import { TransferrableElement, TransferrableText, TransferrableNode } from '../transfer/TransferrableNodes';
-import { NodeType } from '../worker-thread/dom/Node';
+import { TransferrableText, TransferrableNode } from '../transfer/TransferrableNodes';
+// import { NodeType } from '../worker-thread/dom/Node';
 import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { RenderableElement } from './RenderableElement';
 import { NumericBoolean } from '../utils';
@@ -24,12 +24,11 @@ import { process, applyDefaultChangeListener } from './command';
 import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
-const allTextNodes = (nodes: NodeList | Array<TransferrableElement>): boolean =>
-  nodes.length > 0 &&
-  [].every.call(
-    nodes,
-    (node: Node | TransferrableElement): boolean => ('nodeType' in node ? node.nodeType : node[TransferrableKeys.nodeType]) === NodeType.TEXT_NODE,
-  );
+// const allTextNodes = (nodes: NodeList | Array<TransferrableElement>): boolean =>
+//   nodes.length > 0 && [].every.call(nodes, (node: Node | TransferrableElement): boolean => ('nodeType' in node ? node.nodeType : node[TransferrableKeys.nodeType]) === NodeType.TEXT_NODE);
+
+// const isEmptyTextNode = (transferrableNode: TransferrableElement): boolean =>
+//   (transferrableNode as TransferrableText)[TransferrableKeys.nodeType] === NodeType.TEXT_NODE && (transferrableNode as TransferrableText)[TransferrableKeys.textContent] === '';
 
 /**
  * Process MutationRecord from worker thread by comparing it versus the current DOM.
@@ -75,9 +74,18 @@ function hydrateElement(node: RenderableElement, skeleton: TransferrableNode, ba
   // Primary Case: `<form><input><button onClick={function(){console.log(input.value)}} /></form>`
   applyDefaultChangeListener(worker, node);
 
-  ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).forEach(
-    (childNode: TransferrableNode, index: number): void => hydrateNode(node.childNodes[index], childNode, baseElement, worker),
-  );
+  // ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).forEach(
+  //   (childNode: TransferrableNode, index: number): void => {
+  //     if (node.childNodes[index]) {
+  //       hydrateNode(node.childNodes[index], childNode, baseElement, worker);
+  //     } else if (isEmptyTextNode(childNode)) {
+  //       // Many frameworks use an empty text node to denote where additional nodes will go in the dom later.
+  //       const text = document.createTextNode((childNode as TransferrableText)[TransferrableKeys.textContent]);
+  //       node.appendChild(text);
+  //       storeNode(text as RenderableElement, childNode[TransferrableKeys._index_]);
+  //     }
+  //   },
+  // );
 }
 
 /**
@@ -87,38 +95,34 @@ function hydrateElement(node: RenderableElement, skeleton: TransferrableNode, ba
  * @param skeleton Skeleton Node representation created by WorkerDOM and transmitted across threads.
  */
 function hydrateNode(node: Node, skeleton: TransferrableNode, baseElement: Element, worker: Worker): void {
-  if (node.childNodes.length !== ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).length) {
-    // A limited number of cases when the number of childNodes doesn't match is allowable.
-    if (allTextNodes(node.childNodes)) {
-      if ((skeleton as TransferrableText)[TransferrableKeys.textContent]) {
-        // Node with textContent but represented in SSR as Node.childNodes = [Text]
-        node.textContent = (skeleton as TransferrableText)[TransferrableKeys.textContent];
-        storeNode(node as RenderableElement, skeleton[TransferrableKeys._index_]);
-      } else if (allTextNodes((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || [])) {
-        // Node with single textContent represented by multiple Text siblings.
-        // Some frameworks will create multiple Text nodes for a string, since it means they can update specific segments by direct reference.
-        // Hello, {name} => [Text('Hello, '), Text('user')]... Node.childNodes[1].textContent = 'another user';
-        node.removeChild(node.childNodes[0]);
-        ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).forEach(skeletonChild => {
-          const skeletonText = document.createTextNode((skeletonChild as TransferrableText)[TransferrableKeys.textContent]);
-          node.appendChild(skeletonText);
-          storeNode(skeletonText as RenderableElement, skeleton[TransferrableKeys._index_]);
-        });
-      }
-      return;
-    }
+  // if ((node.childNodes || []).length !== ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).length) {
+  //   // A limited number of cases when the number of childNodes doesn't match is allowable.
+  //   if (allTextNodes(node.childNodes)) {
+  //     if ((skeleton as TransferrableText)[TransferrableKeys.textContent]) {
+  //       // Node with textContent but represented in SSR as Node.childNodes = [Text]
+  //       node.textContent = (skeleton as TransferrableText)[TransferrableKeys.textContent];
+  //       storeNode(node as RenderableElement, skeleton[TransferrableKeys._index_]);
+  //     } else if (allTextNodes((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || [])) {
+  //       // Node with single textContent represented by multiple Text siblings.
+  //       // Some frameworks will create multiple Text nodes for a string, since it means they can update specific segments by direct reference.
+  //       // Hello, {name} => [Text('Hello, '), Text('user')]... Node.childNodes[1].textContent = 'another user';
+  //       node.removeChild(node.childNodes[0]);
+  //       ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).forEach(skeletonChild => {
+  //         const skeletonText = document.createTextNode((skeletonChild as TransferrableText)[TransferrableKeys.textContent]);
+  //         node.appendChild(skeletonText);
+  //         storeNode(skeletonText as RenderableElement, skeleton[TransferrableKeys._index_]);
+  //       });
+  //     }
+  //     return;
+  //   }
 
-    const validSkeletonChildren: Array<TransferrableNode> = ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).filter(
-      childNode =>
-        !(
-          (childNode as TransferrableText)[TransferrableKeys.nodeType] === NodeType.TEXT_NODE &&
-          (childNode as TransferrableText)[TransferrableKeys.textContent] === ''
-        ),
-    );
-    if (validSkeletonChildren.length === node.childNodes.length) {
-      hydrateElement(node as RenderableElement, skeleton, baseElement, worker);
-    }
-  } else {
-    hydrateElement(node as RenderableElement, skeleton, baseElement, worker);
-  }
+  //   const validSkeletonChildren: Array<TransferrableNode> = ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).filter(
+  //     childNode => !(isEmptyTextNode(childNode)),
+  //   );
+  //   if (validSkeletonChildren.length === node.childNodes.length) {
+  //     hydrateElement(node as RenderableElement, skeleton, baseElement, worker);
+  //   }
+  // } else {
+  hydrateElement(node as RenderableElement, skeleton, baseElement, worker);
+  // }
 }
