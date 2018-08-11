@@ -30,9 +30,9 @@ export function prepareMutate(passedWorker: Worker): void {
 }
 
 const mutators: {
-  [key: number]: (mutation: TransferrableMutationRecord, sanitizer?: Sanitizer) => boolean;
+  [key: number]: (mutation: TransferrableMutationRecord, sanitizer?: Sanitizer) => void;
 } = {
-  [MutationRecordType.CHILD_LIST](mutation: TransferrableMutationRecord, sanitizer: Sanitizer): boolean {
+  [MutationRecordType.CHILD_LIST](mutation: TransferrableMutationRecord, sanitizer: Sanitizer) {
     const parent = getNode(mutation[TransferrableKeys.target]);
 
     (mutation[TransferrableKeys.removedNodes] || []).forEach(node => getNode(node[TransferrableKeys._index_]).remove());
@@ -51,12 +51,10 @@ const mutators: {
         if (parent) {
           parent.insertBefore(newChild, (nextSibling && getNode(nextSibling[TransferrableKeys._index_])) || null);
         }
-        return false;
       });
     }
-    return true;
   },
-  [MutationRecordType.ATTRIBUTES](mutation: TransferrableMutationRecord, sanitizer?: Sanitizer): boolean {
+  [MutationRecordType.ATTRIBUTES](mutation: TransferrableMutationRecord, sanitizer?: Sanitizer) {
     const attributeName = mutation[TransferrableKeys.attributeName];
     const value = mutation[TransferrableKeys.value];
     if (attributeName != null && value != null) {
@@ -65,20 +63,17 @@ const mutators: {
         node.setAttribute(attributeName, value);
       } else {
         // TODO(choumx): Inform worker?
-        return false;
       }
     }
-    return true;
   },
-  [MutationRecordType.CHARACTER_DATA](mutation: TransferrableMutationRecord, sanitizer?: Sanitizer): boolean {
+  [MutationRecordType.CHARACTER_DATA](mutation: TransferrableMutationRecord, sanitizer?: Sanitizer) {
     const value = mutation[TransferrableKeys.value];
     if (value) {
       // Sanitization not necessary for textContent.
       getNode(mutation[TransferrableKeys.target]).textContent = value;
     }
-    return true;
   },
-  [MutationRecordType.PROPERTIES](mutation: TransferrableMutationRecord, sanitizer?: Sanitizer): boolean {
+  [MutationRecordType.PROPERTIES](mutation: TransferrableMutationRecord, sanitizer?: Sanitizer) {
     const propertyName = mutation[TransferrableKeys.propertyName];
     const value = mutation[TransferrableKeys.value];
     if (propertyName && value) {
@@ -87,10 +82,8 @@ const mutators: {
         node[propertyName] = value;
       } else {
         // TODO(choumx): Inform worker?
-        return false;
       }
     }
-    return true;
   },
 };
 
