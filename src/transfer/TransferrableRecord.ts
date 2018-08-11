@@ -42,5 +42,5 @@ export interface TransferrableMutationRecord {
 }
 
 export interface TransferrableHydrationRecord {
-  readonly [TransferrableKeys.addedNodes]: Array<TransferrableHydrateableNode>;
+  readonly [TransferrableKeys.addedNodes]: TransferrableHydrateableNode;
 }

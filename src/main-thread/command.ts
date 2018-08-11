@@ -100,24 +100,34 @@ const eventHandler = (worker: Worker, _index_: number) => (event: Event | Keyboa
  * @param mutation mutation record containing commands to execute.
  */
 export function process(worker: Worker, mutation: TransferrableMutationRecord): void {
-  const index: number = mutation[TransferrableKeys.target][TransferrableKeys._index_];
-  const target = getNode(index) as HTMLElement;
-  const shouldTrack: boolean = shouldTrackChanges(target);
-  let changeEventSubscribed: boolean = target.onchange !== null;
+  const _index_: number = mutation[TransferrableKeys.target];
+  const target = getNode(_index_);
 
   (mutation[TransferrableKeys.removedEvents] || []).forEach(eventSub => {
-    if (eventSub[TransferrableKeys.type] === 'change') {
-      changeEventSubscribed = false;
-    }
-    target.removeEventListener(eventSub[TransferrableKeys.type], KNOWN_LISTENERS[eventSub[TransferrableKeys.index]]);
+    processListenerChange(worker, target, false, eventSub[TransferrableKeys.type], eventSub[TransferrableKeys.index]);
   });
   (mutation[TransferrableKeys.addedEvents] || []).forEach(eventSub => {
-    if (eventSub[TransferrableKeys.type] === 'change') {
+    processListenerChange(worker, target, true, eventSub[TransferrableKeys.type], eventSub[TransferrableKeys.index]);
+  });
+}
+
+export function processListenerChange(worker: Worker, target: RenderableElement, addEvent: boolean, type: string, index: number): void {
+  let changeEventSubscribed: boolean = target.onchange !== null;
+  const shouldTrack: boolean = shouldTrackChanges(target as HTMLElement);
+  const isChangeEvent = type === 'change';
+
+  if (addEvent) {
+    if (isChangeEvent) {
       changeEventSubscribed = true;
       target.onchange = null;
     }
-    target.addEventListener(eventSub[TransferrableKeys.type], (KNOWN_LISTENERS[eventSub[TransferrableKeys.index]] = eventHandler(worker, index)));
-  });
+    (target as HTMLElement).addEventListener(type, (KNOWN_LISTENERS[index] = eventHandler(worker, target._index_)));
+  } else {
+    if (isChangeEvent) {
+      changeEventSubscribed = false;
+    }
+    (target as HTMLElement).removeEventListener(type, KNOWN_LISTENERS[index]);
+  }
   if (shouldTrack && !changeEventSubscribed) {
     applyDefaultChangeListener(worker, target as RenderableElement);
   }

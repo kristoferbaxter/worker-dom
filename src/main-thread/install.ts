@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { hydrate } from './hydrate';
-import { prepareMutate, mutate } from './mutate';
+import { hydrate } from './hydrator';
+import { prepareMutate, mutate } from './mutator';
 import { createWorker } from './worker';
 import { MessageFromWorker, MessageType } from '../transfer/Messages';
 import { prepare as prepareNodes } from './nodes';
 
-export function install(baseElement: Element, workerDOMUrl: string, sanitizer?: Sanitizer): void {
+export function install(baseElement: HTMLElement, workerDOMUrl: string, sanitizer?: Sanitizer): void {
   const authorURL = baseElement.getAttribute('src');
   if (authorURL === null) {
     return;
@@ -39,7 +39,7 @@ export function install(baseElement: Element, workerDOMUrl: string, sanitizer?: 
       switch (data.type) {
         case MessageType.HYDRATE:
           // console.info(`hydration from worker: ${data.type}`, data.mutations);
-          hydrate(data.mutations, baseElement, worker);
+          hydrate(data.hydration, data.events, baseElement, worker);
           break;
         case MessageType.MUTATE:
           // console.info(`mutation from worker: ${data.type}`, data.mutations);

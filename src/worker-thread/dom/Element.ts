@@ -349,7 +349,7 @@ export class Element extends Node {
     return {
       [TransferrableKeys._index_]: this._index_,
       [TransferrableKeys.transferred]: NumericBoolean.FALSE,
-      [TransferrableKeys.nodeType]: this.nodeType,
+      [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
       [TransferrableKeys.nodeName]: this.nodeName,
       [TransferrableKeys.attributes]: this.attributes.map(attribute => ({ [attribute.name]: attribute.value })),
       [TransferrableKeys.namespaceURI]: this.namespaceURI === null ? undefined : this.namespaceURI,

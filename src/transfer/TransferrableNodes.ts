@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { NodeType, NodeName } from '../worker-thread/dom/Node';
+import { NodeType, NodeName, ElementNodeType } from '../worker-thread/dom/Node';
 import { NumericBoolean } from '../utils';
 import { TransferrableKeys } from './TransferrableKeys';
 
@@ -23,7 +23,7 @@ export type TransferrableHydrateableNode = TransferrableHydrateableElement | Tra
 
 type TransferrableKeyValues = Array<{ [index: string]: string }>;
 export interface TransferrableHydrateableElement extends TransferredNode {
-  readonly [TransferrableKeys.nodeType]: NodeType;
+  readonly [TransferrableKeys.nodeType]: ElementNodeType;
   readonly [TransferrableKeys.nodeName]: NodeName;
   readonly [TransferrableKeys.attributes]?: TransferrableKeyValues;
   readonly [TransferrableKeys.properties]?: TransferrableKeyValues;
@@ -31,7 +31,7 @@ export interface TransferrableHydrateableElement extends TransferredNode {
   readonly [TransferrableKeys.childNodes]?: Array<TransferrableHydrateableElement | TransferrableText>;
 }
 export interface TransferrableElement extends TransferredNode {
-  readonly [TransferrableKeys.nodeType]: NodeType;
+  readonly [TransferrableKeys.nodeType]: ElementNodeType;
   readonly [TransferrableKeys.nodeName]: NodeName;
   readonly [TransferrableKeys.attributes]?: TransferrableKeyValues;
   readonly [TransferrableKeys.properties]?: TransferrableKeyValues;
@@ -39,7 +39,7 @@ export interface TransferrableElement extends TransferredNode {
   readonly [TransferrableKeys.childNodes]?: Array<number>;
 }
 export interface TransferrableText extends TransferredNode {
-  readonly [TransferrableKeys.nodeType]: NodeType;
+  readonly [TransferrableKeys.nodeType]: NodeType.TEXT_NODE;
   readonly [TransferrableKeys.nodeName]: NodeName;
   readonly [TransferrableKeys.textContent]: string;
 }

@@ -37,6 +37,7 @@ export const enum NodeType {
   // Note: DOCUMENT_FRAGMENT_NODE is not supported in this implementation yet.
   NOTATION_NODE = 12,
 }
+export type ElementNodeType = NodeType.ELEMENT_NODE | NodeType.DOCUMENT_NODE | NodeType.DOCUMENT_TYPE_NODE;
 export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
 export type NamespaceURI = string | null;
 

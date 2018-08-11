@@ -45,6 +45,12 @@ export interface TransferrableEventSubscriptionChange {
   readonly [TransferrableKeys.index]: number;
 }
 
+export interface TransferrableHydrationEventSubsciption {
+  readonly [TransferrableKeys.type]: string;
+  readonly [TransferrableKeys._index_]: number;
+  readonly [TransferrableKeys.index]: number;
+}
+
 /**
  * When an event is dispatched from the main thread, it needs to be propagated in the worker thread.
  * Propagate adds an event listener to the worker global scope and uses the WorkerDOM Node.dispatchEvent
@@ -59,6 +65,7 @@ export function propagate(): void {
 
       const event = data[TransferrableKeys.event] as TransferrableEvent;
       const node = get(event[TransferrableKeys._index_]);
+      // debugger;
       if (node !== null) {
         const target = event[TransferrableKeys.target];
         node.dispatchEvent(

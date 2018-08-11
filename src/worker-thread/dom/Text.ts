@@ -76,7 +76,7 @@ export class Text extends CharacterData {
     return {
       [TransferrableKeys._index_]: this._index_,
       [TransferrableKeys.transferred]: NumericBoolean.FALSE,
-      [TransferrableKeys.nodeType]: this.nodeType,
+      [TransferrableKeys.nodeType]: NodeType.TEXT_NODE,
       [TransferrableKeys.nodeName]: this.nodeName,
       [TransferrableKeys.textContent]: this.nodeValue,
     };
@@ -94,7 +94,7 @@ export class Text extends CharacterData {
     return {
       [TransferrableKeys._index_]: this._index_,
       [TransferrableKeys.transferred]: NumericBoolean.FALSE,
-      [TransferrableKeys.nodeType]: this.nodeType,
+      [TransferrableKeys.nodeType]: NodeType.TEXT_NODE,
       [TransferrableKeys.nodeName]: this.nodeName,
       [TransferrableKeys.textContent]: this.nodeValue,
     };

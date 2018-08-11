@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { TransferrableNode, TransferrableText, TransferrableElement } from '../transfer/TransferrableNodes';
+import { TransferrableNode, TransferrableText, TransferrableElement, TransferrableHydrateableNode } from '../transfer/TransferrableNodes';
 import { RenderableElement } from './RenderableElement';
 // import { NumericBoolean } from '../utils';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
@@ -28,6 +28,10 @@ export function prepare(baseElement: Element): void {
   BASE_ELEMENT = baseElement as HTMLElement;
 }
 
+export function isTextNode(node: Node | TransferrableHydrateableNode | TransferrableNode): boolean {
+  return ('nodeType' in node ? node.nodeType : node[TransferrableKeys.nodeType]) === NodeType.TEXT_NODE;
+}
+
 /**
  * Create a real DOM Node from a skeleton Object (`{ nodeType, nodeName, attributes, children, data }`)
  * @example <caption>Text node</caption>
@@ -35,7 +39,7 @@ export function prepare(baseElement: Element): void {
  * @example <caption>Element node</caption>
  *   createNode({ nodeType:1, nodeName:'div', attributes:[{ name:'a', value:'b' }], childNodes:[ ... ] })
  */
-export function createNode(skeleton: TransferrableNode): RenderableElement {
+export function createNode(skeleton: TransferrableNode | TransferrableHydrateableNode): RenderableElement {
   if (skeleton[TransferrableKeys.nodeType] === NodeType.TEXT_NODE) {
     const node = document.createTextNode((skeleton as TransferrableText)[TransferrableKeys.textContent]);
     storeNode(node, skeleton[TransferrableKeys._index_]);
@@ -94,6 +98,7 @@ export function getNode(id: number): RenderableElement {
  * @param id
  */
 export function storeNode(node: HTMLElement | SVGElement | Text, id: number): void {
+  // console.log('store node', id, node);
   (node as RenderableElement)._index_ = id;
   NODES.set(id, node as RenderableElement);
 }

@@ -14,98 +14,90 @@
  * limitations under the License.
  */
 
-import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
+import { TransferrableHydrationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
-import { MutationRecordType } from '../worker-thread/MutationRecord';
-import { TransferrableNode } from '../transfer/TransferrableNodes';
-import { storeNode, getNode } from 'nodes';
+import { TransferrableText, TransferrableHydrateableElement, TransferrableHydrateableNode } from '../transfer/TransferrableNodes';
+import { storeNode, getNode, createNode, isTextNode } from './nodes';
 import { RenderableElement } from 'RenderableElement';
+import { TransferrableHydrationEventSubsciption } from '../transfer/TransferrableEvent';
+import { applyDefaultChangeListener, processListenerChange } from './command';
 
-// ** TransferrableMutationRecord Structure **
-// {
-//   "9": 2,       <-- type: MutationRecordType
-//   "10": 3,      <-- target: number (node index)
-//   "11":         <-- addedNodes: Array<TransferrableNode>
-//     [
-//       {
-//         "0": 3,               <-- nodeType: NodeType
-//         "1": "#text",         <-- nodeName: NodeName
-//         "5": "Hello World!",  <-- textContent: string
-//         "7": 4,               <-- _index_: number
-//         "8": 0                <-- transferred: NumericBoolean
-//       },
-//       {
-//         "0": 1,               <-- nodeType: NodeType
-//         "1": "span",          <-- nodeName: NodeName
-//         "2": [],              <-- attributes: Array<{[index: string]: string}>
-//         "4": [6],             <-- childNodes: Array<number> (Node._index_)
-//         "6": null,            <-- namespaceURI: string | null
-//         "7": 5,               <-- _index_: number
-//         "8": 0                <-- transferred: NumericBoolean
-//       }
-//     ],
-// }
-
-export function hydrate(transferredMutations: Array<TransferrableMutationRecord>, baseElement: HTMLElement, worker: Worker) {
-  let commands: Array<TransferrableMutationRecord> = [];
-  let mutations: Array<TransferrableMutationRecord> = [];
-
-  // Ensure commands are processed after nodes have been created.
-  transferredMutations.forEach(
-    mutation => (mutation[TransferrableKeys.type] === MutationRecordType.COMMAND ? commands.push(mutation) : mutations.push(mutation)),
-  );
-
-  while (mutations.length > 0) {
-    const target: RenderableElement = getNode(mutations[0][TransferrableKeys.target]);
-    if (target !== undefined) {
-      // This target is known, and we can process the requested mutation
-
-      mutations.shift();
-      return;
-    }
-
-    // The target is not yet known, lets move this mutation to the end of the list and try processing the next.
-    if (mutations.length > 1) {
-      // Only push the item if it's not the last one remaining.
-      mutations.push(mutations[0]);
-    }
-    mutations.shift();
-  }
-  // mutations.forEach(mutation => {
-  //   if (mutation[TransferrableKeys.type] === MutationRecordType.COMMAND) {
-  //     // Ensure commands are processed after nodes have been created.
-  //     commands.push(mutation);
-  //     return;
-  //   }
-
-  //   const addedNodes = (mutation[TransferrableKeys.addedNodes] as Array<TransferrableNode>);
-  //   if (addedNodes && addedNodes.length > 0) {
-  //     if (getNode())
-  //     storeNode(
-  //   }
-
-  // });
+function allTextNodes(nodes: NodeList | Array<TransferrableHydrateableNode>): boolean {
+  return nodes.length > 0 && [].every.call(nodes, isTextNode);
 }
 
-// readonly [TransferrableKeys.type]: MutationRecordType;
-// readonly [TransferrableKeys.target]: TransferrableNode | TransferredNode;
+/**
+ *
+ * @param nodes
+ * @param parent
+ * @param worker
+ */
+function replaceNodes(nodes: Array<TransferrableHydrateableNode>, parent: HTMLElement, worker: Worker): void {
+  [].forEach.call(parent.childNodes, (childNode: Element | Text) => childNode.remove());
+  nodes.forEach(node => {
+    const newNode: RenderableElement = createNode(node);
+    parent.appendChild(newNode);
+    applyDefaultChangeListener(worker, newNode as RenderableElement);
+  });
+}
 
-// [TransferrableKeys.addedNodes]?: Array<TransferrableNode | TransferredNode>;
-// [TransferrableKeys.removedNodes]?: Array<TransferrableNode | TransferredNode>;
-// [TransferrableKeys.previousSibling]?: TransferrableNode | TransferredNode;
-// [TransferrableKeys.nextSibling]?: TransferrableNode | TransferredNode;
-// [TransferrableKeys.attributeName]?: string;
-// [TransferrableKeys.attributeNamespace]?: string;
-// [TransferrableKeys.propertyName]?: string;
-// [TransferrableKeys.value]?: string;
-// [TransferrableKeys.oldValue]?: string;
-// [TransferrableKeys.addedEvents]?: TransferrableEventSubscriptionChange[];
-// [TransferrableKeys.removedEvents]?: TransferrableEventSubscriptionChange[];
+/**
+ *
+ * @param transferNode
+ * @param node
+ * @param worker
+ */
+function hydrateNode(transferNode: TransferrableHydrateableNode, node: HTMLElement | Text, worker: Worker): void {
+  const transferIsText = isTextNode(transferNode);
+  const nodeIsText = isTextNode(node);
+  if (!transferIsText && !nodeIsText) {
+    const childNodes = (transferNode as TransferrableHydrateableElement)[TransferrableKeys.childNodes] || [];
+    if (childNodes.length !== node.childNodes.length) {
+      // If this parent node has an unequal number of childNodes, we need to ensure its for an allowable reason.
+      if (allTextNodes(childNodes) && allTextNodes(node.childNodes)) {
+        // Offset due to a differing number of text nodes.
+        // replace the current DOM with the text nodes from the hydration.
+        replaceNodes(childNodes as Array<TransferrableText>, node as HTMLElement, worker);
+      } else {
+        const filteredTransfer = childNodes.filter(childNode => isTextNode(childNode));
+        const filteredNodes = [].filter.call(node.childNodes, (childNode: Node) => isTextNode(childNode));
+        // Empty text nodes are used by frameworks as placeholders for future dom content.
+        if (filteredTransfer.length === filteredNodes.length) {
+          replaceNodes(childNodes, node as HTMLElement, worker);
+        }
+      }
+    } else {
+      storeNode(node, transferNode[TransferrableKeys._index_]);
+      applyDefaultChangeListener(worker, node as RenderableElement);
+      // Same number of children, hydrate them.
+      childNodes.forEach((childNode, index) => hydrateNode(childNode, node.childNodes[index] as HTMLElement | Text, worker));
+    }
+  } else if (transferIsText && nodeIsText) {
+    // Singular text node, no children.
+    storeNode(node, transferNode[TransferrableKeys._index_]);
+    node.textContent = (transferNode as TransferrableText)[TransferrableKeys.textContent];
+    applyDefaultChangeListener(worker, node as RenderableElement);
+  }
+}
 
-// readonly [TransferrableKeys.nodeType]: NodeType;
-// readonly [TransferrableKeys.nodeName]: NodeName;
-// readonly [TransferrableKeys.textContent]: string;
-// readonly [TransferrableKeys.attributes]?: Array<{ [index: string]: string }>;
-// readonly [TransferrableKeys.properties]?: Array<{ [index: string]: string }>;
-// readonly [TransferrableKeys.childNodes]?: Array<number>;
-// readonly [TransferrableKeys.namespaceURI]?: string;
+/**
+ *
+ * @param hydration
+ * @param events
+ * @param baseElement
+ * @param worker
+ */
+export function hydrate(
+  hydration: TransferrableHydrationRecord,
+  events: TransferrableHydrationEventSubsciption[],
+  baseElement: HTMLElement,
+  worker: Worker,
+) {
+  // Process Node Addition / Removal
+  hydrateNode(hydration[TransferrableKeys.addedNodes], baseElement, worker);
+  // Process Event Addition
+  events.forEach(event => {
+    const node = getNode(event[TransferrableKeys._index_]);
+    node && processListenerChange(worker, node, true, event[TransferrableKeys.type], event[TransferrableKeys.index]);
+  });
+}
