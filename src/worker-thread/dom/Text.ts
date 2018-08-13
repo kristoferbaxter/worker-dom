@@ -16,20 +16,35 @@
 
 import { NodeType } from './Node';
 import { CharacterData } from './CharacterData';
-import { TransferredNode, TransferrableText } from '../../transfer/TransferrableNodes';
 import { NumericBoolean } from '../../utils';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { HydrateableNode } from '../../transfer/TransferrableNodes';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Text
 export class Text extends CharacterData {
   constructor(data: string) {
     super(data, NodeType.TEXT_NODE, '#text');
+    this._transferredFormat_ = {
+      [TransferrableKeys._index_]: this._index_,
+      [TransferrableKeys.transferred]: NumericBoolean.TRUE,
+    };
+    this._creationFormat_ = {
+      [TransferrableKeys._index_]: this._index_,
+      [TransferrableKeys.transferred]: NumericBoolean.FALSE,
+      [TransferrableKeys.nodeType]: NodeType.TEXT_NODE,
+      [TransferrableKeys.nodeName]: '#text',
+      [TransferrableKeys.textContent]: this.data,
+    };
   }
 
   // Unimplemented Properties
   // Text.isElementContentWhitespace – https://developer.mozilla.org/en-US/docs/Web/API/Text/isElementContentWhitespace
   // Text.wholeText – https://developer.mozilla.org/en-US/docs/Web/API/Text/wholeText
   // Text.assignedSlot – https://developer.mozilla.org/en-US/docs/Web/API/Text/assignedSlot
+
+  public hydrate(): HydrateableNode {
+    return this._creationFormat_;
+  }
 
   /**
    * textContent getter, retrieves underlying CharacterData data.
@@ -70,33 +85,5 @@ export class Text extends CharacterData {
     }
 
     return remainderTextNode;
-  }
-
-  public hydrate(): TransferrableText {
-    return {
-      [TransferrableKeys._index_]: this._index_,
-      [TransferrableKeys.transferred]: NumericBoolean.FALSE,
-      [TransferrableKeys.nodeType]: NodeType.TEXT_NODE,
-      [TransferrableKeys.nodeName]: this.nodeName,
-      [TransferrableKeys.textContent]: this.nodeValue,
-    };
-  }
-
-  public serialize(): TransferrableText | TransferredNode {
-    if (this._transferred_ !== null) {
-      return this._transferred_;
-    }
-
-    this._transferred_ = {
-      [TransferrableKeys._index_]: this._index_,
-      [TransferrableKeys.transferred]: NumericBoolean.TRUE,
-    };
-    return {
-      [TransferrableKeys._index_]: this._index_,
-      [TransferrableKeys.transferred]: NumericBoolean.FALSE,
-      [TransferrableKeys.nodeType]: NodeType.TEXT_NODE,
-      [TransferrableKeys.nodeName]: this.nodeName,
-      [TransferrableKeys.textContent]: this.nodeValue,
-    };
   }
 }

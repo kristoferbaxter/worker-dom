@@ -1372,7 +1372,6 @@
         enumerable: true,
         writable: true,
         value: function value(e) {
-          console.log('value change', e);
           if (e.keyCode !== ENTER_KEY$1) return;
           e.preventDefault();
   

@@ -19,15 +19,20 @@ import { DOMTokenList } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate } from './Attr';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { TransferredNode, TransferrableElement, TransferrableHydrateableElement } from '../../transfer/TransferrableNodes';
 import { NumericBoolean } from '../../utils';
 import { Text } from './Text';
 import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
 import { matchChildrenElements } from './matchElements';
 import { reflectProperties } from './enhanceElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { HydrateableNode } from '../../transfer/TransferrableNodes';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
+
+export const NODE_NAME_MAPPING: { [key: string]: typeof Element } = {};
+export function registerSubclass(nodeName: NodeName, subclass: typeof Element): void {
+  NODE_NAME_MAPPING[nodeName] = subclass;
+}
 
 export class Element extends Node {
   public attributes: Attr[] = [];
@@ -39,6 +44,28 @@ export class Element extends Node {
   constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI) {
     super(nodeType, nodeName);
     this.namespaceURI = namespaceURI;
+    this._transferredFormat_ = {
+      [TransferrableKeys._index_]: this._index_,
+      [TransferrableKeys.transferred]: NumericBoolean.TRUE,
+    };
+    this._creationFormat_ = {
+      [TransferrableKeys._index_]: this._index_,
+      [TransferrableKeys.transferred]: NumericBoolean.FALSE,
+      [TransferrableKeys.nodeType]: this.nodeType,
+      [TransferrableKeys.nodeName]: this.nodeName,
+      [TransferrableKeys.namespaceURI]: this.namespaceURI === null ? undefined : this.namespaceURI,
+    };
+  }
+
+  /**
+   * When hydrating the tree, we need to send Hydrateable Node representations
+   * for processing on the main thread.
+   */
+  public hydrate(): HydrateableNode {
+    return Object.assign({}, this._creationFormat_, {
+      [TransferrableKeys.attributes]: this.attributes,
+      [TransferrableKeys.childNodes]: this.childNodes.map(node => node.hydrate()),
+    });
   }
 
   // Unimplemented properties
@@ -344,45 +371,5 @@ export class Element extends Node {
   public getElementsByTagName(tagName: string): Element[] {
     return matchChildrenElements(this, tagName === '*' ? _ => true : element => element.tagName === tagName);
   }
-
-  public hydrate(): TransferrableHydrateableElement {
-    return {
-      [TransferrableKeys._index_]: this._index_,
-      [TransferrableKeys.transferred]: NumericBoolean.FALSE,
-      [TransferrableKeys.nodeType]: NodeType.ELEMENT_NODE,
-      [TransferrableKeys.nodeName]: this.nodeName,
-      [TransferrableKeys.attributes]: this.attributes.map(attribute => ({ [attribute.name]: attribute.value })),
-      [TransferrableKeys.namespaceURI]: this.namespaceURI === null ? undefined : this.namespaceURI,
-      [TransferrableKeys.childNodes]: this.childNodes.map(childNode => childNode.hydrate()),
-    };
-  }
-
-  public serialize(): TransferrableElement | TransferredNode {
-    if (this._transferred_ !== null) {
-      return this._transferred_;
-    }
-
-    // After the first transmission of an element in a Mutation, we can refer to it by index alone.
-    this._transferred_ = {
-      [TransferrableKeys._index_]: this._index_,
-      [TransferrableKeys.transferred]: NumericBoolean.TRUE,
-    };
-    return {
-      [TransferrableKeys._index_]: this._index_,
-      [TransferrableKeys.transferred]: NumericBoolean.FALSE,
-      [TransferrableKeys.nodeType]: this.nodeType,
-      [TransferrableKeys.nodeName]: this.nodeName,
-      [TransferrableKeys.attributes]: this.attributes.map(attribute => ({ [attribute.name]: attribute.value })),
-      [TransferrableKeys.namespaceURI]: this.namespaceURI === null ? undefined : this.namespaceURI,
-      [TransferrableKeys.childNodes]: this.childNodes.map(childNode => childNode._index_),
-    } as TransferrableElement;
-  }
 }
 reflectProperties([{ id: [''] }], Element);
-
-export const NODE_NAME_MAPPING: {
-  [key: string]: typeof Element;
-} = {};
-export const registerSubclass = (nodeName: NodeName, subclass: typeof Element): void => {
-  NODE_NAME_MAPPING[nodeName] = subclass;
-};

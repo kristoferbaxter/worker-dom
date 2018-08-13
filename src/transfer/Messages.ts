@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import { TransferrableEvent, TransferrableHydrationEventSubsciption } from './TransferrableEvent';
-import { TransferrableMutationRecord, TransferrableHydrationRecord } from './TransferrableRecord';
+import { TransferrableEvent, TransferrableEventSubscriptionChange } from './TransferrableEvent';
+import { TransferrableMutationRecord } from './TransferrableRecord';
 import { TransferrableSyncValue } from './TransferrableSyncValue';
 import { TransferrableKeys } from './TransferrableKeys';
+import { TransferrableNode, HydrateableNode } from './TransferrableNodes';
 
 export const enum MessageType {
   // INIT = 0,
@@ -32,13 +33,14 @@ export const enum MessageType {
 }
 
 export interface HydrationFromWorker {
-  type: MessageType.HYDRATE;
-  hydration: TransferrableHydrationRecord;
-  events: TransferrableHydrationEventSubsciption[];
+  readonly [TransferrableKeys.type]: MessageType.HYDRATE;
+  readonly [TransferrableKeys.nodes]: HydrateableNode;
+  readonly [TransferrableKeys.addedEvents]: Array<TransferrableEventSubscriptionChange>;
 }
 export interface MutationFromWorker {
-  type: MessageType.MUTATE;
-  mutations: TransferrableMutationRecord[];
+  readonly [TransferrableKeys.type]: MessageType.MUTATE;
+  readonly [TransferrableKeys.nodes]: Array<TransferrableNode>;
+  readonly [TransferrableKeys.mutations]: Array<TransferrableMutationRecord>;
 }
 export interface MessageFromWorker {
   data: HydrationFromWorker | MutationFromWorker;

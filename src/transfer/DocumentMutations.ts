@@ -16,116 +16,94 @@
 
 import { Node } from '../worker-thread/dom/Node';
 import { Document } from '../worker-thread/dom/Document';
-import { MutationRecord } from '../worker-thread/MutationRecord';
-import { TransferrableMutationRecord, TransferrableHydrationRecord } from './TransferrableRecord';
-import { TransferrableNode, TransferredNode } from './TransferrableNodes';
-import { MutationFromWorker, MessageType, HydrationFromWorker } from './Messages';
+import { MutationRecord, MutationRecordType } from '../worker-thread/MutationRecord';
+import { TransferrableMutationRecord } from './TransferrableRecord';
+import { TransferrableNode, TransferredNode, HydrateableNode } from './TransferrableNodes';
+import { MessageType, MutationFromWorker, HydrationFromWorker } from './Messages';
 import { TransferrableKeys } from './TransferrableKeys';
-import { TransferrableHydrationEventSubsciption } from './TransferrableEvent';
+import { consume } from '../worker-thread/NodeMapping';
+import { TransferrableEventSubscriptionChange } from './TransferrableEvent';
 
 const SUPPORTS_POST_MESSAGE = typeof postMessage !== 'undefined';
-const serializeNodes = (nodes: Node[] | undefined): Array<TransferrableNode | TransferredNode> | undefined =>
-  (nodes && nodes.map(node => node.serialize())) || undefined;
+let document: Document;
 let observing = false;
 let hydrated = false;
-let document: Document;
 
-/*
-interface HydrationFromWorker {
-  type: MessageType.HYDRATE;
-  hydration: TransferrableHydrationRecord;
-  events: TransferrableEventSubscriptionChange[];
-}
-export interface TransferrableHydrationRecord {
-  readonly [TransferrableKeys.addedNodes]: Array<TransferrableHydrateableNode>;
-}
-export type TransferrableHydrateableNode = TransferrableHydrateableElement | TransferrableText;
+const serializeNodes = (nodes: Array<Node>): Array<TransferredNode> => nodes.map(node => node._transferredFormat_);
 
-export interface TransferrableHydrateableElement extends TransferredNode {
-  readonly [TransferrableKeys.nodeType]: NodeType;
-  readonly [TransferrableKeys.nodeName]: NodeName;
-  readonly [TransferrableKeys.attributes]?: TransferrableKeyValues;
-  readonly [TransferrableKeys.properties]?: TransferrableKeyValues;
-  readonly [TransferrableKeys.namespaceURI]?: string;
-  readonly [TransferrableKeys.childNodes]?: Array<TransferrableHydrateableElement | TransferrableText>;
-}
-export interface TransferrableText extends TransferredNode {
-  readonly [TransferrableKeys.nodeType]: NodeType;
-  readonly [TransferrableKeys.nodeName]: NodeName;
-  readonly [TransferrableKeys.textContent]: string;
-}
-export interface TransferredNode {
-  readonly [TransferrableKeys._index_]: number;
-  readonly [TransferrableKeys.transferred]: NumericBoolean;
-}
-*/
+/**
+ *
+ * @param mutations
+ */
+function serializeHydration(mutations: Array<MutationRecord>): HydrationFromWorker {
+  consume();
+  const hydratedNode: HydrateableNode = document.body.hydrate();
+  const events: Array<TransferrableEventSubscriptionChange> = [];
 
-function handleHydration(incomingMutations: MutationRecord[]): void {
-  const hydration: TransferrableHydrationRecord = {
-    [TransferrableKeys.addedNodes]: document.body.hydrate(),
-  };
-  let events: TransferrableHydrationEventSubsciption[] = [];
-
-  // debugger;
-  incomingMutations.forEach(mutation => {
-    if (mutation.addedEvents) {
-      events = events.concat(
-        mutation.addedEvents.map(addedEvent => {
-          return {
-            [TransferrableKeys.type]: addedEvent[TransferrableKeys.type],
-            [TransferrableKeys._index_]: mutation.target._index_,
-            [TransferrableKeys.index]: addedEvent[TransferrableKeys.index],
-          };
-        }),
-      );
+  mutations.forEach(mutation => {
+    if (mutation.type === MutationRecordType.COMMAND && mutation.addedEvents) {
+      mutation.addedEvents.forEach(addEvent => {
+        events.push(addEvent);
+      });
     }
   });
 
-  if (SUPPORTS_POST_MESSAGE) {
-    postMessage({
-      type: MessageType.HYDRATE,
-      hydration,
-      events,
-    } as HydrationFromWorker);
-  }
-  hydrated = true;
+  return {
+    [TransferrableKeys.type]: MessageType.HYDRATE,
+    [TransferrableKeys.nodes]: hydratedNode,
+    [TransferrableKeys.addedEvents]: events,
+  };
 }
 
-function handleMutations(incomingMutations: MutationRecord[]): void {
-  if (hydrated === false) {
-    handleHydration(incomingMutations);
-    return;
-  }
-
-  const mutations: TransferrableMutationRecord[] = [];
-  incomingMutations.forEach(mutation => {
-    let transferableMutation: TransferrableMutationRecord = {
+/**
+ *
+ * @param mutations
+ */
+function serializeMutations(mutations: MutationRecord[]): MutationFromWorker {
+  const nodes: Array<TransferrableNode> = consume().map(node => node._creationFormat_);
+  const transferrableMutations: TransferrableMutationRecord[] = [];
+  mutations.forEach(mutation => {
+    let transferable: TransferrableMutationRecord = {
       [TransferrableKeys.type]: mutation.type,
       [TransferrableKeys.target]: mutation.target._index_,
     };
 
-    mutation.addedNodes && (transferableMutation[TransferrableKeys.addedNodes] = serializeNodes(mutation.addedNodes));
-    mutation.removedNodes && (transferableMutation[TransferrableKeys.removedNodes] = serializeNodes(mutation.removedNodes));
-    mutation.nextSibling && (transferableMutation[TransferrableKeys.nextSibling] = mutation.nextSibling.serialize());
-    mutation.attributeName != null && (transferableMutation[TransferrableKeys.attributeName] = mutation.attributeName);
-    mutation.attributeNamespace != null && (transferableMutation[TransferrableKeys.attributeNamespace] = mutation.attributeNamespace);
-    mutation.oldValue != null && (transferableMutation[TransferrableKeys.oldValue] = mutation.oldValue);
-    mutation.propertyName && (transferableMutation[TransferrableKeys.propertyName] = mutation.propertyName);
-    mutation.value != null && (transferableMutation[TransferrableKeys.value] = mutation.value);
-    mutation.addedEvents && (transferableMutation[TransferrableKeys.addedEvents] = mutation.addedEvents);
-    mutation.removedEvents && (transferableMutation[TransferrableKeys.removedEvents] = mutation.removedEvents);
+    mutation.addedNodes && (transferable[TransferrableKeys.addedNodes] = serializeNodes(mutation.addedNodes));
+    mutation.removedNodes && (transferable[TransferrableKeys.removedNodes] = serializeNodes(mutation.removedNodes));
+    mutation.nextSibling && (transferable[TransferrableKeys.nextSibling] = mutation.nextSibling._transferredFormat_);
+    mutation.attributeName != null && (transferable[TransferrableKeys.attributeName] = mutation.attributeName);
+    mutation.attributeNamespace != null && (transferable[TransferrableKeys.attributeNamespace] = mutation.attributeNamespace);
+    mutation.oldValue != null && (transferable[TransferrableKeys.oldValue] = mutation.oldValue);
+    mutation.propertyName && (transferable[TransferrableKeys.propertyName] = mutation.propertyName);
+    mutation.value != null && (transferable[TransferrableKeys.value] = mutation.value);
+    mutation.addedEvents && (transferable[TransferrableKeys.addedEvents] = mutation.addedEvents);
+    mutation.removedEvents && (transferable[TransferrableKeys.removedEvents] = mutation.removedEvents);
 
-    mutations.push(transferableMutation);
+    transferrableMutations.push(transferable);
   });
 
-  if (SUPPORTS_POST_MESSAGE) {
-    postMessage({
-      type: MessageType.MUTATE,
-      mutations,
-    } as MutationFromWorker);
-  }
+  return {
+    [TransferrableKeys.type]: MessageType.MUTATE,
+    [TransferrableKeys.nodes]: nodes,
+    [TransferrableKeys.mutations]: transferrableMutations,
+  };
 }
 
+/**
+ *
+ * @param incoming
+ */
+function handleMutations(incoming: MutationRecord[]): void {
+  if (SUPPORTS_POST_MESSAGE) {
+    postMessage(hydrated === false ? serializeHydration(incoming) : serializeMutations(incoming));
+  }
+  hydrated = true;
+}
+
+/**
+ *
+ * @param doc
+ */
 export function observe(doc: Document): void {
   if (!observing) {
     document = doc;

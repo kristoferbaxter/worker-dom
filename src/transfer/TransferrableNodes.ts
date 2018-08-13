@@ -14,34 +14,23 @@
  * limitations under the License.
  */
 
-import { NodeType, NodeName, ElementNodeType } from '../worker-thread/dom/Node';
+import { NodeType, NodeName } from '../worker-thread/dom/Node';
 import { NumericBoolean } from '../utils';
 import { TransferrableKeys } from './TransferrableKeys';
 
-export type TransferrableNode = TransferrableElement | TransferrableText;
-export type TransferrableHydrateableNode = TransferrableHydrateableElement | TransferrableText;
+export interface HydrateableNode extends TransferrableNode {
+  readonly [TransferrableKeys.attributes]?: Array<{ [key: string]: string }>;
+  readonly [TransferrableKeys.childNodes]?: Array<HydrateableNode>;
+}
 
-type TransferrableKeyValues = Array<{ [index: string]: string }>;
-export interface TransferrableHydrateableElement extends TransferredNode {
-  readonly [TransferrableKeys.nodeType]: ElementNodeType;
+export interface TransferrableNode extends TransferredNode {
+  readonly [TransferrableKeys.nodeType]: NodeType;
   readonly [TransferrableKeys.nodeName]: NodeName;
-  readonly [TransferrableKeys.attributes]?: TransferrableKeyValues;
-  readonly [TransferrableKeys.properties]?: TransferrableKeyValues;
+
+  // Optional keys that are defined at construction of a `Text` or `Element`.
+  // This makes the keys observed.
+  readonly [TransferrableKeys.textContent]?: string;
   readonly [TransferrableKeys.namespaceURI]?: string;
-  readonly [TransferrableKeys.childNodes]?: Array<TransferrableHydrateableElement | TransferrableText>;
-}
-export interface TransferrableElement extends TransferredNode {
-  readonly [TransferrableKeys.nodeType]: ElementNodeType;
-  readonly [TransferrableKeys.nodeName]: NodeName;
-  readonly [TransferrableKeys.attributes]?: TransferrableKeyValues;
-  readonly [TransferrableKeys.properties]?: TransferrableKeyValues;
-  readonly [TransferrableKeys.namespaceURI]?: string;
-  readonly [TransferrableKeys.childNodes]?: Array<number>;
-}
-export interface TransferrableText extends TransferredNode {
-  readonly [TransferrableKeys.nodeType]: NodeType.TEXT_NODE;
-  readonly [TransferrableKeys.nodeName]: NodeName;
-  readonly [TransferrableKeys.textContent]: string;
 }
 
 // If a Node has been transferred once already to main thread then we need only pass its index.

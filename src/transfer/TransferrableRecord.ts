@@ -15,7 +15,7 @@
  */
 
 import { MutationRecordType } from '../worker-thread/MutationRecord';
-import { TransferrableNode, TransferredNode, TransferrableHydrateableNode } from './TransferrableNodes';
+import { TransferredNode } from './TransferrableNodes';
 import { TransferrableEventSubscriptionChange } from './TransferrableEvent';
 import { TransferrableKeys } from './TransferrableKeys';
 
@@ -28,19 +28,15 @@ export interface TransferrableMutationRecord {
   readonly [TransferrableKeys.type]: MutationRecordType;
   readonly [TransferrableKeys.target]: number;
 
-  [TransferrableKeys.addedNodes]?: Array<TransferrableNode | TransferredNode>;
-  [TransferrableKeys.removedNodes]?: Array<TransferrableNode | TransferredNode>;
-  [TransferrableKeys.previousSibling]?: TransferrableNode | TransferredNode;
-  [TransferrableKeys.nextSibling]?: TransferrableNode | TransferredNode;
+  [TransferrableKeys.addedNodes]?: Array<TransferredNode>;
+  [TransferrableKeys.removedNodes]?: Array<TransferredNode>;
+  [TransferrableKeys.previousSibling]?: TransferredNode;
+  [TransferrableKeys.nextSibling]?: TransferredNode;
   [TransferrableKeys.attributeName]?: string;
   [TransferrableKeys.attributeNamespace]?: string;
   [TransferrableKeys.propertyName]?: string;
   [TransferrableKeys.value]?: string;
   [TransferrableKeys.oldValue]?: string;
-  [TransferrableKeys.addedEvents]?: TransferrableEventSubscriptionChange[];
-  [TransferrableKeys.removedEvents]?: TransferrableEventSubscriptionChange[];
-}
-
-export interface TransferrableHydrationRecord {
-  readonly [TransferrableKeys.addedNodes]: TransferrableHydrateableNode;
+  [TransferrableKeys.addedEvents]?: Array<TransferrableEventSubscriptionChange>;
+  [TransferrableKeys.removedEvents]?: Array<TransferrableEventSubscriptionChange>;
 }

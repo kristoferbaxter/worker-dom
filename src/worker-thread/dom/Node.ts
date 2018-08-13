@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { store as mappingStoreNode } from '../NodeMapping';
+import { store as storeNodeMapping } from '../NodeMapping';
 import { Event, EventHandler } from '../Event';
 import { toLower } from '../../utils';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { TransferredNode, TransferrableNode, TransferrableHydrateableNode } from '../../transfer/TransferrableNodes';
+import { TransferredNode, TransferrableNode, HydrateableNode } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 export const enum NodeType {
@@ -37,7 +37,6 @@ export const enum NodeType {
   // Note: DOCUMENT_FRAGMENT_NODE is not supported in this implementation yet.
   NOTATION_NODE = 12,
 }
-export type ElementNodeType = NodeType.ELEMENT_NODE | NodeType.DOCUMENT_NODE | NodeType.DOCUMENT_TYPE_NODE;
 export type NodeName = '#comment' | '#document' | '#document-fragment' | '#text' | string;
 export type NamespaceURI = string | null;
 
@@ -69,12 +68,12 @@ export abstract class Node {
   public parentNode: Node | null = null;
   public isConnected: boolean = false;
   public _index_: number;
-  protected _transferred_: TransferredNode | null = null;
+  public _transferredFormat_: TransferredNode;
+  public _creationFormat_: TransferrableNode;
+  public abstract hydrate(): HydrateableNode;
   private _handlers_: {
     [index: string]: EventHandler[];
   } = {};
-  public abstract serialize(): TransferrableNode | TransferredNode;
-  public abstract hydrate(): TransferrableHydrateableNode;
 
   constructor(nodeType: NodeType, nodeName: NodeName) {
     this.nodeType = nodeType;
@@ -86,7 +85,7 @@ export abstract class Node {
     }
     this.ownerDocument = globalDocument;
 
-    this._index_ = mappingStoreNode(this);
+    this._index_ = storeNodeMapping(this);
   }
 
   // Unimplemented Properties
@@ -203,6 +202,10 @@ export abstract class Node {
       // The new child cannot contain the parent.
       return child;
     }
+
+    // KRIS – ONLY FIRE A MUTATION IF THE NODE IS ATTACHED TO AN EXISTING DOCUMENT
+    // WHEN CREATING, LETS USE A NODEPOOL TO TRANSMIT THE NODES, AND THE MUTATIONS TO
+    // SEND THE STRUCTURE OF THE DOM TREE.
 
     if (referenceNode == null) {
       // When a referenceNode is not valid, appendChild(child).
@@ -341,6 +344,7 @@ export abstract class Node {
       addedEvents: [
         {
           [TransferrableKeys.type]: type,
+          [TransferrableKeys._index_]: this._index_,
           [TransferrableKeys.index]: index,
         },
       ],
@@ -365,6 +369,7 @@ export abstract class Node {
         removedEvents: [
           {
             [TransferrableKeys.type]: type,
+            [TransferrableKeys._index_]: this._index_,
             [TransferrableKeys.index]: index,
           },
         ],

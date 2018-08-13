@@ -42,11 +42,6 @@ export interface TransferrableEvent {
 
 export interface TransferrableEventSubscriptionChange {
   readonly [TransferrableKeys.type]: string;
-  readonly [TransferrableKeys.index]: number;
-}
-
-export interface TransferrableHydrationEventSubsciption {
-  readonly [TransferrableKeys.type]: string;
   readonly [TransferrableKeys._index_]: number;
   readonly [TransferrableKeys.index]: number;
 }
