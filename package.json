@@ -49,12 +49,10 @@
     "typescript": "3.0.1"
   },
   "lint-staged": {
-    "linters": {
-      "*.ts": [
-        "prettier --config config/.prettierrc --write",
-        "git add"
-      ]
-    }
+    "*.ts": [
+      "prettier --config config/.prettierrc --write",
+      "git add"
+    ]
   },
   "husky": {
     "hooks": {
