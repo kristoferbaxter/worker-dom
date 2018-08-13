@@ -22,7 +22,6 @@ import { getNode, createNode } from './nodes';
 import { process } from './command';
 import { RenderableElement } from './RenderableElement';
 
-let NODE_QUEUE: Array<TransferrableNode> = [];
 let MUTATION_QUEUE: Array<TransferrableMutationRecord> = [];
 let PENDING_MUTATIONS: boolean = false;
 let worker: Worker;
@@ -99,12 +98,7 @@ export function mutate(nodes: Array<TransferrableNode>, mutations: Array<Transfe
   //   return;
   // }
   // this.lastGestureTime = lastGestureTime;
-  NODE_QUEUE = NODE_QUEUE.concat(nodes);
-  // TODO(KB): Should we just apply this creation now?
-  // // Ensure Nodes are in the lookup table.
-  // NODE_QUEUE.forEach(node => createNode(node));
-  // NODE_QUEUE = [];
-
+  nodes.forEach(node => createNode(node));
   MUTATION_QUEUE = MUTATION_QUEUE.concat(mutations);
   if (!PENDING_MUTATIONS) {
     PENDING_MUTATIONS = true;
@@ -119,15 +113,9 @@ export function mutate(nodes: Array<TransferrableNode>, mutations: Array<Transfe
  * Investigations in using asyncFlush to resolve are worth considering.
  */
 function syncFlush(sanitizer?: Sanitizer): void {
-  // Ensure Nodes are in the lookup table.
-  NODE_QUEUE.forEach(node => createNode(node));
-  NODE_QUEUE = [];
-
-  // Process Mutations
   MUTATION_QUEUE.forEach(mutation => {
     mutators[mutation[TransferrableKeys.type]](mutation, getNode(mutation[TransferrableKeys.target]), sanitizer);
   });
   MUTATION_QUEUE = [];
-
   PENDING_MUTATIONS = false;
 }
