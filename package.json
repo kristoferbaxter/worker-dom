@@ -57,7 +57,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "pre-push": "npm run test; npm run build; npm run bundlesize"
+      "pre-push": "npm run test; npm run build; bundlesize"
     }
   },
   "bundlesize": [
