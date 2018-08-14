@@ -16,6 +16,6 @@
 
 import { install } from './install';
 
-export function upgradeElement(baseElement: Element): void {
-  install(baseElement);
+export function upgradeElement(baseElement: Element, workerDOMUrl: string): void {
+  install(baseElement as HTMLElement, workerDOMUrl);
 }

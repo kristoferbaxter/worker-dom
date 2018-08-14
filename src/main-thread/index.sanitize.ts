@@ -17,6 +17,6 @@
 import { DOMPurifySanitizer } from './DOMPurifySanitizer';
 import { install } from './install';
 
-export function upgradeElement(baseElement: Element): void {
-  install(baseElement, new DOMPurifySanitizer());
+export function upgradeElement(baseElement: Element, workerDOMUrl: string): void {
+  install(baseElement as HTMLElement, workerDOMUrl, new DOMPurifySanitizer());
 }

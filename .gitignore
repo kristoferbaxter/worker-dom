@@ -1,8 +1,9 @@
 output/
-build/
 node_modules/
 .vscode/
 .DS_Store
 yarn-error.log
 yarn.lock
+package-lock.json
 demo/build/
+dist/

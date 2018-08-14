@@ -25,10 +25,12 @@ const pushMutation = (observer: MutationObserver, record: MutationRecord): void 
   observer.pushRecord(record);
   if (!pendingMutations) {
     pendingMutations = true;
-    Promise.resolve().then((): void => {
-      pendingMutations = false;
-      observers.forEach(observer => observer.callback(observer.takeRecords()));
-    });
+    Promise.resolve().then(
+      (): void => {
+        pendingMutations = false;
+        observers.forEach(observer => observer.callback(observer.takeRecords()));
+      },
+    );
   }
 };
 
@@ -39,7 +41,7 @@ const pushMutation = (observer: MutationObserver, record: MutationRecord): void 
  */
 export function mutate(record: MutationRecord): void {
   observers.forEach(observer => {
-    if (record.type === MutationRecordType.COMMAND) {
+    if (!observer.options.subtreeFlattened || record.type === MutationRecordType.COMMAND) {
       pushMutation(observer, record);
       return;
     }
@@ -49,21 +51,34 @@ export function mutate(record: MutationRecord): void {
     if (!matched) {
       do {
         if ((matched = match(observer.target, target))) {
+          pushMutation(observer, record);
           break;
         }
       } while ((target = target.parentNode));
     }
-
-    if (matched) {
-      pushMutation(observer, record);
-    }
   });
+}
+
+interface MutationObserverInit {
+  // None of these init options are supported currently.
+  // attributeFilter?: Array<string>;
+  // attributeOldValue?: boolean;
+  // attributes?: boolean; // Default false
+  // characterData?: boolean;
+  // characterDataOldValue?: boolean;
+  // childList?: boolean;  // Default false
+  // subtree?: boolean;    // Default false
+
+  // Except for this one (not specced) that will force all mutations to be observed
+  // Without flattening the record to the node requested to be observed.
+  subtreeFlattened?: boolean;
 }
 
 export class MutationObserver {
   public callback: (mutations: MutationRecord[]) => any;
   private _records_: MutationRecord[] = [];
   public target: Node | null;
+  public options: MutationObserverInit;
 
   constructor(callback: (mutations: MutationRecord[]) => any) {
     this.callback = callback;
@@ -74,9 +89,10 @@ export class MutationObserver {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
    * @param target Node to observe DOM mutations
    */
-  public observe(target: Node): void {
+  public observe(target: Node, options?: MutationObserverInit): void {
     this.disconnect();
     this.target = target;
+    this.options = Object.assign({ subtreeFlattened: false }, options);
 
     observers.push(this);
   }

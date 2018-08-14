@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { TransferrableNode, TransferrableText, TransferrableElement } from '../transfer/TransferrableNodes';
+import { TransferrableNode } from '../transfer/TransferrableNodes';
 import { RenderableElement } from './RenderableElement';
-import { NumericBoolean } from '../utils';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { NodeType } from '../worker-thread/dom/Node';
 
 let NODES: Map<number, RenderableElement>;
 let BASE_ELEMENT: HTMLElement;
@@ -25,6 +25,10 @@ let BASE_ELEMENT: HTMLElement;
 export function prepare(baseElement: Element): void {
   NODES = new Map([[1, baseElement as RenderableElement], [2, baseElement as RenderableElement]]);
   BASE_ELEMENT = baseElement as HTMLElement;
+}
+
+export function isTextNode(node: Node | TransferrableNode): boolean {
+  return ('nodeType' in node ? node.nodeType : node[TransferrableKeys.nodeType]) === NodeType.TEXT_NODE;
 }
 
 /**
@@ -35,32 +39,25 @@ export function prepare(baseElement: Element): void {
  *   createNode({ nodeType:1, nodeName:'div', attributes:[{ name:'a', value:'b' }], childNodes:[ ... ] })
  */
 export function createNode(skeleton: TransferrableNode): RenderableElement {
-  if (skeleton[TransferrableKeys.nodeType] === Node.TEXT_NODE) {
-    const node = document.createTextNode((skeleton as TransferrableText)[TransferrableKeys.textContent]);
+  if (isTextNode(skeleton)) {
+    const node = document.createTextNode(skeleton[TransferrableKeys.textContent] as string);
     storeNode(node, skeleton[TransferrableKeys._index_]);
     return node as RenderableElement;
   }
 
-  const namespace: string | undefined = (skeleton as TransferrableElement)[TransferrableKeys.namespaceURI];
+  const namespace: string | undefined = skeleton[TransferrableKeys.namespaceURI];
   const node: HTMLElement | SVGElement = namespace
-    ? (document.createElementNS(namespace, (skeleton as TransferrableElement)[TransferrableKeys.nodeName]) as SVGElement)
+    ? (document.createElementNS(namespace, skeleton[TransferrableKeys.nodeName]) as SVGElement)
     : document.createElement(skeleton[TransferrableKeys.nodeName]);
-  ((skeleton as TransferrableElement)[TransferrableKeys.attributes] || []).forEach(attribute => {
-    if (attribute.namespaceURI) {
-      node.setAttributeNS(attribute.namespaceURI, attribute.name, attribute.value);
-    } else {
-      node.setAttribute(attribute.name, attribute.value);
-    }
-  });
   // TODO(KB): Restore Properties
   // skeleton.properties.forEach(property => {
   //   node[`${property.name}`] = property.value;
   // });
-  ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).forEach(childNode => {
-    if (childNode[TransferrableKeys.transferred] === NumericBoolean.FALSE) {
-      node.appendChild(createNode(childNode as TransferrableNode));
-    }
-  });
+  // ((skeleton as TransferrableElement)[TransferrableKeys.childNodes] || []).forEach(childNode => {
+  //   if (childNode[TransferrableKeys.transferred] === NumericBoolean.FALSE) {
+  //     node.appendChild(createNode(childNode as TransferrableNode));
+  //   }
+  // });
 
   storeNode(node, skeleton[TransferrableKeys._index_]);
   return node as RenderableElement;

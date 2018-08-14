@@ -14,30 +14,8 @@
  * limitations under the License.
  */
 
-// This file uses CJS format since it's consumed by Babel and Rollup.
-// Babel 7 .babelrc.js files must use CJS, and Rollup configuration can be either.
-// This means we must use CJS for common functionality.
-
 const { DEBUG_BUNDLE = false, MINIFY_BUNDLE = false, COMPRESS_BUNDLE = false } = process.env;
 
 export let DEBUG_BUNDLE_VALUE = DEBUG_BUNDLE === 'true';
 export let MINIFY_BUNDLE_VALUE = MINIFY_BUNDLE === 'true';
 export let COMPRESS_BUNDLE_VALUE = COMPRESS_BUNDLE === 'true';
-
-/**
- * @param {boolean} esmodules
- * @param {boolean} forMainThread
- * @param {boolean} sanitizer
- * @param {string} filename
- * @param {string=} extension
- * @return {string} path to filename including filename.
- */
-export function path(esmodules, forMainThread, sanitizer, filename, extension = 'js') {
-  return [
-    DEBUG_BUNDLE_VALUE ? 'demo' : null,
-    'build',
-    esmodules === true ? 'esmodules' : null,
-    forMainThread === true ? 'main-thread' : null,
-    `${filename}${sanitizer ? '.sanitizer' : ''}.${extension}`,
-  ].filter(Boolean).join('/');
-}

@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-import { MutationRecordType } from '../worker-thread/MutationRecord';
-import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
+import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { TransferrableNode } from '../transfer/TransferrableNodes';
 import { getNode, createNode } from './nodes';
 import { process } from './command';
+import { RenderableElement } from './RenderableElement';
 
-// TODO(KB): Restore mutation threshold timeout.
-// const GESTURE_TO_MUTATION_THRESHOLD = 5000;
-
-let MUTATION_QUEUE: TransferrableMutationRecord[] = [];
+let MUTATION_QUEUE: Array<TransferrableMutationRecord> = [];
 let PENDING_MUTATIONS: boolean = false;
 let worker: Worker;
 
@@ -33,15 +31,10 @@ export function prepareMutate(passedWorker: Worker): void {
 }
 
 const mutators: {
-  [key: number]: (mutation: TransferrableMutationRecord, sanitizer?: Sanitizer) => void;
+  [key: number]: (mutation: TransferrableMutationRecord, target: RenderableElement, sanitizer?: Sanitizer) => void;
 } = {
-  [MutationRecordType.CHILD_LIST](mutation: TransferrableMutationRecord, sanitizer: Sanitizer) {
-    const parent = getNode(mutation[TransferrableKeys.target][TransferrableKeys._index_]);
-
-    const removedNodes = mutation[TransferrableKeys.removedNodes];
-    if (removedNodes) {
-      removedNodes.forEach(node => parent.removeChild(getNode(node[TransferrableKeys._index_])));
-    }
+  [MutationRecordType.CHILD_LIST](mutation: TransferrableMutationRecord, target: RenderableElement, sanitizer: Sanitizer) {
+    (mutation[TransferrableKeys.removedNodes] || []).forEach(node => getNode(node[TransferrableKeys._index_]).remove());
 
     const addedNodes = mutation[TransferrableKeys.addedNodes];
     const nextSibling = mutation[TransferrableKeys.nextSibling];
@@ -54,36 +47,34 @@ const mutators: {
             sanitizer.sanitize(newChild); // TODO(choumx): Inform worker?
           }
         }
-        parent.insertBefore(newChild, (nextSibling && getNode(nextSibling[TransferrableKeys._index_])) || null);
+        target.insertBefore(newChild, (nextSibling && getNode(nextSibling[TransferrableKeys._index_])) || null);
       });
     }
   },
-  [MutationRecordType.ATTRIBUTES](mutation: TransferrableMutationRecord, sanitizer?: Sanitizer) {
+  [MutationRecordType.ATTRIBUTES](mutation: TransferrableMutationRecord, target: RenderableElement, sanitizer?: Sanitizer) {
     const attributeName = mutation[TransferrableKeys.attributeName];
     const value = mutation[TransferrableKeys.value];
     if (attributeName != null && value != null) {
-      const node = getNode(mutation[TransferrableKeys.target][TransferrableKeys._index_]);
-      if (!sanitizer || sanitizer.validAttribute(node.nodeName, attributeName, value)) {
-        node.setAttribute(attributeName, value);
+      if (!sanitizer || sanitizer.validAttribute(target.nodeName, attributeName, value)) {
+        target.setAttribute(attributeName, value);
       } else {
         // TODO(choumx): Inform worker?
       }
     }
   },
-  [MutationRecordType.CHARACTER_DATA](mutation: TransferrableMutationRecord, sanitizer?: Sanitizer) {
+  [MutationRecordType.CHARACTER_DATA](mutation: TransferrableMutationRecord, target: RenderableElement) {
     const value = mutation[TransferrableKeys.value];
     if (value) {
       // Sanitization not necessary for textContent.
-      getNode(mutation[TransferrableKeys.target][TransferrableKeys._index_]).textContent = value;
+      target.textContent = value;
     }
   },
-  [MutationRecordType.PROPERTIES](mutation: TransferrableMutationRecord, sanitizer?: Sanitizer) {
+  [MutationRecordType.PROPERTIES](mutation: TransferrableMutationRecord, target: RenderableElement, sanitizer?: Sanitizer) {
     const propertyName = mutation[TransferrableKeys.propertyName];
     const value = mutation[TransferrableKeys.value];
     if (propertyName && value) {
-      const node = getNode(mutation[TransferrableKeys.target][TransferrableKeys._index_]);
-      if (!sanitizer || sanitizer.validProperty(node.nodeName, propertyName, value)) {
-        node[propertyName] = value;
+      if (!sanitizer || sanitizer.validProperty(target.nodeName, propertyName, value)) {
+        target[propertyName] = value;
       } else {
         // TODO(choumx): Inform worker?
       }
@@ -95,18 +86,19 @@ const mutators: {
 };
 
 /**
- * Process MutationRecord from worker thread applying changes to the existing DOM.
- * @param hydrationFromWorker contains mutations to apply
- * @param nodes
- * @param worker
+ * Process MutationRecords from worker thread applying changes to the existing DOM.
+ * @param nodes New nodes to add in the main thread with the incoming mutations.
+ * @param mutations Changes to apply in both graph shape and content of Elements.
+ * @param sanitizer Sanitizer to apply to content if needed.
  */
-export function mutate(mutations: TransferrableMutationRecord[], sanitizer?: Sanitizer): void {
+export function mutate(nodes: Array<TransferrableNode>, mutations: Array<TransferrableMutationRecord>, sanitizer?: Sanitizer): void {
   //mutations: TransferrableMutationRecord[]): void {
   // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferrableMutationRecord[])
   // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {
   //   return;
   // }
   // this.lastGestureTime = lastGestureTime;
+  nodes.forEach(node => createNode(node));
   MUTATION_QUEUE = MUTATION_QUEUE.concat(mutations);
   if (!PENDING_MUTATIONS) {
     PENDING_MUTATIONS = true;
@@ -121,9 +113,9 @@ export function mutate(mutations: TransferrableMutationRecord[], sanitizer?: San
  * Investigations in using asyncFlush to resolve are worth considering.
  */
 function syncFlush(sanitizer?: Sanitizer): void {
-  const length = MUTATION_QUEUE.length;
-  MUTATION_QUEUE.forEach(mutation => mutators[mutation[TransferrableKeys.type]](mutation, sanitizer));
-
-  MUTATION_QUEUE.splice(0, length);
+  MUTATION_QUEUE.forEach(mutation => {
+    mutators[mutation[TransferrableKeys.type]](mutation, getNode(mutation[TransferrableKeys.target]), sanitizer);
+  });
+  MUTATION_QUEUE = [];
   PENDING_MUTATIONS = false;
 }

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import { TransferrableEvent } from './TransferrableEvent';
+import { TransferrableEvent, TransferrableEventSubscriptionChange } from './TransferrableEvent';
 import { TransferrableMutationRecord } from './TransferrableRecord';
 import { TransferrableSyncValue } from './TransferrableSyncValue';
 import { TransferrableKeys } from './TransferrableKeys';
+import { TransferrableNode, HydrateableNode } from './TransferrableNodes';
 
 export const enum MessageType {
   // INIT = 0,
@@ -31,12 +32,18 @@ export const enum MessageType {
   // NAVIGATION_POP_STATE = 7,
 }
 
+export interface HydrationFromWorker {
+  readonly [TransferrableKeys.type]: MessageType.HYDRATE;
+  readonly [TransferrableKeys.nodes]: HydrateableNode;
+  readonly [TransferrableKeys.addedEvents]: Array<TransferrableEventSubscriptionChange>;
+}
 export interface MutationFromWorker {
-  type: MessageType.HYDRATE | MessageType.MUTATE;
-  mutations: TransferrableMutationRecord[];
+  readonly [TransferrableKeys.type]: MessageType.MUTATE;
+  readonly [TransferrableKeys.nodes]: Array<TransferrableNode>;
+  readonly [TransferrableKeys.mutations]: Array<TransferrableMutationRecord>;
 }
 export interface MessageFromWorker {
-  data: MutationFromWorker;
+  data: HydrationFromWorker | MutationFromWorker;
 }
 
 export interface EventToWorker {

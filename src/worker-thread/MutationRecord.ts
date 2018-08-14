@@ -34,8 +34,8 @@ export type MutationRecordMutableKey =
 // @see https://developer.mozilla.org/en-US/docs/Web/API/MutationRecord
 export interface MutationRecord {
   readonly target: Node;
-  readonly addedNodes?: Node[];
-  readonly removedNodes?: Node[];
+  readonly addedNodes?: Array<Node>;
+  readonly removedNodes?: Array<Node>;
   readonly previousSibling?: Node | null;
   readonly nextSibling?: Node | null;
   readonly attributeName?: string | null;
@@ -49,8 +49,8 @@ export interface MutationRecord {
   // Mutation of attributes or properties must pass a value representing the new value.
   readonly value?: string | null;
   // Event subscription mutations
-  readonly addedEvents?: TransferrableEventSubscriptionChange[];
-  readonly removedEvents?: TransferrableEventSubscriptionChange[];
+  readonly addedEvents?: Array<TransferrableEventSubscriptionChange>;
+  readonly removedEvents?: Array<TransferrableEventSubscriptionChange>;
 }
 
 // Add a new type of MutationRecord 'properties' to enable MutationRecords to capture properties changes on Nodes.

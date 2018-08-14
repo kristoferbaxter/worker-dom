@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { store as mappingStoreNode } from '../NodeMapping';
+import { store as storeNodeMapping } from '../NodeMapping';
 import { Event, EventHandler } from '../Event';
 import { toLower } from '../../utils';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { TransferredNode, TransferrableNode } from '../../transfer/TransferrableNodes';
+import { TransferredNode, TransferrableNode, HydrateableNode } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 
 export const enum NodeType {
@@ -68,11 +68,12 @@ export abstract class Node {
   public parentNode: Node | null = null;
   public isConnected: boolean = false;
   public _index_: number;
-  protected _transferred_: TransferredNode | null = null;
+  public _transferredFormat_: TransferredNode;
+  public _creationFormat_: TransferrableNode;
+  public abstract hydrate(): HydrateableNode;
   private _handlers_: {
     [index: string]: EventHandler[];
   } = {};
-  public abstract serialize(): TransferrableNode | TransferredNode;
 
   constructor(nodeType: NodeType, nodeName: NodeName) {
     this.nodeType = nodeType;
@@ -84,7 +85,7 @@ export abstract class Node {
     }
     this.ownerDocument = globalDocument;
 
-    this._index_ = mappingStoreNode(this);
+    this._index_ = storeNodeMapping(this);
   }
 
   // Unimplemented Properties
@@ -210,7 +211,6 @@ export abstract class Node {
         type: MutationRecordType.CHILD_LIST,
         target: this,
       });
-
       return child;
     }
 
@@ -294,6 +294,7 @@ export abstract class Node {
         oldChild.parentNode = null;
         propagate(oldChild, 'isConnected', false);
         this.childNodes.splice(index, 1, newChild);
+
         mutate({
           addedNodes: [newChild],
           removedNodes: [oldChild],
@@ -335,6 +336,7 @@ export abstract class Node {
       addedEvents: [
         {
           [TransferrableKeys.type]: type,
+          [TransferrableKeys._index_]: this._index_,
           [TransferrableKeys.index]: index,
         },
       ],
@@ -359,6 +361,7 @@ export abstract class Node {
         removedEvents: [
           {
             [TransferrableKeys.type]: type,
+            [TransferrableKeys._index_]: this._index_,
             [TransferrableKeys.index]: index,
           },
         ],

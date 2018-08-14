@@ -2,9 +2,10 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>DBMON</title>
+  <title>Preact • TodoMVC</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="dbmon.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="preact-todomvc/base.css" />
+  <link rel="stylesheet" href="preact-todomvc/todomvc.css" />
   <script src="./dist/index.mjs" type="module"></script>
   <script src="./dist/index.js" nomodule defer></script>
   <!-- This comment block is intended to make it easier to test both the script module and nomodule path -->
@@ -12,7 +13,12 @@
   <!-- <script src="./dist/index.js" defer></script> -->
 </head>
 <body>
-  <div src="author-dbmon.js" class="amp-script"><div><div id="mutations"><label id="ratioval">mutations: 50%</label><input type="range"></input></div><table class="table table-striped latest-data"><tbody></tbody></table></div></div>
+  <div src="preact-todomvc/app.js" class="amp-script todoapp"><div><header class="header"><h1>todos</h1><input class="new-todo" placeholder="What needs to be done?" autofocus></header></div></div>
+  <footer class="info">
+    <p>Double-click to edit a todo</p>
+    <p>Created by <a href="http://github.com/kristoferbaxter/">kristoferbaxter</a></p>
+    <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+  </footer>
   <script type="module">
     import {upgradeElement} from './dist/index.mjs';
     upgradeElement(document.getElementsByClassName('amp-script')[0], './dist/worker.mjs');

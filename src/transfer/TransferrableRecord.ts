@@ -15,7 +15,7 @@
  */
 
 import { MutationRecordType } from '../worker-thread/MutationRecord';
-import { TransferrableNode, TransferredNode } from './TransferrableNodes';
+import { TransferredNode } from './TransferrableNodes';
 import { TransferrableEventSubscriptionChange } from './TransferrableEvent';
 import { TransferrableKeys } from './TransferrableKeys';
 
@@ -26,17 +26,17 @@ import { TransferrableKeys } from './TransferrableKeys';
 // For more info on MutationRecords: https://developer.mozilla.org/en-US/docs/Web/API/MutationRecord
 export interface TransferrableMutationRecord {
   readonly [TransferrableKeys.type]: MutationRecordType;
-  readonly [TransferrableKeys.target]: TransferrableNode | TransferredNode;
+  readonly [TransferrableKeys.target]: number;
 
-  [TransferrableKeys.addedNodes]?: Array<TransferrableNode | TransferredNode>;
-  [TransferrableKeys.removedNodes]?: Array<TransferrableNode | TransferredNode>;
-  [TransferrableKeys.previousSibling]?: TransferrableNode | TransferredNode;
-  [TransferrableKeys.nextSibling]?: TransferrableNode | TransferredNode;
+  [TransferrableKeys.addedNodes]?: Array<TransferredNode>;
+  [TransferrableKeys.removedNodes]?: Array<TransferredNode>;
+  [TransferrableKeys.previousSibling]?: TransferredNode;
+  [TransferrableKeys.nextSibling]?: TransferredNode;
   [TransferrableKeys.attributeName]?: string;
   [TransferrableKeys.attributeNamespace]?: string;
   [TransferrableKeys.propertyName]?: string;
   [TransferrableKeys.value]?: string;
   [TransferrableKeys.oldValue]?: string;
-  [TransferrableKeys.addedEvents]?: TransferrableEventSubscriptionChange[];
-  [TransferrableKeys.removedEvents]?: TransferrableEventSubscriptionChange[];
+  [TransferrableKeys.addedEvents]?: Array<TransferrableEventSubscriptionChange>;
+  [TransferrableKeys.removedEvents]?: Array<TransferrableEventSubscriptionChange>;
 }
