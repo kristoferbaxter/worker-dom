@@ -99,7 +99,11 @@ export class Document extends Element {
   }
 }
 
-export function createDocument(): Document {
+/**
+ *
+ * @param postMessage
+ */
+export function createDocument(postMessage?: Function): Document {
   // Use local references of privileged functions that are used asynchronously
   // (e.g. `postMessage`) to prevent overwriting by 3P JS.
   const _postMessage = postMessage;
@@ -115,4 +119,5 @@ export function createDocument(): Document {
   return document;
 }
 
+/** Should only be used for testing. */
 export const document = createDocument();

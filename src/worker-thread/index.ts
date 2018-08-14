@@ -19,7 +19,7 @@ import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 import { appendKeys } from './css/CSSStyleDeclaration';
 
 export const workerDOM: WorkerDOMGlobalScope = {
-  document: createDocument(),
+  document: createDocument((self as DedicatedWorkerGlobalScope).postMessage),
   localStorage: {},
   location: {},
   url: '/',

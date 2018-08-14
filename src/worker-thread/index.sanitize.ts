@@ -98,7 +98,7 @@ const WHITELISTED_GLOBALS = [
 ];
 
 export const workerDOM: WorkerDOMGlobalScope = {
-  document: createDocument(),
+  document: createDocument((self as DedicatedWorkerGlobalScope).postMessage),
   localStorage: {},
   location: {},
   url: '/',
