@@ -60,7 +60,6 @@ export function propagate(): void {
 
       const event = data[TransferrableKeys.event] as TransferrableEvent;
       const node = get(event[TransferrableKeys._index_]);
-      // debugger;
       if (node !== null) {
         const target = event[TransferrableKeys.target];
         node.dispatchEvent(
