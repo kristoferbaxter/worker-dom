@@ -203,10 +203,6 @@ export abstract class Node {
       return child;
     }
 
-    // KRIS – ONLY FIRE A MUTATION IF THE NODE IS ATTACHED TO AN EXISTING DOCUMENT
-    // WHEN CREATING, LETS USE A NODEPOOL TO TRANSMIT THE NODES, AND THE MUTATIONS TO
-    // SEND THE STRUCTURE OF THE DOM TREE.
-
     if (referenceNode == null) {
       // When a referenceNode is not valid, appendChild(child).
       this.appendChild(child);
@@ -215,7 +211,6 @@ export abstract class Node {
         type: MutationRecordType.CHILD_LIST,
         target: this,
       });
-
       return child;
     }
 
