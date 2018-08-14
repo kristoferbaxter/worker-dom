@@ -37,10 +37,12 @@ export interface TransferrableEvent {
   readonly [TransferrableKeys.timeStamp]?: number;
   readonly [TransferrableKeys.type]: string;
   readonly [TransferrableKeys.scoped]?: boolean;
+  readonly [TransferrableKeys.keyCode]?: number;
 }
 
 export interface TransferrableEventSubscriptionChange {
   readonly [TransferrableKeys.type]: string;
+  readonly [TransferrableKeys._index_]: number;
   readonly [TransferrableKeys.index]: number;
 }
 
@@ -72,6 +74,7 @@ export function propagate(): void {
               target: get(target ? target[TransferrableKeys._index_] : null),
               timeStamp: event[TransferrableKeys.timeStamp],
               scoped: event[TransferrableKeys.scoped],
+              keyCode: event[TransferrableKeys.keyCode],
             },
           ),
         );

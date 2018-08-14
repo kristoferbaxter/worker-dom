@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import { hydrate } from './hydrate';
-import { prepareMutate, mutate } from './mutate';
+import { hydrate } from './hydrator';
+import { prepareMutate, mutate } from './mutator';
 import { createWorker } from './worker';
-import { MessageFromWorker, MessageType } from '../transfer/Messages';
+import { MessageFromWorker, MessageType, HydrationFromWorker, MutationFromWorker } from '../transfer/Messages';
 import { prepare as prepareNodes } from './nodes';
+import { TransferrableKeys } from '../transfer/TransferrableKeys';
 
-export function install(baseElement: Element, workerDOMUrl: string, sanitizer?: Sanitizer): void {
+export function install(baseElement: HTMLElement, workerDOMUrl: string, sanitizer?: Sanitizer): void {
   const authorURL = baseElement.getAttribute('src');
   if (authorURL === null) {
     return;
   }
 
-  // console.log(`creating worker, author code: ${authorURL}`);
   createWorker(workerDOMUrl, authorURL).then(worker => {
     if (worker === null) {
       return;
@@ -36,15 +36,19 @@ export function install(baseElement: Element, workerDOMUrl: string, sanitizer?: 
     prepareMutate(worker);
 
     worker.onmessage = ({ data }: MessageFromWorker) => {
-      switch (data.type) {
+      switch (data[TransferrableKeys.type]) {
         case MessageType.HYDRATE:
-          // console.info(`hydration from worker: ${data.type}`, data.mutations);
-          hydrate(data.mutations, baseElement, worker);
+          // console.info(`hydration from worker: ${data.type}`, data);
+          hydrate(
+            (data as HydrationFromWorker)[TransferrableKeys.nodes],
+            (data as HydrationFromWorker)[TransferrableKeys.addedEvents],
+            baseElement,
+            worker,
+          );
           break;
         case MessageType.MUTATE:
-          // console.info(`mutation from worker: ${data.type}`, data.mutations);
-          // mutationInstance.process(data.mutations);
-          mutate(data.mutations, sanitizer);
+          // console.info(`mutation from worker: ${data.type}`, data);
+          mutate((data as MutationFromWorker)[TransferrableKeys.nodes], (data as MutationFromWorker)[TransferrableKeys.mutations], sanitizer);
           break;
       }
     };

@@ -19,15 +19,20 @@ import { DOMTokenList } from './DOMTokenList';
 import { Attr, toString as attrsToString, matchPredicate as matchAttrPredicate } from './Attr';
 import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
-import { TransferredNode, TransferrableElement } from '../../transfer/TransferrableNodes';
 import { NumericBoolean } from '../../utils';
 import { Text } from './Text';
 import { CSSStyleDeclaration } from '../css/CSSStyleDeclaration';
 import { matchChildrenElements } from './matchElements';
 import { reflectProperties } from './enhanceElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { HydrateableNode } from '../../transfer/TransferrableNodes';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
+
+export const NODE_NAME_MAPPING: { [key: string]: typeof Element } = {};
+export function registerSubclass(nodeName: NodeName, subclass: typeof Element): void {
+  NODE_NAME_MAPPING[nodeName] = subclass;
+}
 
 export class Element extends Node {
   public attributes: Attr[] = [];
@@ -39,6 +44,28 @@ export class Element extends Node {
   constructor(nodeType: NodeType, nodeName: NodeName, namespaceURI: NamespaceURI) {
     super(nodeType, nodeName);
     this.namespaceURI = namespaceURI;
+    this._transferredFormat_ = {
+      [TransferrableKeys._index_]: this._index_,
+      [TransferrableKeys.transferred]: NumericBoolean.TRUE,
+    };
+    this._creationFormat_ = {
+      [TransferrableKeys._index_]: this._index_,
+      [TransferrableKeys.transferred]: NumericBoolean.FALSE,
+      [TransferrableKeys.nodeType]: this.nodeType,
+      [TransferrableKeys.nodeName]: this.nodeName,
+      [TransferrableKeys.namespaceURI]: this.namespaceURI === null ? undefined : this.namespaceURI,
+    };
+  }
+
+  /**
+   * When hydrating the tree, we need to send HydrateableNode representations
+   * for the main thread to process and store items from for future modifications.
+   */
+  public hydrate(): HydrateableNode {
+    return Object.assign({}, this._creationFormat_, {
+      [TransferrableKeys.attributes]: this.attributes,
+      [TransferrableKeys.childNodes]: this.childNodes.map(node => node.hydrate()),
+    });
   }
 
   // Unimplemented properties
@@ -344,35 +371,5 @@ export class Element extends Node {
   public getElementsByTagName(tagName: string): Element[] {
     return matchChildrenElements(this, tagName === '*' ? _ => true : element => element.tagName === tagName);
   }
-
-  public serialize(): TransferrableElement | TransferredNode {
-    if (this._transferred_ !== null) {
-      return this._transferred_;
-    }
-
-    Promise.resolve().then(_ => {
-      // After transmission of the current unsanitized form across a message, we can start to send the more compressed format.
-      this._transferred_ = {
-        [TransferrableKeys._index_]: this._index_,
-        [TransferrableKeys.transferred]: NumericBoolean.TRUE,
-      };
-    });
-    return {
-      [TransferrableKeys._index_]: this._index_,
-      [TransferrableKeys.transferred]: NumericBoolean.FALSE,
-      [TransferrableKeys.nodeType]: this.nodeType,
-      [TransferrableKeys.nodeName]: this.nodeName,
-      [TransferrableKeys.attributes]: this.attributes,
-      [TransferrableKeys.namespaceURI]: this.namespaceURI,
-      [TransferrableKeys.childNodes]: this.childNodes.map(childNode => childNode.serialize()),
-    };
-  }
 }
 reflectProperties([{ id: [''] }], Element);
-
-export const NODE_NAME_MAPPING: {
-  [key: string]: typeof Element;
-} = {};
-export const registerSubclass = (nodeName: NodeName, subclass: typeof Element): void => {
-  NODE_NAME_MAPPING[nodeName] = subclass;
-};
