@@ -268,8 +268,6 @@ export abstract class Node {
       child.parentNode = null;
       propagate(child, 'isConnected', false);
       this.childNodes.splice(index, 1);
-      this._transferred_ = null;
-
       mutate({
         removedNodes: [child],
         type: MutationRecordType.CHILD_LIST,
@@ -296,7 +294,6 @@ export abstract class Node {
         oldChild.parentNode = null;
         propagate(oldChild, 'isConnected', false);
         this.childNodes.splice(index, 1, newChild);
-        oldChild._transferred_ = null;
 
         mutate({
           addedNodes: [newChild],

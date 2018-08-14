@@ -58,8 +58,8 @@ export class Element extends Node {
   }
 
   /**
-   * When hydrating the tree, we need to send Hydrateable Node representations
-   * for processing on the main thread.
+   * When hydrating the tree, we need to send HydrateableNode representations
+   * for the main thread to process and store items from for future modifications.
    */
   public hydrate(): HydrateableNode {
     return Object.assign({}, this._creationFormat_, {
