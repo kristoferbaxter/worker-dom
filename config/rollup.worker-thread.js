@@ -33,7 +33,7 @@ const ESModules = [
     plugins: [
       babelPlugin({
         transpileToES5: false,
-        allowConsole: false,
+        allowConsole: DEBUG_BUNDLE_VALUE,
       }),
       MINIFY_BUNDLE_VALUE ? compiler({
         env: 'CUSTOM'
@@ -54,7 +54,7 @@ const IIFEModules = [
     plugins: [
       babelPlugin({
         transpileToES5: true,
-        allowConsole: false,
+        allowConsole: DEBUG_BUNDLE_VALUE,
       }),
       MINIFY_BUNDLE_VALUE ? compiler({
         env: 'CUSTOM'
