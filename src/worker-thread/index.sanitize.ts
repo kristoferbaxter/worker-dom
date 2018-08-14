@@ -99,7 +99,6 @@ const WHITELISTED_GLOBALS = [
 
 export const workerDOM: WorkerDOMGlobalScope = {
   document: createDocument(),
-  // TODO(choumx): Make these useful.
   localStorage: {},
   location: {},
   url: '/',

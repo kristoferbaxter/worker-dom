@@ -99,13 +99,20 @@ export class Document extends Element {
   }
 }
 
-export const document = (() => {
-  const doc = new Document();
-  doc.isConnected = true;
-  doc.appendChild((doc.body = doc.createElement('body')));
-  observeMutations(doc, __postMessage);
+export function createDocument(): Document {
+  // Use local references of privileged functions that are used asynchronously
+  // (e.g. `postMessage`) to prevent overwriting by 3P JS.
+  const _postMessage = postMessage;
+
+  const document = new Document();
+  document.isConnected = true;
+  document.appendChild((document.body = document.createElement('body')));
+
+  observeMutations(document, _postMessage);
   propagateEvents();
   propagateSyncValues();
 
-  return doc;
-})();
+  return document;
+}
+
+export const document = createDocument();

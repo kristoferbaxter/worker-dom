@@ -24,7 +24,6 @@ import { TransferrableKeys } from './TransferrableKeys';
 import { consume } from '../worker-thread/NodeMapping';
 import { TransferrableEventSubscriptionChange } from './TransferrableEvent';
 
-const SUPPORTS_POST_MESSAGE = typeof postMessage !== 'undefined';
 let document: Document;
 let observing = false;
 let hydrated = false;
@@ -92,9 +91,10 @@ function serializeMutations(mutations: MutationRecord[]): MutationFromWorker {
 /**
  *
  * @param incoming
+ * @param postMessage
  */
-function handleMutations(incoming: MutationRecord[]): void {
-  if (SUPPORTS_POST_MESSAGE) {
+function handleMutations(incoming: MutationRecord[], postMessage?: Function): void {
+  if (postMessage) {
     postMessage(hydrated === false ? serializeHydration(incoming) : serializeMutations(incoming));
   }
   hydrated = true;
@@ -103,11 +103,12 @@ function handleMutations(incoming: MutationRecord[]): void {
 /**
  *
  * @param doc
+ * @param postMessage
  */
-export function observe(doc: Document): void {
+export function observe(doc: Document, postMessage: Function): void {
   if (!observing) {
     document = doc;
-    new doc.defaultView.MutationObserver(handleMutations).observe(doc.body);
+    new doc.defaultView.MutationObserver(mutations => handleMutations(mutations, postMessage)).observe(doc.body);
     observing = true;
   }
 }
