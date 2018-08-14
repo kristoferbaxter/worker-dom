@@ -8,7 +8,6 @@
     "url": "https://github.com/ampproject/worker-dom.git"
   },
   "engines": {
-    "yarn": ">=1.7.0",
     "node": ">=8.10.0"
   },
   "author": "Kristofer Baxter",
@@ -19,8 +18,9 @@
     "pre~rollup": "rimraf output dist && tsc -p config/tsconfig.build.worker-thread.json & tsc -p config/tsconfig.build.main-thread.json",
     "~rollup": "rollup --config config/rollup.config.js",
     "lint": "tslint -c config/tslint.json -p src/worker-thread/ & tslint -c config/tslint.json -p src/main-thread/",
-    "debug": "DEBUG_BUNDLE=true yarn ~rollup && node -r esm demo/server.mjs",
-    "build": "MINIFY_BUNDLE=true yarn ~rollup"
+    "predebug": "DEBUG_BUNDLE=true npm run ~rollup",
+    "debug": "node -r esm demo/server.mjs",
+    "build": "MINIFY_BUNDLE=true npm run ~rollup"
   },
   "dependencies": {
     "dompurify": "1.0.7"
@@ -50,14 +50,14 @@
   },
   "lint-staged": {
     "*.ts": [
-      "yarn prettier --config config/.prettierrc --write",
+      "prettier --config config/.prettierrc --write",
       "git add"
     ]
   },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "pre-push": "yarn test; yarn build; yarn bundlesize"
+      "pre-push": "npm run test; npm run build; bundlesize"
     }
   },
   "bundlesize": [
