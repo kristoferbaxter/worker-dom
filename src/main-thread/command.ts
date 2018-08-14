@@ -111,6 +111,15 @@ export function process(worker: Worker, mutation: TransferrableMutationRecord): 
   });
 }
 
+/**
+ * If the worker requests to add an event listener to 'change' for something the foreground thread is already listening to
+ * ensure that only a single 'change' event is attached to prevent sending values multiple times.
+ * @param worker worker issuing listener changes
+ * @param target node to change listeners on
+ * @param addEvent is this an 'addEvent' or 'removeEvent' change
+ * @param type event type requested to change
+ * @param index number in the listeners array this event corresponds to.
+ */
 export function processListenerChange(worker: Worker, target: RenderableElement, addEvent: boolean, type: string, index: number): void {
   let changeEventSubscribed: boolean = target.onchange !== null;
   const shouldTrack: boolean = shouldTrackChanges(target as HTMLElement);

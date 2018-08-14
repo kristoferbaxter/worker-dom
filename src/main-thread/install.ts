@@ -27,7 +27,6 @@ export function install(baseElement: HTMLElement, workerDOMUrl: string, sanitize
     return;
   }
 
-  // console.log(`creating worker, author code: ${authorURL}`);
   createWorker(workerDOMUrl, authorURL).then(worker => {
     if (worker === null) {
       return;
@@ -39,7 +38,7 @@ export function install(baseElement: HTMLElement, workerDOMUrl: string, sanitize
     worker.onmessage = ({ data }: MessageFromWorker) => {
       switch (data[TransferrableKeys.type]) {
         case MessageType.HYDRATE:
-          // console.info(`hydration from worker: ${data.type}`, data.mutations);
+          // console.info(`hydration from worker: ${data.type}`, data);
           hydrate(
             (data as HydrationFromWorker)[TransferrableKeys.nodes],
             (data as HydrationFromWorker)[TransferrableKeys.addedEvents],
@@ -48,7 +47,7 @@ export function install(baseElement: HTMLElement, workerDOMUrl: string, sanitize
           );
           break;
         case MessageType.MUTATE:
-          // console.info(`mutation from worker: ${data.type}`, data.mutations);
+          // console.info(`mutation from worker: ${data.type}`, data);
           mutate((data as MutationFromWorker)[TransferrableKeys.nodes], (data as MutationFromWorker)[TransferrableKeys.mutations], sanitizer);
           break;
       }
