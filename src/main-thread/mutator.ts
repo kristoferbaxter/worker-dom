@@ -86,10 +86,10 @@ const mutators: {
 };
 
 /**
- * Process MutationRecord from worker thread applying changes to the existing DOM.
- * @param nodes
- * @param mutations
- * @param sanitizer
+ * Process MutationRecords from worker thread applying changes to the existing DOM.
+ * @param nodes New nodes to add in the main thread with the incoming mutations.
+ * @param mutations Changes to apply in both graph shape and content of Elements.
+ * @param sanitizer Sanitizer to apply to content if needed.
  */
 export function mutate(nodes: Array<TransferrableNode>, mutations: Array<TransferrableMutationRecord>, sanitizer?: Sanitizer): void {
   //mutations: TransferrableMutationRecord[]): void {

@@ -26,10 +26,11 @@ function allTextNodes(nodes: NodeList | Array<HydrateableNode>): boolean {
 }
 
 /**
- *
- * @param nodes
- * @param parent
- * @param worker
+ * Replace all the children with the ones from the HydrateableNode.
+ * Used when we're certain the content won't break the page.
+ * @param nodes HydrateableNodes containing content to potentially overwrite main thread content.
+ * @param parent Node in the main thread that will be the parent of the passed nodes.
+ * @param worker worker that issued the request for hydration.
  */
 function replaceNodes(nodes: Array<HydrateableNode>, parent: HTMLElement, worker: Worker): void {
   [].forEach.call(parent.childNodes, (childNode: Element | Text) => childNode.remove());
@@ -50,10 +51,12 @@ function replaceNodes(nodes: Array<HydrateableNode>, parent: HTMLElement, worker
 }
 
 /**
- *
- * @param transferNode
- * @param node
- * @param worker
+ * Hydrate a single node and it's children safely.
+ * Attempt to ensure content is a rough match so content doesn't shift between the document representation
+ * and client side generated content.
+ * @param transferNode root of the background thread content (document.body from worker-thread).
+ * @param node root for the foreground thread content (element upgraded to background driven).
+ * @param worker worker that issued the request for hydration.
  */
 function hydrateNode(transferNode: HydrateableNode, node: HTMLElement | Text, worker: Worker): void {
   const transferIsText = isTextNode(transferNode);
@@ -90,11 +93,11 @@ function hydrateNode(transferNode: HydrateableNode, node: HTMLElement | Text, wo
 }
 
 /**
- *
- * @param hydration
- * @param events
- * @param baseElement
- * @param worker
+ * Hydrate a root from the worker thread by comparing with the main thread representation.
+ * @param skeleton root of the background thread content.
+ * @param addEvents events needing subscription from the background thread content.
+ * @param baseElement root of the main thread content to compare against.
+ * @param worker worker issuing the upgrade request.
  */
 export function hydrate(skeleton: HydrateableNode, addEvents: Array<TransferrableEventSubscriptionChange>, baseElement: HTMLElement, worker: Worker) {
   // Process Node Addition / Removal
