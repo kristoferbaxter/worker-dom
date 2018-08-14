@@ -2,12 +2,12 @@
 
 An in-progress implementation of the DOM API intended to run within a Web Worker. 
 
-Purpose: Move complexity of intermediate work related to DOM mutations to a background thread, sending only the necessary manipulations to a foreground thread.
+**Purpose**: Move complexity of intermediate work related to DOM mutations to a background thread, sending only the necessary manipulations to a foreground thread.
 
-Usecases:
+**Use Cases**:
 1. Embedded content from a third party living side by side with first party code.
-2. Mitigation of expensive rendering for content not requiring syncronous updating to user actions.
-3. Retaining main thread availablity for high priority updates and slowly applying less prioritized updates elsewhere in a document.  
+2. Mitigation of expensive rendering for content not requiring syncronous updates to user actions.
+3. Retaining main thread availablity for high priority updates by async updating elsewhere in a document.  
 
 ## Installation
 
@@ -25,7 +25,8 @@ Include the WorkerDOM main thread code within your document directly or via a bu
 ```
 
 Upgrade a specific section of the document to be driven by a worker.
-**Note**: The nomodule format exposes a global `MainThread` whereas the module format allows one to directly import the `upgradeElement` method.
+
+**Note**: The nomodule format exposes the global `MainThread` whereas the module format allows one to directly import the `upgradeElement` method.
 ```html
 <div src="hello-world.js" id="upgrade-me"></div>
 <script type="module">
@@ -39,7 +40,7 @@ Upgrade a specific section of the document to be driven by a worker.
 </script>
 ``` 
 
-If you would like to leverage built-in sanitization of mutations from the worker, you can use the distributed version of the sanitizer.
+If you would like to leverage built-in mutation sanitization, you can use the distributed version of the main thread that includes automatic sanitization.
 ```html
 <script src="./dist/index.sanitizer.mjs" type="module"></script>
 <script src="./dist/index.sanitizer.js" nomodule defer></script>
