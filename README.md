@@ -39,7 +39,7 @@ Upgrade a specific section of the document to be driven by a worker.
 </script>
 ``` 
 
-If you would like to leverage built-in sanitization of mutations from the worker, use can distributed version of the sanitizer.
+If you would like to leverage built-in sanitization of mutations from the worker, you can use the distributed version of the sanitizer.
 ```html
 <script src="./dist/index.sanitizer.mjs" type="module"></script>
 <script src="./dist/index.sanitizer.js" nomodule defer></script>
