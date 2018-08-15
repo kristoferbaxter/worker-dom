@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { MonkeyWorkerGlobalScope } from './MonkeyWorkerGlobalScope';
+import { createDocument } from './dom/Document';
+import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 import { appendKeys } from './css/CSSStyleDeclaration';
-import { document } from './dom/Document';
 
-export const monkey: MonkeyWorkerGlobalScope = {
-  document,
+export const workerDOM: WorkerDOMGlobalScope = {
+  document: createDocument((self as DedicatedWorkerGlobalScope).postMessage),
   localStorage: {},
   location: {},
   url: '/',

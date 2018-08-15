@@ -39,7 +39,25 @@ const ESModules = [
         env: 'CUSTOM'
       }) : null,
     ].filter(Boolean)
-  }
+  },
+  {
+    input: 'output/worker-thread/index.safe.js',
+    output: {
+      file: 'dist/worker.safe.mjs',
+      format: 'iife',
+      name: 'WorkerThread',
+      sourcemap: true,
+    },
+    plugins: [
+      babelPlugin({
+        transpileToES5: false,
+        allowConsole: DEBUG_BUNDLE_VALUE,
+      }),
+      MINIFY_BUNDLE_VALUE ? compiler({
+        env: 'CUSTOM'
+      }) : null,
+    ].filter(Boolean)
+  },
 ];
 
 const IIFEModules = [
@@ -47,6 +65,24 @@ const IIFEModules = [
     input: 'output/worker-thread/index.js',
     output: {
       file: 'dist/worker.js',
+      format: 'iife',
+      name: 'WorkerThread',
+      sourcemap: true,
+    },
+    plugins: [
+      babelPlugin({
+        transpileToES5: true,
+        allowConsole: DEBUG_BUNDLE_VALUE,
+      }),
+      MINIFY_BUNDLE_VALUE ? compiler({
+        env: 'CUSTOM'
+      }) : null,
+    ].filter(Boolean)
+  },
+  {
+    input: 'output/worker-thread/index.safe.js',
+    output: {
+      file: 'dist/worker.safe.js',
       format: 'iife',
       name: 'WorkerThread',
       sourcemap: true,

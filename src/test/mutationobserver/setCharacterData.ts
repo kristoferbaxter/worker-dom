@@ -15,23 +15,25 @@
  */
 
 import test from 'ava';
-import { document } from '../../worker-thread/dom/Document';
+import { documentForTesting as document } from '../../worker-thread/dom/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
 test.cb('Text, set data', t => {
   const text = document.createTextNode('original text');
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.CHARACTER_DATA,
-        target: text,
-        value: 'new text',
-        oldValue: 'original text',
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.CHARACTER_DATA,
+          target: text,
+          value: 'new text',
+          oldValue: 'original text',
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   document.body.appendChild(text);
   observer.observe(document.body);
@@ -40,18 +42,20 @@ test.cb('Text, set data', t => {
 
 test.cb.serial('Text, set textContent', t => {
   const text = document.createTextNode('original text');
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.CHARACTER_DATA,
-        target: text,
-        value: 'new text',
-        oldValue: 'original text',
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.CHARACTER_DATA,
+          target: text,
+          value: 'new text',
+          oldValue: 'original text',
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   document.body.appendChild(text);
   observer.observe(document.body);

@@ -99,13 +99,27 @@ export class Document extends Element {
   }
 }
 
-export const document = (() => {
+/**
+ *
+ * @param postMessage
+ */
+export function createDocument(postMessage?: Function): Document {
+  // Use local references of privileged functions that are used asynchronously
+  // (e.g. `postMessage`) to prevent overwriting by 3P JS.
+  const _postMessage = postMessage;
+
   const doc = new Document();
   doc.isConnected = true;
   doc.appendChild((doc.body = doc.createElement('body')));
-  observeMutations(doc);
-  propagateEvents();
-  propagateSyncValues();
+
+  if (_postMessage) {
+    observeMutations(doc, _postMessage);
+    propagateEvents();
+    propagateSyncValues();
+  }
 
   return doc;
-})();
+}
+
+/** Should only be used for testing. */
+export const documentForTesting = createDocument();

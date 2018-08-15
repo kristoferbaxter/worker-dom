@@ -15,24 +15,26 @@
  */
 
 import test from 'ava';
-import { document } from '../../worker-thread/dom/Document';
+import { documentForTesting as document } from '../../worker-thread/dom/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 
 test.cb.serial('replaceChild mutation, only node', t => {
   const div = document.createElement('div');
   const p = document.createElement('p');
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.CHILD_LIST,
-        target: document.body,
-        removedNodes: [div],
-        addedNodes: [p],
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.CHILD_LIST,
+          target: document.body,
+          removedNodes: [div],
+          addedNodes: [p],
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   document.body.appendChild(div);
   observer.observe(document.body);
@@ -42,18 +44,20 @@ test.cb.serial('replaceChild mutation, only node', t => {
 test.cb.serial('replaceChild mutation, remove sibling node', t => {
   const div = document.createElement('div');
   const p = document.createElement('p');
-  const observer = new document.defaultView.MutationObserver((mutations: MutationRecord[]): void => {
-    t.deepEqual(mutations, [
-      {
-        type: MutationRecordType.CHILD_LIST,
-        target: document.body,
-        removedNodes: [p],
-        addedNodes: [div],
-      },
-    ]);
-    observer.disconnect();
-    t.end();
-  });
+  const observer = new document.defaultView.MutationObserver(
+    (mutations: MutationRecord[]): void => {
+      t.deepEqual(mutations, [
+        {
+          type: MutationRecordType.CHILD_LIST,
+          target: document.body,
+          removedNodes: [p],
+          addedNodes: [div],
+        },
+      ]);
+      observer.disconnect();
+      t.end();
+    },
+  );
 
   document.body.appendChild(div);
   document.body.appendChild(p);

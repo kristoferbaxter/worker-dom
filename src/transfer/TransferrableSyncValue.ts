@@ -29,17 +29,18 @@ export interface TransferrableSyncValue {
  * method to dispatch the transfered event in the worker thread.
  */
 export function propagate(): void {
-  if (typeof addEventListener !== 'undefined') {
-    addEventListener('message', ({ data }: { data: MessageToWorker }) => {
-      if (data[TransferrableKeys.type] !== MessageType.SYNC) {
-        return;
-      }
-
-      const sync = (data as ValueSyncToWorker)[TransferrableKeys.sync];
-      const node = get(sync[TransferrableKeys._index_]);
-      if (node) {
-        node.value = sync[TransferrableKeys.value];
-      }
-    });
+  if (typeof addEventListener !== 'function') {
+    return;
   }
+  addEventListener('message', ({ data }: { data: MessageToWorker }) => {
+    if (data[TransferrableKeys.type] !== MessageType.SYNC) {
+      return;
+    }
+
+    const sync = (data as ValueSyncToWorker)[TransferrableKeys.sync];
+    const node = get(sync[TransferrableKeys._index_]);
+    if (node) {
+      node.value = sync[TransferrableKeys.value];
+    }
+  });
 }

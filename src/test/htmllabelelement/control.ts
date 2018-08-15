@@ -16,7 +16,7 @@
 
 import test from 'ava';
 import { HTMLLabelElement } from '../../worker-thread/dom/HTMLLabelElement';
-import { document } from '../../worker-thread/dom/Document';
+import { documentForTesting as document } from '../../worker-thread/dom/Document';
 import { HTMLElement } from '../../worker-thread/dom/HTMLElement';
 
 test.beforeEach(t => {

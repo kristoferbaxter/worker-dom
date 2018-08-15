@@ -50,7 +50,7 @@ export function createWorker(workerDomURL: string, authorScriptURL: string): Pro
           }
           this.appendKeys([${keys}]);
           ${authorScript}
-        }).call(WorkerThread.monkey);`;
+        }).call(WorkerThread.workerDOM);`;
       return new Worker(URL.createObjectURL(new Blob([code])));
     })
     .catch(error => {
