@@ -40,10 +40,16 @@ Upgrade a specific section of the document to be driven by a worker.
 </script>
 ``` 
 
-If you would like to leverage built-in mutation sanitization, you can use the distributed version of the main thread that includes automatic sanitization.
-```html
-<script src="./dist/index.safe.mjs" type="module"></script>
-<script src="./dist/index.safe.js" nomodule defer></script>
+### "Safe" mode
+
+WorkerDOM has a special output variant that includes safety features e.g. HTML sanitization and a web worker sandbox. This variant is distributed under the ".safe" suffix for main and worker thread binaries:
+
+```
+index.safe.mjs
+index.safe.js
+
+worker.safe.mjs
+worker.safe.js
 ```
 
 ## Security disclosures
