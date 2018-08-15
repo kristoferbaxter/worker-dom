@@ -34,11 +34,13 @@ export const enum MessageType {
 
 export interface HydrationFromWorker {
   readonly [TransferrableKeys.type]: MessageType.HYDRATE;
+  readonly [TransferrableKeys.strings]: Array<string>;
   readonly [TransferrableKeys.nodes]: HydrateableNode;
   readonly [TransferrableKeys.addedEvents]: Array<TransferrableEventSubscriptionChange>;
 }
 export interface MutationFromWorker {
   readonly [TransferrableKeys.type]: MessageType.MUTATE;
+  readonly [TransferrableKeys.strings]: Array<string>;
   readonly [TransferrableKeys.nodes]: Array<TransferrableNode>;
   readonly [TransferrableKeys.mutations]: Array<TransferrableMutationRecord>;
 }

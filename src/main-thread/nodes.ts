@@ -17,6 +17,7 @@
 import { TransferrableNode } from '../transfer/TransferrableNodes';
 import { RenderableElement } from './RenderableElement';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
+import { getString } from './strings';
 import { NodeType } from '../worker-thread/dom/Node';
 
 let NODES: Map<number, RenderableElement>;
@@ -40,15 +41,16 @@ export function isTextNode(node: Node | TransferrableNode): boolean {
  */
 export function createNode(skeleton: TransferrableNode): RenderableElement {
   if (isTextNode(skeleton)) {
-    const node = document.createTextNode(skeleton[TransferrableKeys.textContent] as string);
+    const node = document.createTextNode(getString(skeleton[TransferrableKeys.textContent] as number));
     storeNode(node, skeleton[TransferrableKeys._index_]);
     return node as RenderableElement;
   }
 
-  const namespace: string | undefined = skeleton[TransferrableKeys.namespaceURI];
+  const namespace: string | undefined =
+    skeleton[TransferrableKeys.namespaceURI] !== undefined ? getString(skeleton[TransferrableKeys.namespaceURI] as number) : undefined;
   const node: HTMLElement | SVGElement = namespace
-    ? (document.createElementNS(namespace, skeleton[TransferrableKeys.nodeName]) as SVGElement)
-    : document.createElement(skeleton[TransferrableKeys.nodeName]);
+    ? (document.createElementNS(namespace, getString(skeleton[TransferrableKeys.nodeName])) as SVGElement)
+    : document.createElement(getString(skeleton[TransferrableKeys.nodeName]));
   // TODO(KB): Restore Properties
   // skeleton.properties.forEach(property => {
   //   node[`${property.name}`] = property.value;

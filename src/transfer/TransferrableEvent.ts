@@ -41,7 +41,7 @@ export interface TransferrableEvent {
 }
 
 export interface TransferrableEventSubscriptionChange {
-  readonly [TransferrableKeys.type]: string;
+  readonly [TransferrableKeys.type]: number;
   readonly [TransferrableKeys._index_]: number;
   readonly [TransferrableKeys.index]: number;
 }

@@ -21,6 +21,7 @@ import { mutate } from '../MutationObserver';
 import { MutationRecordType } from '../MutationRecord';
 import { TransferredNode, TransferrableNode, HydrateableNode } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { store as storeString } from '../StringMapping';
 
 export const enum NodeType {
   ELEMENT_NODE = 1,
@@ -335,7 +336,7 @@ export abstract class Node {
       type: MutationRecordType.COMMAND,
       addedEvents: [
         {
-          [TransferrableKeys.type]: type,
+          [TransferrableKeys.type]: storeString(type),
           [TransferrableKeys._index_]: this._index_,
           [TransferrableKeys.index]: index,
         },
@@ -360,7 +361,7 @@ export abstract class Node {
         type: MutationRecordType.COMMAND,
         removedEvents: [
           {
-            [TransferrableKeys.type]: type,
+            [TransferrableKeys.type]: storeString(type),
             [TransferrableKeys._index_]: this._index_,
             [TransferrableKeys.index]: index,
           },
