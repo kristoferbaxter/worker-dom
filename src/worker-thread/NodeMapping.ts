@@ -46,7 +46,7 @@ export function get(index: number | null): Node | null {
 
 /**
  * Returns nodes registered but not yet transferred.
- * Side effect: Increases the transferred count to current registred.
+ * Side effect: Resets the transfer array to default value, to prevent passing the same values multiple times.
  */
 export function consume(): Array<Node> {
   const copy = transfer;
