@@ -36,7 +36,6 @@ export function install(baseElement: HTMLElement, workerDOMUrl: string, sanitize
     prepareMutate(worker);
 
     worker.onmessage = ({ data }: MessageFromWorker) => {
-      console.log(data);
       switch (data[TransferrableKeys.type]) {
         case MessageType.HYDRATE:
           // console.info(`hydration from worker: ${data.type}`, data);
