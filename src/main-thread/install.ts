@@ -51,7 +51,7 @@ export function install(baseElement: HTMLElement, workerDOMUrl: string, sanitize
           // console.info(`mutation from worker: ${data.type}`, data);
           mutate(
             (data as MutationFromWorker)[TransferrableKeys.nodes],
-            (data as HydrationFromWorker)[TransferrableKeys.strings],
+            (data as MutationFromWorker)[TransferrableKeys.strings],
             (data as MutationFromWorker)[TransferrableKeys.mutations],
             sanitizer,
           );
