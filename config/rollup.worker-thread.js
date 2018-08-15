@@ -41,9 +41,9 @@ const ESModules = [
     ].filter(Boolean)
   },
   {
-    input: 'output/worker-thread/index.sanitize.js',
+    input: 'output/worker-thread/index.safe.js',
     output: {
-      file: 'dist/worker.sanitize.mjs',
+      file: 'dist/worker.safe.mjs',
       format: 'iife',
       name: 'WorkerThread',
       sourcemap: true,
@@ -80,9 +80,9 @@ const IIFEModules = [
     ].filter(Boolean)
   },
   {
-    input: 'output/worker-thread/index.sanitize.js',
+    input: 'output/worker-thread/index.safe.js',
     output: {
-      file: 'dist/worker.sanitize.js',
+      file: 'dist/worker.safe.js',
       format: 'iife',
       name: 'WorkerThread',
       sourcemap: true,
