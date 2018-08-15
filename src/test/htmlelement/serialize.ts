@@ -19,6 +19,7 @@ import { Element } from '../../worker-thread/dom/Element';
 import { NodeType } from '../../worker-thread/dom/Node';
 import { HydrateableNode } from '../../transfer/TransferrableNodes';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { get } from '../../worker-thread/StringMapping';
 
 const RANDOM_TEXT_CONTENT = `TEXT_CONTENT-${Math.random()}`;
 const DIV_ID = 'DIV_ID';
@@ -37,14 +38,14 @@ test.beforeEach(t => {
 test('Element should serialize to a TransferrableNode', t => {
   const serializedDiv = t.context.div.hydrate();
   t.is(serializedDiv[TransferrableKeys.nodeType], NodeType.ELEMENT_NODE);
-  t.is(serializedDiv[TransferrableKeys.nodeName], 'div');
+  t.is(serializedDiv[TransferrableKeys.nodeName], get('div') as number);
   t.is(serializedDiv[TransferrableKeys.childNodes].length, 1);
   t.is(serializedDiv[TransferrableKeys.attributes].length, 2);
-  t.is(serializedDiv[TransferrableKeys.attributes][0].name, 'id');
-  t.is(serializedDiv[TransferrableKeys.attributes][0].value, DIV_ID);
-  t.is(serializedDiv[TransferrableKeys.attributes][1].name, 'class');
-  t.is(serializedDiv[TransferrableKeys.attributes][1].value, DIV_CLASS);
-  t.is(serializedDiv[TransferrableKeys.childNodes][0][TransferrableKeys.textContent], RANDOM_TEXT_CONTENT);
+  t.is(serializedDiv[TransferrableKeys.attributes][0][1], get('id') as number);
+  t.is(serializedDiv[TransferrableKeys.attributes][0][2], get(DIV_ID) as number);
+  t.is(serializedDiv[TransferrableKeys.attributes][1][1], get('class') as number);
+  t.is(serializedDiv[TransferrableKeys.attributes][1][2], get(DIV_CLASS) as number);
+  t.is(serializedDiv[TransferrableKeys.childNodes][0][TransferrableKeys.textContent], get(RANDOM_TEXT_CONTENT) as number);
   // Properties are not yet implemented
   // t.is(serializedDiv.properties.length, 0);
 });
@@ -52,7 +53,7 @@ test('Element should serialize to a TransferrableNode', t => {
 test('Element should serialize namespace', t => {
   const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
   const svg = new Element(NodeType.ELEMENT_NODE, 'svg', SVG_NAMESPACE);
-  t.is((svg.hydrate() as HydrateableNode)[TransferrableKeys.namespaceURI], SVG_NAMESPACE);
+  t.is((svg.hydrate() as HydrateableNode)[TransferrableKeys.namespaceURI], get(SVG_NAMESPACE) as number);
 });
 
 test('Element should serialize child node as well', t => {

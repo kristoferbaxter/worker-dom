@@ -35,6 +35,15 @@ export function store(value: string): number {
 }
 
 /**
+ * Retrieve the index for a string (mostly used for tests).
+ * @param value string value we need to know the index of
+ * @returns index in the map for the string
+ */
+export function get(value: string): number | undefined {
+  return mapping.get(value);
+}
+
+/**
  * Returns strings registered but not yet transferred.
  * Side effect: Resets the transfer array to default value, to prevent passing the same values multiple times.
  */
