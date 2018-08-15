@@ -41,6 +41,7 @@ export function store(node: Node): number {
  * @return either the Node represented in index position, or null if not available.
  */
 export function get(index: number | null): Node | null {
+  // mapping has a 1 based index, since on first store we ++count before storing.
   return (!!index && mapping.get(index)) || null;
 }
 
