@@ -31,6 +31,5 @@ export function getString(index: number): string {
  * @param value string to store from background thread.
  */
 export function storeString(value: string): void {
-  count = count + 1;
-  STRINGS.set(count, value);
+  STRINGS.set(++count, value);
 }
