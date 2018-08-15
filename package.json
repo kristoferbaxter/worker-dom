@@ -67,6 +67,11 @@
       "maxSize": "6 kB"
     },
     {
+      "path": "./dist/worker.sanitize.mjs",
+      "compression": "brotli",
+      "maxSize": "6 kB"
+    },
+    {
       "path": "./dist/index.mjs",
       "compression": "brotli",
       "maxSize": "2 kB"
@@ -83,6 +88,8 @@
     "index.js",
     "index.sanitize.js",
     "worker.mjs",
-    "worker.js"
+    "worker.sanitize.mjs",
+    "worker.js",
+    "worker.sanitize.js"
   ]
 }
