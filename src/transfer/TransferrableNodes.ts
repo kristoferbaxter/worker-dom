@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-import { NodeType, NodeName } from '../worker-thread/dom/Node';
+import { NodeType } from '../worker-thread/dom/Node';
 import { NumericBoolean } from '../utils';
 import { TransferrableKeys } from './TransferrableKeys';
 
 export interface HydrateableNode extends TransferrableNode {
-  readonly [TransferrableKeys.attributes]?: Array<{ [key: string]: string }>;
+  readonly [TransferrableKeys.attributes]?: Array<[number, number, number]>;
   readonly [TransferrableKeys.childNodes]?: Array<HydrateableNode>;
 }
 
 export interface TransferrableNode extends TransferredNode {
   readonly [TransferrableKeys.nodeType]: NodeType;
-  readonly [TransferrableKeys.nodeName]: NodeName;
+  readonly [TransferrableKeys.nodeName]: number;
 
   // Optional keys that are defined at construction of a `Text` or `Element`.
   // This makes the keys observed.
-  readonly [TransferrableKeys.textContent]?: string;
-  readonly [TransferrableKeys.namespaceURI]?: string;
+  readonly [TransferrableKeys.textContent]?: number;
+  readonly [TransferrableKeys.namespaceURI]?: number;
 }
 
 // If a Node has been transferred once already to main thread then we need only pass its index.

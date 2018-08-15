@@ -26,6 +26,7 @@ import { matchChildrenElements } from './matchElements';
 import { reflectProperties } from './enhanceElement';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { HydrateableNode } from '../../transfer/TransferrableNodes';
+import { store as storeString } from '../StringMapping';
 
 const isElementPredicate = (node: Node): boolean => node.nodeType === NodeType.ELEMENT_NODE;
 
@@ -52,8 +53,8 @@ export class Element extends Node {
       [TransferrableKeys._index_]: this._index_,
       [TransferrableKeys.transferred]: NumericBoolean.FALSE,
       [TransferrableKeys.nodeType]: this.nodeType,
-      [TransferrableKeys.nodeName]: this.nodeName,
-      [TransferrableKeys.namespaceURI]: this.namespaceURI === null ? undefined : this.namespaceURI,
+      [TransferrableKeys.nodeName]: storeString(this.nodeName),
+      [TransferrableKeys.namespaceURI]: this.namespaceURI === null ? undefined : storeString(this.namespaceURI),
     };
   }
 
@@ -63,7 +64,11 @@ export class Element extends Node {
    */
   public hydrate(): HydrateableNode {
     return Object.assign({}, this._creationFormat_, {
-      [TransferrableKeys.attributes]: this.attributes,
+      [TransferrableKeys.attributes]: this.attributes.map(attribute => [
+        storeString(attribute.namespaceURI || 'null'),
+        storeString(attribute.name),
+        storeString(attribute.value),
+      ]),
       [TransferrableKeys.childNodes]: this.childNodes.map(node => node.hydrate()),
     });
   }

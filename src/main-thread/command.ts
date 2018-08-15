@@ -21,6 +21,7 @@ import { NumericBoolean } from '../utils';
 import { TransferrableMutationRecord } from '../transfer/TransferrableRecord';
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { getNode } from './nodes';
+import { getString } from './strings';
 
 const KNOWN_LISTENERS: Array<(event: Event) => any> = [];
 
@@ -104,10 +105,10 @@ export function process(worker: Worker, mutation: TransferrableMutationRecord): 
   const target = getNode(_index_);
 
   (mutation[TransferrableKeys.removedEvents] || []).forEach(eventSub => {
-    processListenerChange(worker, target, false, eventSub[TransferrableKeys.type], eventSub[TransferrableKeys.index]);
+    processListenerChange(worker, target, false, getString(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]);
   });
   (mutation[TransferrableKeys.addedEvents] || []).forEach(eventSub => {
-    processListenerChange(worker, target, true, eventSub[TransferrableKeys.type], eventSub[TransferrableKeys.index]);
+    processListenerChange(worker, target, true, getString(eventSub[TransferrableKeys.type]), eventSub[TransferrableKeys.index]);
   });
 }
 

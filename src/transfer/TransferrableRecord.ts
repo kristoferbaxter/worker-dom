@@ -32,11 +32,11 @@ export interface TransferrableMutationRecord {
   [TransferrableKeys.removedNodes]?: Array<TransferredNode>;
   [TransferrableKeys.previousSibling]?: TransferredNode;
   [TransferrableKeys.nextSibling]?: TransferredNode;
-  [TransferrableKeys.attributeName]?: string;
-  [TransferrableKeys.attributeNamespace]?: string;
-  [TransferrableKeys.propertyName]?: string;
-  [TransferrableKeys.value]?: string;
-  [TransferrableKeys.oldValue]?: string;
+  [TransferrableKeys.attributeName]?: number;
+  [TransferrableKeys.attributeNamespace]?: number;
+  [TransferrableKeys.propertyName]?: number;
+  [TransferrableKeys.value]?: number;
+  [TransferrableKeys.oldValue]?: number;
   [TransferrableKeys.addedEvents]?: Array<TransferrableEventSubscriptionChange>;
   [TransferrableKeys.removedEvents]?: Array<TransferrableEventSubscriptionChange>;
 }

@@ -21,7 +21,8 @@ import { TransferrableMutationRecord } from './TransferrableRecord';
 import { TransferrableNode, TransferredNode, HydrateableNode } from './TransferrableNodes';
 import { MessageType, MutationFromWorker, HydrationFromWorker } from './Messages';
 import { TransferrableKeys } from './TransferrableKeys';
-import { consume } from '../worker-thread/NodeMapping';
+import { consume as consumeNodes } from '../worker-thread/NodeMapping';
+import { store as storeString, consume as consumeStrings } from '../worker-thread/StringMapping';
 import { TransferrableEventSubscriptionChange } from './TransferrableEvent';
 
 const SUPPORTS_POST_MESSAGE = typeof postMessage !== 'undefined';
@@ -36,7 +37,7 @@ const serializeNodes = (nodes: Array<Node>): Array<TransferredNode> => nodes.map
  * @param mutations
  */
 function serializeHydration(mutations: Array<MutationRecord>): HydrationFromWorker {
-  consume();
+  consumeNodes();
   const hydratedNode: HydrateableNode = document.body.hydrate();
   const events: Array<TransferrableEventSubscriptionChange> = [];
 
@@ -50,6 +51,7 @@ function serializeHydration(mutations: Array<MutationRecord>): HydrationFromWork
 
   return {
     [TransferrableKeys.type]: MessageType.HYDRATE,
+    [TransferrableKeys.strings]: consumeStrings(),
     [TransferrableKeys.nodes]: hydratedNode,
     [TransferrableKeys.addedEvents]: events,
   };
@@ -60,7 +62,7 @@ function serializeHydration(mutations: Array<MutationRecord>): HydrationFromWork
  * @param mutations
  */
 function serializeMutations(mutations: MutationRecord[]): MutationFromWorker {
-  const nodes: Array<TransferrableNode> = consume().map(node => node._creationFormat_);
+  const nodes: Array<TransferrableNode> = consumeNodes().map(node => node._creationFormat_);
   const transferrableMutations: TransferrableMutationRecord[] = [];
   mutations.forEach(mutation => {
     let transferable: TransferrableMutationRecord = {
@@ -71,11 +73,11 @@ function serializeMutations(mutations: MutationRecord[]): MutationFromWorker {
     mutation.addedNodes && (transferable[TransferrableKeys.addedNodes] = serializeNodes(mutation.addedNodes));
     mutation.removedNodes && (transferable[TransferrableKeys.removedNodes] = serializeNodes(mutation.removedNodes));
     mutation.nextSibling && (transferable[TransferrableKeys.nextSibling] = mutation.nextSibling._transferredFormat_);
-    mutation.attributeName != null && (transferable[TransferrableKeys.attributeName] = mutation.attributeName);
-    mutation.attributeNamespace != null && (transferable[TransferrableKeys.attributeNamespace] = mutation.attributeNamespace);
-    mutation.oldValue != null && (transferable[TransferrableKeys.oldValue] = mutation.oldValue);
-    mutation.propertyName && (transferable[TransferrableKeys.propertyName] = mutation.propertyName);
-    mutation.value != null && (transferable[TransferrableKeys.value] = mutation.value);
+    mutation.attributeName != null && (transferable[TransferrableKeys.attributeName] = storeString(mutation.attributeName));
+    mutation.attributeNamespace != null && (transferable[TransferrableKeys.attributeNamespace] = storeString(mutation.attributeNamespace));
+    mutation.oldValue != null && (transferable[TransferrableKeys.oldValue] = storeString(mutation.oldValue));
+    mutation.propertyName && (transferable[TransferrableKeys.propertyName] = storeString(mutation.propertyName));
+    mutation.value != null && (transferable[TransferrableKeys.value] = storeString(mutation.value));
     mutation.addedEvents && (transferable[TransferrableKeys.addedEvents] = mutation.addedEvents);
     mutation.removedEvents && (transferable[TransferrableKeys.removedEvents] = mutation.removedEvents);
 
@@ -84,6 +86,7 @@ function serializeMutations(mutations: MutationRecord[]): MutationFromWorker {
 
   return {
     [TransferrableKeys.type]: MessageType.MUTATE,
+    [TransferrableKeys.strings]: consumeStrings(),
     [TransferrableKeys.nodes]: nodes,
     [TransferrableKeys.mutations]: transferrableMutations,
   };

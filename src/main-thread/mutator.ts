@@ -19,6 +19,7 @@ import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { MutationRecordType } from '../worker-thread/MutationRecord';
 import { TransferrableNode } from '../transfer/TransferrableNodes';
 import { getNode, createNode } from './nodes';
+import { storeString, getString } from './strings';
 import { process } from './command';
 import { RenderableElement } from './RenderableElement';
 
@@ -52,8 +53,9 @@ const mutators: {
     }
   },
   [MutationRecordType.ATTRIBUTES](mutation: TransferrableMutationRecord, target: RenderableElement, sanitizer?: Sanitizer) {
-    const attributeName = mutation[TransferrableKeys.attributeName];
-    const value = mutation[TransferrableKeys.value];
+    const attributeName =
+      mutation[TransferrableKeys.attributeName] !== undefined ? getString(mutation[TransferrableKeys.attributeName] as number) : null;
+    const value = mutation[TransferrableKeys.value] !== undefined ? getString(mutation[TransferrableKeys.value] as number) : null;
     if (attributeName != null && value != null) {
       if (!sanitizer || sanitizer.validAttribute(target.nodeName, attributeName, value)) {
         target.setAttribute(attributeName, value);
@@ -66,12 +68,13 @@ const mutators: {
     const value = mutation[TransferrableKeys.value];
     if (value) {
       // Sanitization not necessary for textContent.
-      target.textContent = value;
+      target.textContent = getString(value);
     }
   },
   [MutationRecordType.PROPERTIES](mutation: TransferrableMutationRecord, target: RenderableElement, sanitizer?: Sanitizer) {
-    const propertyName = mutation[TransferrableKeys.propertyName];
-    const value = mutation[TransferrableKeys.value];
+    const propertyName =
+      mutation[TransferrableKeys.propertyName] !== undefined ? getString(mutation[TransferrableKeys.propertyName] as number) : null;
+    const value = mutation[TransferrableKeys.value] !== undefined ? getString(mutation[TransferrableKeys.value] as number) : null;
     if (propertyName && value) {
       if (!sanitizer || sanitizer.validProperty(target.nodeName, propertyName, value)) {
         target[propertyName] = value;
@@ -91,13 +94,19 @@ const mutators: {
  * @param mutations Changes to apply in both graph shape and content of Elements.
  * @param sanitizer Sanitizer to apply to content if needed.
  */
-export function mutate(nodes: Array<TransferrableNode>, mutations: Array<TransferrableMutationRecord>, sanitizer?: Sanitizer): void {
+export function mutate(
+  nodes: Array<TransferrableNode>,
+  stringValues: Array<string>,
+  mutations: Array<TransferrableMutationRecord>,
+  sanitizer?: Sanitizer,
+): void {
   //mutations: TransferrableMutationRecord[]): void {
   // TODO(KB): Restore signature requiring lastMutationTime. (lastGestureTime: number, mutations: TransferrableMutationRecord[])
   // if (performance.now() || Date.now() - lastGestureTime > GESTURE_TO_MUTATION_THRESHOLD) {
   //   return;
   // }
   // this.lastGestureTime = lastGestureTime;
+  stringValues.forEach(value => storeString(value));
   nodes.forEach(node => createNode(node));
   MUTATION_QUEUE = MUTATION_QUEUE.concat(mutations);
   if (!PENDING_MUTATIONS) {

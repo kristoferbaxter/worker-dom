@@ -41,6 +41,7 @@ export function install(baseElement: HTMLElement, workerDOMUrl: string, sanitize
           // console.info(`hydration from worker: ${data.type}`, data);
           hydrate(
             (data as HydrationFromWorker)[TransferrableKeys.nodes],
+            (data as HydrationFromWorker)[TransferrableKeys.strings],
             (data as HydrationFromWorker)[TransferrableKeys.addedEvents],
             baseElement,
             worker,
@@ -48,7 +49,12 @@ export function install(baseElement: HTMLElement, workerDOMUrl: string, sanitize
           break;
         case MessageType.MUTATE:
           // console.info(`mutation from worker: ${data.type}`, data);
-          mutate((data as MutationFromWorker)[TransferrableKeys.nodes], (data as MutationFromWorker)[TransferrableKeys.mutations], sanitizer);
+          mutate(
+            (data as MutationFromWorker)[TransferrableKeys.nodes],
+            (data as HydrationFromWorker)[TransferrableKeys.strings],
+            (data as MutationFromWorker)[TransferrableKeys.mutations],
+            sanitizer,
+          );
           break;
       }
     };

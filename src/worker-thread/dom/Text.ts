@@ -19,6 +19,7 @@ import { CharacterData } from './CharacterData';
 import { NumericBoolean } from '../../utils';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
 import { HydrateableNode } from '../../transfer/TransferrableNodes';
+import { store as storeString } from '../StringMapping';
 
 // @see https://developer.mozilla.org/en-US/docs/Web/API/Text
 export class Text extends CharacterData {
@@ -32,8 +33,8 @@ export class Text extends CharacterData {
       [TransferrableKeys._index_]: this._index_,
       [TransferrableKeys.transferred]: NumericBoolean.FALSE,
       [TransferrableKeys.nodeType]: NodeType.TEXT_NODE,
-      [TransferrableKeys.nodeName]: '#text',
-      [TransferrableKeys.textContent]: this.data,
+      [TransferrableKeys.nodeName]: storeString('#text'),
+      [TransferrableKeys.textContent]: storeString(this.data),
     };
   }
 
