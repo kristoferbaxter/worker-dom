@@ -16,9 +16,10 @@
 
 import { TransferrableKeys } from '../transfer/TransferrableKeys';
 import { HydrateableNode } from '../transfer/TransferrableNodes';
-import { storeNode, getNode, createNode, isTextNode } from './nodes';
-import { RenderableElement } from 'RenderableElement';
 import { TransferrableEventSubscriptionChange } from '../transfer/TransferrableEvent';
+import { storeNode, getNode, createNode, isTextNode } from './nodes';
+import { storeString, getString } from './strings';
+import { RenderableElement } from './RenderableElement';
 import { applyDefaultChangeListener, processListenerChange } from './command';
 
 function allTextNodes(nodes: NodeList | Array<HydrateableNode>): boolean {
@@ -37,10 +38,11 @@ function replaceNodes(nodes: Array<HydrateableNode>, parent: HTMLElement, worker
   nodes.forEach((node, index) => {
     const newNode: RenderableElement = createNode(node);
     (node[TransferrableKeys.attributes] || []).forEach(attribute => {
-      if (attribute.namespaceURI) {
-        newNode.setAttributeNS(attribute.namespaceURI, attribute.name, attribute.value);
+      const namespaceURI = getString(attribute[0]);
+      if (namespaceURI !== 'null') {
+        newNode.setAttributeNS(namespaceURI, getString(attribute[1]), getString(attribute[2]));
       } else {
-        newNode.setAttribute(attribute.name, attribute.value);
+        newNode.setAttribute(getString(attribute[1]), getString(attribute[2]));
       }
     });
     parent.appendChild(newNode);
@@ -87,7 +89,7 @@ function hydrateNode(transferNode: HydrateableNode, node: HTMLElement | Text, wo
   } else if (transferIsText && nodeIsText) {
     // Singular text node, no children.
     storeNode(node, transferNode[TransferrableKeys._index_]);
-    node.textContent = transferNode[TransferrableKeys.textContent] as string;
+    node.textContent = getString(transferNode[TransferrableKeys.textContent] as number);
     applyDefaultChangeListener(worker, node as RenderableElement);
   }
 }
@@ -99,12 +101,20 @@ function hydrateNode(transferNode: HydrateableNode, node: HTMLElement | Text, wo
  * @param baseElement root of the main thread content to compare against.
  * @param worker worker issuing the upgrade request.
  */
-export function hydrate(skeleton: HydrateableNode, addEvents: Array<TransferrableEventSubscriptionChange>, baseElement: HTMLElement, worker: Worker) {
+export function hydrate(
+  skeleton: HydrateableNode,
+  stringValues: Array<string>,
+  addEvents: Array<TransferrableEventSubscriptionChange>,
+  baseElement: HTMLElement,
+  worker: Worker,
+) {
+  // Process String Additions
+  stringValues.forEach(value => storeString(value));
   // Process Node Addition / Removal
   hydrateNode(skeleton, baseElement, worker);
   // Process Event Addition
   addEvents.forEach(event => {
     const node = getNode(event[TransferrableKeys._index_]);
-    node && processListenerChange(worker, node, true, event[TransferrableKeys.type], event[TransferrableKeys.index]);
+    node && processListenerChange(worker, node, true, getString(event[TransferrableKeys.type]), event[TransferrableKeys.index]);
   });
 }

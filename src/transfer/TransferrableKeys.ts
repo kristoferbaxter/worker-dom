@@ -54,4 +54,5 @@ export const enum TransferrableKeys {
   data = 36,
   event = 37,
   sync = 38,
+  strings = 39,
 }

@@ -19,6 +19,7 @@ import { document } from '../../worker-thread/dom/Document';
 import { Element } from '../../worker-thread/dom/Element';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';
+import { get } from '../../worker-thread/StringMapping';
 
 test.beforeEach(t => {
   t.context = {
@@ -40,7 +41,7 @@ test.cb.serial('Element.addEventListener mutation observed when node is connecte
           target: el,
           addedEvents: [
             {
-              [TransferrableKeys.type]: 'mouseenter',
+              [TransferrableKeys.type]: get('mouseenter') as number,
               [TransferrableKeys._index_]: 3,
               [TransferrableKeys.index]: 0,
             },
@@ -67,7 +68,7 @@ test.cb.serial('Element.addEventListener mutation observed when node is not yet 
           target: el,
           addedEvents: [
             {
-              [TransferrableKeys.type]: 'mouseenter',
+              [TransferrableKeys.type]: get('mouseenter') as number,
               [TransferrableKeys._index_]: 4,
               [TransferrableKeys.index]: 0,
             },

@@ -17,9 +17,8 @@
 import { Node } from './dom/Node';
 
 let count: number = 0;
-let transferred: number = 0;
-const mapping: Array<Node> = [];
-const EMPTY_NODE_ARRAY: Array<Node> = [];
+let transfer: Array<Node> = [];
+const mapping: Map<number, Node> = new Map();
 
 /**
  * Stores a node in mapping, and makes the index available on the Node directly.
@@ -31,8 +30,8 @@ export function store(node: Node): number {
     return node._index_;
   }
 
-  count = mapping.push(node);
-  node._index_ = count;
+  mapping.set((node._index_ = ++count), node);
+  transfer.push(node);
   return count;
 }
 
@@ -42,18 +41,16 @@ export function store(node: Node): number {
  * @return either the Node represented in index position, or null if not available.
  */
 export function get(index: number | null): Node | null {
-  return (!!index && mapping[index - 1]) || null;
+  // mapping has a 1 based index, since on first store we ++count before storing.
+  return (!!index && mapping.get(index)) || null;
 }
 
 /**
  * Returns nodes registered but not yet transferred.
- * Side effect: Increases the transferred count to current registred.
+ * Side effect: Resets the transfer array to default value, to prevent passing the same values multiple times.
  */
 export function consume(): Array<Node> {
-  if (transferred < count) {
-    const oldTransferred = transferred;
-    transferred = count;
-    return mapping.slice(oldTransferred, count);
-  }
-  return EMPTY_NODE_ARRAY;
+  const copy = transfer;
+  transfer = [];
+  return copy;
 }
