@@ -105,10 +105,12 @@ function handleMutations(incoming: MutationRecord[], postMessage?: Function): vo
  * @param doc
  * @param postMessage
  */
-export function observe(doc: Document, postMessage?: Function): void {
+export function observe(doc: Document, postMessage: Function): void {
   if (!observing) {
     document = doc;
     new doc.defaultView.MutationObserver(mutations => handleMutations(mutations, postMessage)).observe(doc.body);
     observing = true;
+  } else {
+    console.error('observe() was called more than once.');
   }
 }

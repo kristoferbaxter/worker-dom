@@ -108,16 +108,18 @@ export function createDocument(postMessage?: Function): Document {
   // (e.g. `postMessage`) to prevent overwriting by 3P JS.
   const _postMessage = postMessage;
 
-  const document = new Document();
-  document.isConnected = true;
-  document.appendChild((document.body = document.createElement('body')));
+  const doc = new Document();
+  doc.isConnected = true;
+  doc.appendChild((doc.body = doc.createElement('body')));
 
-  observeMutations(document, _postMessage);
-  propagateEvents();
-  propagateSyncValues();
+  if (_postMessage) {
+    observeMutations(doc, _postMessage);
+    propagateEvents();
+    propagateSyncValues();
+  }
 
-  return document;
+  return doc;
 }
 
 /** Should only be used for testing. */
-export const document = createDocument();
+export const documentForTesting = createDocument();

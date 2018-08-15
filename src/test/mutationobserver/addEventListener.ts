@@ -15,7 +15,7 @@
  */
 
 import test from 'ava';
-import { document } from '../../worker-thread/dom/Document';
+import { documentForTesting as document } from '../../worker-thread/dom/Document';
 import { Element } from '../../worker-thread/dom/Element';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 import { TransferrableKeys } from '../../transfer/TransferrableKeys';

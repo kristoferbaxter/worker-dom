@@ -110,7 +110,7 @@ export const workerDOM: WorkerDOMGlobalScope = {
  * until EventTarget is reached.
  * @param global
  */
-export function dereferenceGlobals(global: DedicatedWorkerGlobalScope) {
+function dereferenceGlobals(global: WorkerGlobalScope) {
   function deleteUnsafe(object: any, property: string) {
     if (WHITELISTED_GLOBALS.indexOf(property) >= 0) {
       return;
@@ -132,3 +132,5 @@ export function dereferenceGlobals(global: DedicatedWorkerGlobalScope) {
     current = Object.getPrototypeOf(current);
   }
 }
+
+dereferenceGlobals(self);

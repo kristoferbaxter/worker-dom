@@ -28,7 +28,6 @@ export function createWorker(workerDomURL: string, authorScriptURL: string): Pro
       const code = `
         'use strict';
         ${workerScript}
-        WorkerThread.dereferenceGlobals(self);
         (function() {
           var self = this;
           var document = this.document;

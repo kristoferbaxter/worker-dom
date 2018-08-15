@@ -15,7 +15,7 @@
  */
 
 import test from 'ava';
-import { document } from '../../worker-thread/dom/Document';
+import { documentForTesting as document } from '../../worker-thread/dom/Document';
 import { MutationRecord, MutationRecordType } from '../../worker-thread/MutationRecord';
 import { appendKeys } from '../../worker-thread/css/CSSStyleDeclaration';
 
