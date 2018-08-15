@@ -20,28 +20,29 @@
     "lint": "tslint -c config/tslint.json -p src/worker-thread/ & tslint -c config/tslint.json -p src/main-thread/",
     "predebug": "DEBUG_BUNDLE=true npm run ~rollup",
     "debug": "node -r esm demo/server.mjs",
-    "build": "MINIFY_BUNDLE=true npm run ~rollup"
+    "build": "MINIFY_BUNDLE=true npm run ~rollup",
+    "size": "npm run build && bundlesize"
   },
   "dependencies": {
     "dompurify": "1.0.7"
   },
   "devDependencies": {
     "@ampproject/rollup-plugin-closure-compiler": "0.6.1",
-    "@babel/cli": "v7.0.0-beta.56",
-    "@babel/core": "v7.0.0-beta.56",
-    "@babel/plugin-proposal-class-properties": "v7.0.0-beta.56",
-    "@babel/plugin-proposal-object-rest-spread": "v7.0.0-beta.56",
-    "@babel/preset-env": "v7.0.0-beta.56",
+    "@babel/cli": "v7.0.0-rc.1",
+    "@babel/core": "v7.0.0-rc.1",
+    "@babel/plugin-proposal-class-properties": "v7.0.0-rc.1",
+    "@babel/plugin-proposal-object-rest-spread": "v7.0.0-rc.1",
+    "@babel/preset-env": "v7.0.0-rc.1",
     "ava": "0.25.0",
     "babel-plugin-transform-remove-console": "6.9.4",
     "bundlesize": "0.17.0",
-    "esm": "3.0.74",
+    "esm": "3.0.76",
     "husky": "1.0.0-rc.13",
-    "lint-staged": "7.2.0",
+    "lint-staged": "7.2.2",
     "polka": "0.4.0",
-    "prettier": "1.14.0",
+    "prettier": "1.14.2",
     "rimraf": "2.6.2",
-    "rollup": "0.63.5",
+    "rollup": "0.64.1",
     "rollup-plugin-babel": "4.0.0-beta.7",
     "rollup-plugin-node-resolve": "3.3.0",
     "serve-static": "1.13.2",
@@ -57,7 +58,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "pre-push": "npm run test; npm run build; bundlesize"
+      "pre-push": "npm run test && npm run size"
     }
   },
   "bundlesize": [
@@ -69,7 +70,7 @@
     {
       "path": "./dist/worker.safe.mjs",
       "compression": "brotli",
-      "maxSize": "6 kB"
+      "maxSize": "7 kB"
     },
     {
       "path": "./dist/index.mjs",
