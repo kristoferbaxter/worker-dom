@@ -63,14 +63,24 @@ export class Element extends Node {
    * for the main thread to process and store items from for future modifications.
    */
   public hydrate(): HydrateableNode {
-    return Object.assign({}, this._creationFormat_, {
-      [TransferrableKeys.attributes]: this.attributes.map(attribute => [
-        storeString(attribute.namespaceURI || 'null'),
-        storeString(attribute.name),
-        storeString(attribute.value),
-      ]),
-      [TransferrableKeys.childNodes]: this.childNodes.map(node => node.hydrate()),
-    });
+    return Object.assign(
+      {},
+      this._creationFormat_,
+      this.childNodes.length > 0
+        ? {
+            [TransferrableKeys.childNodes]: this.childNodes.map(node => node.hydrate()),
+          }
+        : {},
+      this.attributes.length > 0
+        ? {
+            [TransferrableKeys.attributes]: this.attributes.map(attribute => [
+              storeString(attribute.namespaceURI || 'null'),
+              storeString(attribute.name),
+              storeString(attribute.value),
+            ]),
+          }
+        : {},
+    );
   }
 
   // Unimplemented properties
