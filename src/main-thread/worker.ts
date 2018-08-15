@@ -27,7 +27,6 @@ export function createWorker(workerDomURL: string, authorScriptURL: string): Pro
       }
       const code = `
         'use strict';
-        debugger;
         ${workerScript}
         WorkerThread.dereferenceGlobals(self);
         (function() {
@@ -51,7 +50,6 @@ export function createWorker(workerDomURL: string, authorScriptURL: string): Pro
             return document.removeEventListener(type, handler);
           }
           this.appendKeys([${keys}]);
-          debugger;
           ${authorScript}
         }).call(WorkerThread.workerDOM);`;
       return new Worker(URL.createObjectURL(new Blob([code])));
