@@ -42,8 +42,8 @@ Upgrade a specific section of the document to be driven by a worker.
 
 If you would like to leverage built-in mutation sanitization, you can use the distributed version of the main thread that includes automatic sanitization.
 ```html
-<script src="./dist/index.sanitizer.mjs" type="module"></script>
-<script src="./dist/index.sanitizer.js" nomodule defer></script>
+<script src="./dist/index.safe.mjs" type="module"></script>
+<script src="./dist/index.safe.js" nomodule defer></script>
 ```
 
 ## Security disclosures
