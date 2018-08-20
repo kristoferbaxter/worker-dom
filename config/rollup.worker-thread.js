@@ -107,12 +107,13 @@ const debugModules = DEBUG_BUNDLE_VALUE ? [
       format: 'iife',
       name: 'WorkerThread',
       sourcemap: true,
-      outro: 'window.workerDocument = monkey.document;'
+      outro: 'window.workerDocument = documentForTesting;'
     },
     plugins: [
       babelPlugin({
         transpileToES5: false,
-        allowConsole: true,
+        allowConsole: DEBUG_BUNDLE_VALUE,
+        allowPostMessage: false,
       }),
       MINIFY_BUNDLE_VALUE ? compiler({
         env: 'CUSTOM'

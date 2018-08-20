@@ -101,12 +101,12 @@ export class Document extends Element {
 
 /**
  *
- * @param postMessage
+ * @param postMessageMethod
  */
-export function createDocument(postMessage?: Function): Document {
+export function createDocument(postMessageMethod?: Function): Document {
   // Use local references of privileged functions that are used asynchronously
   // (e.g. `postMessage`) to prevent overwriting by 3P JS.
-  const _postMessage = postMessage;
+  const _postMessage = postMessageMethod;
 
   const doc = new Document();
   doc.isConnected = true;

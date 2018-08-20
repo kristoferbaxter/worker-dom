@@ -18,8 +18,10 @@ import { createDocument } from './dom/Document';
 import { WorkerDOMGlobalScope } from './WorkerDOMGlobalScope';
 import { appendKeys } from './css/CSSStyleDeclaration';
 
+declare var __ALLOW_POST_MESSAGE__: boolean;
+
 export const workerDOM: WorkerDOMGlobalScope = {
-  document: createDocument((self as DedicatedWorkerGlobalScope).postMessage),
+  document: createDocument(__ALLOW_POST_MESSAGE__ ? (self as DedicatedWorkerGlobalScope).postMessage : undefined),
   localStorage: {},
   location: {},
   url: '/',
