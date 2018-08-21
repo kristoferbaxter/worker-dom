@@ -15,9 +15,12 @@
  */
 
 import { Document } from './dom/Document';
+import { EventHandler } from './Event';
 
 export interface WorkerDOMGlobalScope {
   document: Document;
+  addEventListener: (type: string, handler: EventHandler) => void;
+  removeEventListener: (type: string, handler: EventHandler) => void;
   localStorage: object;
   location: object;
   url: string;

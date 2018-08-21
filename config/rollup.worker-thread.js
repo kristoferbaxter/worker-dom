@@ -15,7 +15,7 @@
  */
 
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
-import {babelPlugin} from './rollup.plugins.js';
+import {babelPlugin, removeTestingDocument} from './rollup.plugins.js';
 import {MINIFY_BUNDLE_VALUE, DEBUG_BUNDLE_VALUE} from './rollup.utils.js';
 
 // Workers do not natively support ES Modules containing `import` or `export` statments.
@@ -31,6 +31,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
+      removeTestingDocument(),
       babelPlugin({
         transpileToES5: false,
         allowConsole: DEBUG_BUNDLE_VALUE,
@@ -49,6 +50,7 @@ const ESModules = [
       sourcemap: true,
     },
     plugins: [
+      removeTestingDocument(),
       babelPlugin({
         transpileToES5: false,
         allowConsole: DEBUG_BUNDLE_VALUE,
@@ -70,6 +72,7 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
+      removeTestingDocument(),
       babelPlugin({
         transpileToES5: true,
         allowConsole: DEBUG_BUNDLE_VALUE,
@@ -88,6 +91,7 @@ const IIFEModules = [
       sourcemap: true,
     },
     plugins: [
+      removeTestingDocument(),
       babelPlugin({
         transpileToES5: true,
         allowConsole: DEBUG_BUNDLE_VALUE,
@@ -110,6 +114,7 @@ const debugModules = DEBUG_BUNDLE_VALUE ? [
       outro: 'window.workerDocument = documentForTesting;'
     },
     plugins: [
+      removeTestingDocument(),
       babelPlugin({
         transpileToES5: false,
         allowConsole: DEBUG_BUNDLE_VALUE,

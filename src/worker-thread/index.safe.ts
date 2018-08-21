@@ -97,8 +97,11 @@ const WHITELISTED_GLOBALS = [
   'unescape',
 ];
 
+const doc = createDocument((self as DedicatedWorkerGlobalScope).postMessage);
 export const workerDOM: WorkerDOMGlobalScope = {
-  document: createDocument((self as DedicatedWorkerGlobalScope).postMessage),
+  document: doc,
+  addEventListener: doc.addEventListener.bind(doc),
+  removeEventListener: doc.removeEventListener.bind(doc),
   localStorage: {},
   location: {},
   url: '/',
