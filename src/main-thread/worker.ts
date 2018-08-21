@@ -30,6 +30,7 @@ export function createWorker(workerDomURL: string, authorScriptURL: string): Pro
         ${workerScript}
         (function() {
           var self = this;
+          var window = this;
           var document = this.document;
           var localStorage = this.localStorage;
           var location = this.location;
@@ -50,7 +51,8 @@ export function createWorker(workerDomURL: string, authorScriptURL: string): Pro
           }
           this.appendKeys([${keys}]);
           ${authorScript}
-        }).call(WorkerThread.workerDOM);`;
+        }).call(WorkerThread.workerDOM);
+//# sourceURL=${encodeURI(authorScriptURL)}`;
       return new Worker(URL.createObjectURL(new Blob([code])));
     })
     .catch(error => {

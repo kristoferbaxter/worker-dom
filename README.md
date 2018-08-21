@@ -12,7 +12,7 @@ An in-progress implementation of the DOM API intended to run within a Web Worker
 ## Installation
 
 ```bash
-yarn add @ampproject/worker-dom
+npm install @ampproject/worker-dom
 ```
 
 ## Usage

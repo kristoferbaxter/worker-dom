@@ -35,22 +35,10 @@ function toggle() {
 
 span.addEventListener('click', toggle, false);
 
-input.value = 'foo';
-
 input.addEventListener('input', event => {
-  if (/foo/.test(event.currentTarget.value)) {
+  if (/change/.test(event.currentTarget.value)) {
     toggle();
-  } else if (/bar/.test(event.currentTarget.value)) {
+  } else if (/remove/.test(event.currentTarget.value)) {
     span.remove();
   }
 }, false);
-
-// span.addEventListener('click', function handleClick() {
-//   span.textContent = JSON.stringify(span.getBoundingClientRect());
-// }, false);
-
-// span.addEventListener('click', function handleClick() {
-//   span.textContent = JSON.stringify(span.getAsyncBoundingClientRect());
-// }, false);
-
-// setInterval(toggle, 600);

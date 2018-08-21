@@ -6,7 +6,7 @@
   "author": "Kristofer Baxter",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "yarn webpack --config webpack.config.js"
+    "build": "webpack --config webpack.config.js"
   },
   "dependencies": {
     "obj-str": "1.0.0",

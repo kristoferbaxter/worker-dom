@@ -15,6 +15,8 @@
  */
 
 import babel from 'rollup-plugin-babel';
+import MagicString from 'magic-string';
+const walk = require('acorn/dist/walk');
 
 /**
  * Invoke Babel on source, with some configuration.
@@ -25,7 +27,7 @@ import babel from 'rollup-plugin-babel';
  */
 export function babelPlugin({transpileToES5, allowConsole = false, allowPostMessage = true}) {
   const targets = transpileToES5 ? { browsers: ['last 2 versions', 'ie >= 11', 'safari >= 7'] } : { esmodules: true };
-  const exclude = allowConsole ? ['error', 'warn', 'info', 'log', 'time', 'timeEnd'] : [];
+  const exclude = allowConsole ? ['error', 'warn', 'trace', 'info', 'log', 'time', 'timeEnd'] : [];
 
   return babel({
     exclude: 'node_modules/**',
@@ -55,3 +57,40 @@ export function babelPlugin({transpileToES5, allowConsole = false, allowPostMess
     ],
   });
 };
+
+/**
+ * RollupPlugin that removes the testing document singleton from output source.
+ */
+export function removeTestingDocument() {
+  let context;
+
+  return {
+    name: 'remove-testing-document',
+    buildStart() {
+      context = this;
+    },
+    transformChunk: async (code) => {
+      const source = new MagicString(code);
+
+      if (context) {
+        const program = context.parse(code, { ranges: true });
+
+        walk.simple(program, {
+          VariableDeclarator(node) {
+            if (node.id && node.id.type === 'Identifier' && node.id.name && node.id.name === 'documentForTesting') {
+              const range = node.range;
+              if (range) {
+                source.overwrite(node.range[0], node.range[1], 'documentForTesting = undefined');
+              }
+            }
+          },
+        });
+      }
+      
+      return {
+        code: source.toString(),
+        map: source.generateMap(),
+      };
+    },
+  };
+}

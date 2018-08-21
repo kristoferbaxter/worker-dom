@@ -55,14 +55,14 @@ class App extends React.Component {
   }
 
   render() {
-    return (
-      <div>
-        <CandidateTable votes={TOTAL_VOTES} totalData={CANDIDATE_DATA} regionData={REGION_DATA} focusedRegion={this.state.focusedRegion} />
-        <h1>Precinct Map</h1>
-        <CandidateMap regionData={REGION_DATA} totalData={CANDIDATE_DATA} focusRegion={this.handleRegionFocus} />
-      </div>
-    );
+    return [
+      <CandidateTable key='table' votes={TOTAL_VOTES} totalData={CANDIDATE_DATA} regionData={REGION_DATA} focusedRegion={this.state.focusedRegion} />,
+      <h1 key='map'>Precinct Map</h1>,
+      <CandidateMap key='map-display' regionData={REGION_DATA} totalData={CANDIDATE_DATA} focusRegion={this.handleRegionFocus} />,
+    ];
   }
 }
 
-render(<App />, document.body);
+const div = document.createElement('div');
+document.body.appendChild(div);
+render(<App />, div);

@@ -389,7 +389,7 @@ export abstract class Node {
           }
         }
       }
-    } while (event.bubbles && !(event.cancelable && event._stop) && (event.target = target = target && target.parentNode));
+    } while (event.bubbles && !(event.cancelable && event._stop) && (target = target && target.parentNode));
     return !event.defaultPrevented;
   }
 }
